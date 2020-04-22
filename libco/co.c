@@ -64,6 +64,7 @@ void align_check(struct co* now)
 printf("co at %p\n",(void *)now);
 printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
 }
+
 void co_end()//stack_switch_call的终点
 {
 printf("no %d coroutine is ended\n",current->no);
