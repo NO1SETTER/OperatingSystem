@@ -91,7 +91,7 @@ __attribute__((constructor)) void set_main()
   allco[0]=mainco;
   co_push(mainco);
   current=mainco;
- 
+  srand((int)time(0));
 }
 
 
@@ -123,7 +123,7 @@ co_yield();//current被移除,在co_yield中重新设置一个current
 void co_yield() {
   int val=setjmp(current->context);//此时current已经不在active中
   if(val==0)//
-  { srand((int)time(0));
+  { 
     co_check();
     int nxt=rand()%active_num;
     struct co *nxtco=active[nxt];
