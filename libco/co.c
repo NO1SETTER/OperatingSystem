@@ -99,7 +99,7 @@ void co_yield() {
   int val=setjmp(current->context);
   if(val==0)//
   {int nxt=rand()%active_num;
-  struct co *nxtco=active_num[nxt];
+  struct co *nxtco=active[nxt];
     if(nxtco->status=CO_NEW)
     {
       stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,nxtco->arg);
