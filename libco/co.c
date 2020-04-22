@@ -14,7 +14,7 @@ enum co_status {
 
 
 struct co {
-  char *name;
+  const char *name;
   void (*func)(void *); // co_start 指定的入口地址和参数
   void *arg;
 
@@ -36,7 +36,7 @@ void copush(struct co *now)
 void coremove(struct co *now)
 { int pos=-1;
   for(int i=0;i<active_num;i++)
-  if(active[i]==co)
+  if(active[i]now)
   {
     pos==i;
     break;
@@ -61,7 +61,7 @@ static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
 
 __attribute__((constructor)) void set_main()
 {
-  struct co* mainco=(co*)malloc(sizeof(struct co));
+  struct co* mainco=(struct co*)malloc(sizeof(struct co));
   mainco->no=0;
   mainco->status=CO_RUNNING;
   copush(mainco);
@@ -70,7 +70,7 @@ __attribute__((constructor)) void set_main()
 
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
-  struct co* newco=(co*)malloc(sizeof(struct co));
+  struct co* newco=(struct co*)malloc(sizeof(struct co));
   newco->name=name;
   newco->func=func;
   newco->arg=arg;
@@ -99,7 +99,7 @@ void co_yield() {
   int val=setjmp(current->context);
   if(val==0)//
   {int nxt=rand()%active_num;
-  struct nxtco=active_num[nxt];
+  struct co *nxtco=active_num[nxt];
     if(nxtco->status=CO_NEW)
     {
       stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,nxtco->arg);
