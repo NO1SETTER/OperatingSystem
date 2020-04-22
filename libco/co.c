@@ -30,10 +30,10 @@ struct co *allco[200];//管理所有协程
 int co_num=1;//已有协程数量,把main也看做一个协程
 
 struct co *active[200];//当前能够被调用的协程,即状态为CO_RUNNING和CO_NEW的协程
-int active_num=1;
-void copush(struct co *now)
+int active_num=0;
+void co_push(struct co *now)
 {active[active_num++]=now;}
-void coremove(struct co *now)
+void co_remove(struct co *now)
 { int pos=-1;
   for(int i=0;i<active_num;i++)
   if(active[i]==now)
@@ -50,10 +50,10 @@ void coremove(struct co *now)
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   asm volatile (
 #if __x86_64__
-    "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
+    "movq %0, %%rsp; movq %2, %%rdi; call *%1"
       : : "b"((uintptr_t)sp),     "d"(entry), "a"(arg)
 #else
-    "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
+    "movl %0, %%esp; movl %2, 4(%0); call *%1"
       : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg)
 #endif
   );
@@ -64,7 +64,8 @@ __attribute__((constructor)) void set_main()
   struct co* mainco=(struct co*)malloc(sizeof(struct co));
   mainco->no=0;
   mainco->status=CO_RUNNING;
-  copush(mainco);
+  allco[0]=mainco;
+  co_push(mainco);
   current=mainco;
 }
 
@@ -78,7 +79,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
   newco->status=CO_NEW;
   allco[co_num]=newco;
   co_num++;
-  copush(newco);
+  co_push(newco);
   return NULL;
 }//创建新的协程
 
@@ -89,22 +90,23 @@ if(co->status==CO_DEAD)//被等待的协程已经结束
 else
 {
 co->waiter=current;
-coremove(current);
+co_remove(current);
 co_yield();//current被移除,在co_yield中重新设置一个current
 }
 }//co_wait只设置协程之间的关系
 
 
 void co_yield() {
-  int val=setjmp(current->context);
+  int val=setjmp(current->context);//此时current已经不在active中
   if(val==0)//
   {int nxt=rand()%active_num;
-  struct co *nxtco=active[nxt];
-    if(nxtco->status==CO_NEW)
+   struct co *nxtco=active[nxt];
+    if(nxtco->status==CO_NEW)//调用新的协程，切换堆栈即可
     {
-      stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,nxtco->arg);
+      stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,(uintptr_t)nxtco->arg);
+    
     }
-    else if(nxtco->status==CO_RUNNING)//已经开始的协程，直接恢复寄存器现场即可
+    else if(nxtco->status==CO_RUNNING)//调用已经开始的协程，直接恢复寄存器现场即可
     {
       longjmp(nxtco->context,1);
     }
