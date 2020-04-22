@@ -108,6 +108,8 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
   return newco;
 }//创建新的协程
 
+//注意，一个线程在任一时刻只能wait一个线程
+//但是一个线程有可能被多个线程wait，这种情况暂不处理
 void co_wait(struct co *co) {
 if(co->status==CO_DEAD)//被等待的协程已经结束
 {}
