@@ -82,10 +82,10 @@ static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   uintptr_t endfunc=(uintptr_t)co_end;
   asm volatile (//stack_switch_call本身可以不返回,
 #if __x86_64__
-    "movq %0, %%rsp; movq %2, %%rdi;movq %3,(%%rsp);jmp *%1"
+    "movq %0, %%rsp; movq %2, %%rdi;push %3;jmp *%1"
       : : "b"((uintptr_t)sp),     "d"(entry), "a"(arg),"S"(endfunc) 
 #else
-    "movl %0, %%esp; movl %2, 4(%0);movl %3,(%%esp);jmp *%1"
+    "movl %0, %%esp; movl %2, 4(%0);push %3;jmp *%1"
       : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg),"S"(endfunc)
 #endif
   );
@@ -143,7 +143,7 @@ void co_yield() {
     if(nxtco->status==CO_NEW)//调用新的协程，切换堆栈即可
     {
       nxtco->status=CO_RUNNING;
-      stack_switch_call(&nxtco->stack[STACK_SIZE-9],nxtco->func,(uintptr_t)nxtco->arg);
+      stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,(uintptr_t)nxtco->arg);
     
     }
     else if(nxtco->status==CO_RUNNING)//调用已经开始的协程，直接恢复寄存器现场即可
