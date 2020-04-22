@@ -134,7 +134,7 @@ void co_yield() {
     if(nxtco->status==CO_NEW)//调用新的协程，切换堆栈即可
     {
       nxtco->status=CO_RUNNING;
-      stack_switch_call(&nxtco->stack[STACK_SIZE-9],nxtco->func,(uintptr_t)nxtco->arg);
+      stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,(uintptr_t)nxtco->arg);
     
     }
     else if(nxtco->status==CO_RUNNING)//调用已经开始的协程，直接恢复寄存器现场即可
