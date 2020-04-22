@@ -90,7 +90,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
   allco[co_num]=newco;
   co_num++;
   co_push(newco);
-  return NULL;
+  return newco;
 }//创建新的协程
 
 void co_wait(struct co *co) {
