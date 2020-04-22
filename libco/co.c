@@ -100,6 +100,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
   newco->status=CO_NEW;
   allco[co_num]=newco;
   co_num++;
+  printf("newco->co=%d\n",newco->co);
   co_push(newco);
   return newco;
 }//创建新的协程
