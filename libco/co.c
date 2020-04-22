@@ -53,7 +53,7 @@ void co_remove(struct co *now)
     pos=i;
     break;
   }
-  assert(pos!=-1);
+  //assert(pos!=-1);
   for(int i=pos;i<active_num-1;i++)
     active[i]=active[i+1];
   active_num=active_num-1;
