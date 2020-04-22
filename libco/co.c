@@ -47,14 +47,22 @@ void co_remove(struct co *now)
   active_num=active_num-1;
 }
 
+void co_end()//stack_switch_call的终点
+{
+current->status=CO_DEAD;
+co_remove(current);
+co_yield()
+}
+
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
-  asm volatile (
+  uintptr_t endfunc=co_end;
+  asm volatile (//stack_switch_call本身可以不返回,
 #if __x86_64__
-    "movq %0, %%rsp; movq %2, %%rdi; call *%1"
-      : : "b"((uintptr_t)sp),     "d"(entry), "a"(arg)
+    "movq %0, %%rsp; movq %2, %%rdi;push %3;jmp *%1"/
+      : : "b"((uintptr_t)sp),     "d"(entry), "a"(arg),"S"(endfunc) 
 #else
-    "movl %0, %%esp; movl %2, 4(%0); call *%1"
-      : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg)
+    "movl %0, %%esp; movl %2, 4(%0);push %3; jmp *%1"
+      : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg),"S"(endfunc)
 #endif
   );
 }
