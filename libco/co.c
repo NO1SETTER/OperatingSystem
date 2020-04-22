@@ -67,6 +67,7 @@ printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
 
 void co_end()//stack_switch_call的终点
 {
+
 printf("no %d coroutine is ended\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
@@ -80,6 +81,7 @@ co_yield();
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   uintptr_t endfunc=(uintptr_t)co_end;
+  printf("stack at %p\n",sp);
   asm volatile (//stack_switch_call本身可以不返回,
 #if __x86_64__
     "movq %0, %%rsp; movq %2, %%rdi;push %%rsi;jmp *%1"
