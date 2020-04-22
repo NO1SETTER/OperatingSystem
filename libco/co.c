@@ -35,7 +35,7 @@ int active_num=0;
 void co_check()
 {printf("Acitve coroutines: ");
   for(int i=0;i<co_num;i++)
-  printf("%d",active[i]->no);
+  printf("%d ",active[i]->no);
   printf("\n");
 }
 
