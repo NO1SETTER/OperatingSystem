@@ -22,7 +22,7 @@ struct co {
   uint8_t        stack[STACK_SIZE]; // 协程的堆栈
 };
 
-struct co *current；//当前协程
+struct co *current;//当前协程
 struct co *allco[200];//管理所有协程
 int co_num=1;//已有协程数量,把main也看做一个协程
 
