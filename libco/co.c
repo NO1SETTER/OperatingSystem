@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <setjmp.h>
 #include <assert.h>
-#include <x86.h>
+
 #define STACK_SIZE 4096
 enum co_status {
   CO_NEW = 1, // 新创建，还未执行过
@@ -11,6 +11,7 @@ enum co_status {
   CO_WAITING, // 在 co_wait 上等待
   CO_DEAD,    // 已经结束，但还未释放资源
 };
+
 
 struct co {
   char *name;
@@ -44,6 +45,18 @@ void coremove(struct co *now)
   for(int i=pos;i<active_num-1;i++)
     active[i]=active[i+1];
   active_num=active_num-1;
+}
+
+static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
+  asm volatile (
+#if __x86_64__
+    "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
+      : : "b"((uintptr_t)sp),     "d"(entry), "a"(arg)
+#else
+    "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
+      : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg)
+#endif
+  );
 }
 
 __attribute__((constructor)) void set_main()
