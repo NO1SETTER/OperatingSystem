@@ -126,6 +126,7 @@ void co_yield() {
   { srand((int)time(0));
     int nxt=rand()%active_num;
     struct co *nxtco=active[nxt];
+    printf("select coroutine %d as next\n",nxtco->no);
     current=nxtco;
     if(nxtco->status==CO_NEW)//调用新的协程，切换堆栈即可
     {
