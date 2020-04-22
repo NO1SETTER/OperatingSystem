@@ -98,7 +98,7 @@ __attribute__((constructor)) void set_main()
   allco[0]=mainco;
   co_push(mainco);
   current=mainco;
-  srand((int)time(0));
+ // srand((int)time(0));
 }
 
 
