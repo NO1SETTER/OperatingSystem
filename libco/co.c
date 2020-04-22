@@ -36,7 +36,7 @@ void copush(struct co *now)
 void coremove(struct co *now)
 { int pos=-1;
   for(int i=0;i<active_num;i++)
-  if(active[i]now)
+  if(active[i]==now)
   {
     pos==i;
     break;
@@ -100,11 +100,11 @@ void co_yield() {
   if(val==0)//
   {int nxt=rand()%active_num;
   struct co *nxtco=active[nxt];
-    if(nxtco->status=CO_NEW)
+    if(nxtco->status==CO_NEW)
     {
       stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,nxtco->arg);
     }
-    else if(nxtco->status=CO_RUNNING)//已经开始的协程，直接恢复寄存器现场即可
+    else if(nxtco->status==CO_RUNNING)//已经开始的协程，直接恢复寄存器现场即可
     {
       longjmp(nxtco->context,1);
     }
