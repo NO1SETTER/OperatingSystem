@@ -96,6 +96,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
   newco->func=func;
   newco->arg=arg;
   newco->no==co_num;
+  printf("co_num=%d\n",co_num);
   newco->status=CO_NEW;
   allco[co_num]=newco;
   co_num++;
