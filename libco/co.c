@@ -82,10 +82,10 @@ static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   uintptr_t endfunc=(uintptr_t)co_end;
   asm volatile (//stack_switch_call本身可以不返回,
 #if __x86_64__
-    "movq %0, %%rsp; movq %2, %%rdi;push %3;jmp *%1"
+    "movq %0, %%rsp; movq %2, %%rdi;push %%rsi;jmp *%1"
       : : "b"((uintptr_t)sp),     "d"(entry), "a"(arg),"S"(endfunc) 
 #else
-    "movl %0, %%esp; movl %2, 4(%0);push %3;jmp *%1"
+    "movl %0, %%esp; movl %2, 4(%0);push %%esi;jmp *%1"
       : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg),"S"(endfunc)
 #endif
   );
