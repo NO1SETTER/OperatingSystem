@@ -24,7 +24,7 @@ struct co {
   struct co *    waiter;  // 是否有其他协程在等待当前协程
   jmp_buf        context; // 寄存器现场 (setjmp.h)
   uint8_t        stack[STACK_SIZE]; // 协程的堆栈
-}__attribute__((align(64)));
+}__attribute__((aligned(64)));
 
 struct co *current;//当前协程
 struct co *allco[200];//管理所有协程
