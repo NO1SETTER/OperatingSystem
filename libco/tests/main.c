@@ -17,8 +17,9 @@ static int get_count() {
 static void work_loop(void *arg) {
     const char *s = (const char*)arg;
     for (int i = 0; i < 100; ++i) {
+        printf("i=%d\n",i);
         printf("\n%s%d  \n\n", s, get_count());
-        if(g_count>300)assert(0);
+        if(g_count>1000)assert(0);
         add_count();
         co_yield();
     }
