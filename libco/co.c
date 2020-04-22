@@ -27,8 +27,9 @@ struct co *allco[200];//管理所有协程
 int co_num=1;//已有协程数量,把main也看做一个协程
 
 struct co *active[200];//当前能够被调用的协程,即状态为CO_RUNNING和CO_NEW的协程
+int active_num=1;
 void copush(struct co *now)
-{co(active_num++)=now;}
+{active[active_num++]=now;}
 void coremove(struct co *now)
 { int pos=-1;
   for(int i=0;i<active_num;i++)
@@ -42,7 +43,6 @@ void coremove(struct co *now)
     active[i]=active[i+1];
   active_num=active_num-1;
 }
-int active_num=1;
 
 __attribute__((constructor)) void set_main()
 {
