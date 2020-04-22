@@ -133,6 +133,7 @@ void co_yield() {
     current=nxtco;
     if(nxtco->status==CO_NEW)//调用新的协程，切换堆栈即可
     {
+      nxtco->status=CO_RUNNING;
       stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,(uintptr_t)nxtco->arg);
     
     }
