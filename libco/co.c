@@ -16,13 +16,15 @@ enum co_status {
 
 struct co {
   const char *name;
+  int no;//协程号
   void (*func)(void *); // co_start 指定的入口地址和参数
+   enum co_status status;  // 协程的状态
   void *arg;
 
-  int no;//协程号
-  enum co_status status;  // 协程的状态
-  struct co *    waiter;  // 是否有其他协程在等待当前协程
   jmp_buf        context; // 寄存器现场 (setjmp.h)
+ 
+  struct co *    waiter;  // 是否有其他协程在等待当前协程
+  
   uint8_t        stack[STACK_SIZE]; // 协程的堆栈
 };
 
