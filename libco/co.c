@@ -63,6 +63,10 @@ void co_end()//stack_switch_call的终点
 printf("no %d coroutine is ended\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
+if(current->waiter)
+{current->waiter->status=CO_RUNNING;
+co_push(current->waiter);
+}
 co_yield();
 }
 
