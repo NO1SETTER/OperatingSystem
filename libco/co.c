@@ -34,7 +34,7 @@ struct co *active[200];//当前能够被调用的协程,即状态为CO_RUNNING�
 int active_num=0;
 void co_check()
 { //printf("Acitve coroutines: ");
-  for(int i=0;i<active_num;i++)
+  //for(int i=0;i<active_num;i++)
  // printf("%d ",active[i]->no);
  // printf("\n");
 }
