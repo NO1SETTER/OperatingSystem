@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <time.h>
 
-#define STACK_SIZE 131062
+#define STACK_SIZE 131061
 enum co_status {
   CO_NEW = 1, // 新创建，还未执行过
   CO_RUNNING, // 已经执行过
