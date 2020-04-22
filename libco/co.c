@@ -33,7 +33,7 @@ int co_num=1;//已有协程数量,把main也看做一个协程
 struct co *active[200];//当前能够被调用的协程,即状态为CO_RUNNING和CO_NEW的协程
 int active_num=0;
 void co_check()
-{printf("Acitve coroutines: ");
+{ printf("Acitve coroutines: ");
   for(int i=0;i<active_num;i++)
   printf("%d ",active[i]->no);
   printf("\n");
@@ -41,7 +41,8 @@ void co_check()
 
 void co_push(struct co *now)
 { printf("No %d is activated\n",now->no);
-  active[active_num++]=now;}
+  active[active_num++]=now;
+  }
 void co_remove(struct co *now)
 { co_check();
   printf("No %d is removed\n",now->no);
@@ -61,7 +62,9 @@ void co_remove(struct co *now)
 void align_check(struct co* now)
 {
 printf("co at %p\n",(void *)now);
+assert(now%16==0);
 printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
+assert((&now->stack[STACK_SIZE-1])%16==0);
 }
 void co_end()//stack_switch_call的终点
 {
