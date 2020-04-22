@@ -67,7 +67,7 @@ printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
 
 void co_end()//stack_switch_call的终点
 {
-printf("no %d coroutine is ended\n",current->no);
+//printf("no %d coroutine is ended\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
 if(current->waiter)
