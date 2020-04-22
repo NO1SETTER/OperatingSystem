@@ -58,6 +58,11 @@ void co_remove(struct co *now)
   active_num=active_num-1;
 }
 
+void align_check(struct co* now)
+{
+printf("co at %p\n",(uintptr_t)now);
+printf("co->stack at %p\n",(uintptr_t)&now->stack[STACK_SIZE-1]);
+}
 void co_end()//stack_switch_call的终点
 {
 printf("no %d coroutine is ended\n",current->no);
@@ -69,6 +74,7 @@ co_push(current->waiter);
 }
 co_yield();
 }
+
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   uintptr_t endfunc=(uintptr_t)co_end;
