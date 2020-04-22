@@ -49,7 +49,7 @@ void co_remove(struct co *now)
   for(int i=0;i<active_num;i++)
   if(active[i]==now)
   {
-    pos==i;
+    pos=i;
     break;
   }
   assert(pos!=-1);
