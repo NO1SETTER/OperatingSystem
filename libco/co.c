@@ -44,8 +44,8 @@ void co_push(struct co *now)
   active[active_num++]=now;
   }
 void co_remove(struct co *now)
-{ //co_check();
-  //printf("No %d is removed\n",now->no);
+{ co_check();
+  printf("No %d is removed\n",now->no);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   if(active[i]==now)
@@ -53,7 +53,7 @@ void co_remove(struct co *now)
     pos=i;
     break;
   }
-  //assert(pos!=-1);
+  assert(pos!=-1);
   for(int i=pos;i<active_num-1;i++)
     active[i]=active[i+1];
   active_num=active_num-1;
@@ -67,7 +67,7 @@ printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
 
 void co_end()//stack_switch_call的终点
 {
-//printf("no %d coroutine is ended\n",current->no);
+printf("no %d coroutine is ended\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
 if(current->waiter)
@@ -82,10 +82,10 @@ static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
   uintptr_t endfunc=(uintptr_t)co_end;
   asm volatile (//stack_switch_call本身可以不返回,
 #if __x86_64__
-    "movq %0, %%rsp; movq %2, %%rdi;push %3;jmp *%1"
+    "movq %0, %%rsp; movq %2, %%rdi;movq %3,(%%rsp);jmp *%1"
       : : "b"((uintptr_t)sp),     "d"(entry), "a"(arg),"S"(endfunc) 
 #else
-    "movl %0, %%esp; movl %2, 4(%0);push %3; jmp *%1"
+    "movl %0, %%esp; movl %2, 4(%0);movq %3,(%%rsp);jmp *%1"
       : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg),"S"(endfunc)
 #endif
   );
