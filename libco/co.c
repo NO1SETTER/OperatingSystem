@@ -45,7 +45,7 @@ void co_push(struct co *now)
   }
 void co_remove(struct co *now)
 { co_check();
-  printf("No %d is removed\n",now->no);
+  //printf("No %d is removed\n",now->no);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   if(active[i]==now)
