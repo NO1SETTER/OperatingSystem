@@ -124,6 +124,7 @@ void co_yield() {
   int val=setjmp(current->context);//此时current已经不在active中
   if(val==0)//
   { srand((int)time(0));
+  co_check();
     int nxt=rand()%active_num;
     struct co *nxtco=active[nxt];
     printf("select coroutine %d as next\n",nxtco->no);
