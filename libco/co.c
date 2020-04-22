@@ -35,8 +35,8 @@ int active_num=0;
 void co_check()
 { //printf("Acitve coroutines: ");
   for(int i=0;i<active_num;i++)
-  printf("%d ",active[i]->no);
-  printf("\n");
+ // printf("%d ",active[i]->no);
+ // printf("\n");
 }
 
 void co_push(struct co *now)
