@@ -15,14 +15,14 @@ enum co_status {
 
 
 struct co {
-  const char *name;
-  void (*func)(void *); // co_start 指定的入口地址和参数
-  void *arg;
+  const char *name__attribute__((aligned(64))) ;
+  void (*func)(void *)__attribute__((aligned(64))); // co_start 指定的入口地址和参数
+  void *arg__attribute__((aligned(64)));
 
-  int no;//协程号
-  enum co_status status;  // 协程的状态
-  struct co *    waiter;  // 是否有其他协程在等待当前协程
-  jmp_buf        context; // 寄存器现场 (setjmp.h)
+  int no__attribute__((aligned(64)));//协程号
+  enum co_status status__attribute__((aligned(64)));  // 协程的状态
+  struct co *    waiter__attribute__((aligned(64)));  // 是否有其他协程在等待当前协程
+  jmp_buf        context__attribute__((aligned(64))); // 寄存器现场 (setjmp.h)
   uint8_t        stack[STACK_SIZE]; // 协程的堆栈
 }__attribute__((aligned(64)));
 
@@ -62,7 +62,6 @@ void co_remove(struct co *now)
 void align_check(struct co* now)
 {
 printf("co at %p\n",(void *)now);
-assert(((void *)now));
 printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
 }
 void co_end()//stack_switch_call的终点
