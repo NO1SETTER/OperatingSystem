@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <setjmp.h>
 #include <assert.h>
+#include <x86.h>
 #define STACK_SIZE 4096
 enum co_status {
   CO_NEW = 1, // 新创建，还未执行过
