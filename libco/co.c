@@ -49,13 +49,14 @@ void co_remove(struct co *now)
 
 void co_end()//stack_switch_call的终点
 {
+printf("no %d coroutine is now end\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
-co_yield()
+co_yield();
 }
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
-  uintptr_t endfunc=co_end;
+  uintptr_t endfunc=(uintptr_t)co_end;
   asm volatile (//stack_switch_call本身可以不返回,
 #if __x86_64__
     "movq %0, %%rsp; movq %2, %%rdi;push %3;jmp *%1"/
