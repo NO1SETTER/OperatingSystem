@@ -4,7 +4,7 @@
 #include <setjmp.h>
 #include <assert.h>
 #include <time.h>
-
+__attribute__((aligned(64)))
 #define STACK_SIZE 4097
 enum co_status {
   CO_NEW = 1, // 新创建，还未执行过
@@ -16,15 +16,13 @@ enum co_status {
 
 struct co {
   const char *name;
-  int no;//协程号
   void (*func)(void *); // co_start 指定的入口地址和参数
-   enum co_status status;  // 协程的状态
   void *arg;
 
-  jmp_buf        context; // 寄存器现场 (setjmp.h)
- 
+  int no;//协程号
+  enum co_status status;  // 协程的状态
   struct co *    waiter;  // 是否有其他协程在等待当前协程
-  
+  jmp_buf        context; // 寄存器现场 (setjmp.h)
   uint8_t        stack[STACK_SIZE]; // 协程的堆栈
 };
 
