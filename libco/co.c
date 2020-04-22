@@ -95,8 +95,7 @@ struct co *co_start(const char *name, void (*func)(void *), void *arg) {
 
 void co_wait(struct co *co) {
 if(co->status==CO_DEAD)//被等待的协程已经结束
-{
-}
+{}
 else
 {
 co->waiter=current;
@@ -109,8 +108,9 @@ co_yield();//current被移除,在co_yield中重新设置一个current
 void co_yield() {
   int val=setjmp(current->context);//此时current已经不在active中
   if(val==0)//
-  {int nxt=rand()%active_num;
-   struct co *nxtco=active[nxt];
+  { int nxt=rand()%active_num;
+    struct co *nxtco=active[nxt];
+    current=nxtco;
     if(nxtco->status==CO_NEW)//调用新的协程，切换堆栈即可
     {
       stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,(uintptr_t)nxtco->arg);
