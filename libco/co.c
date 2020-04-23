@@ -27,10 +27,10 @@ struct co {
 }__attribute__((aligned(64)));
 
 struct co *current;//当前协程
-struct co *allco[200];//管理所有协程
+struct co *allco[15000];//管理所有协程
 int co_num=1;//已有协程数量,把main也看做一个协程
 
-struct co *active[200];//当前能够被调用的协程,即状态为CO_RUNNING和CO_NEW的协程
+struct co *active[15000];//当前能够被调用的协程,即状态为CO_RUNNING和CO_NEW的协程
 int active_num=0;
 void co_check()
 { 
