@@ -105,7 +105,7 @@ static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
     "movq %0, %%rsp; movq %2, %%rdi;push %%rsi;jmp *%1"
       : : "b"((uintptr_t)sp),     "d"(entry), "a"(arg),"S"(endfunc) 
 #else
-    "movl %0, %%esp; movl %2, 4(%0);push %%esi;jmp *%1"
+    "movl %0, %%esp; movl %2, 4(%0);movl %%esi,(%%esp);jmp *%1"
       : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg),"S"(endfunc)
 #endif
   );
