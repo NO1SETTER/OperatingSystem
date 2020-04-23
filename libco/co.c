@@ -86,8 +86,10 @@ co_push(current->waiter);
 asm volatile(
 #if __x86_64__
     "pop %%rbp"
+    ::
 #else
     "pop %%ebp"
+    ::
 #endif
  );
 co_yield();
