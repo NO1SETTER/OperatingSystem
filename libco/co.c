@@ -33,19 +33,23 @@ int co_num=1;//已有协程数量,把main也看做一个协程
 struct co *active[200];//当前能够被调用的协程,即状态为CO_RUNNING和CO_NEW的协程
 int active_num=0;
 void co_check()
-{ //printf("Acitve coroutines: ");
-  //for(int i=0;i<active_num;i++)
- // printf("%d ",active[i]->no);
- // printf("\n");
+{ printf("Acitve coroutines: ");
+  for(int i=0;i<active_num;i++)
+  printf("%d ",active[i]->no);
+  printf("\n");
 }
 
 void co_push(struct co *now)
-{ printf("No %d is activated\n",now->no);
+{ #ifdef _DEBUG
+  printf("No %d is activated\n",now->no);
+  #endif
   active[active_num++]=now;
   }
 void co_remove(struct co *now)
-{ co_check();
+{ #ifdef _DEBUG
+  co_check();
   printf("No %d is removed\n",now->no);
+  #endif
   int pos=-1;
   for(int i=0;i<active_num;i++)
   if(active[i]==now)
@@ -61,8 +65,10 @@ void co_remove(struct co *now)
 
 void align_check(struct co* now)
 {
+  #ifdef _DEBUG
 printf("co at %p\n",(void *)now);
 printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
+#endif
 }
 
 void co_end()//stack_switch_call的终点
@@ -76,7 +82,9 @@ asm volatile(
       ::
 #endif
  );
+ #ifdef _DEBUG
 printf("no %d coroutine is ended\n",current->no);
+#endif
 current->status=CO_DEAD;
 co_remove(current);
 if(current->waiter)
@@ -97,9 +105,7 @@ co_yield();
 
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
-  printf("arg=%s\n",(char*)arg);
   uintptr_t endfunc=(uintptr_t)co_end;
-  printf("stack at %p\n",sp);
   asm volatile (//stack_switch_call本身可以不返回,
 #if __x86_64__
     "movq %0, %%rsp; movq %2, %%rdi;push %%rsi;jmp *%1"
