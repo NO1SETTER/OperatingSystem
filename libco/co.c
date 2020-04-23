@@ -33,10 +33,13 @@ int co_num=1;//已有协程数量,把main也看做一个协程
 struct co *active[200];//当前能够被调用的协程,即状态为CO_RUNNING和CO_NEW的协程
 int active_num=0;
 void co_check()
-{ printf("Acitve coroutines: ");
+{ 
+  #ifdef _DEBUG
+  printf("Acitve coroutines: ");
   for(int i=0;i<active_num;i++)
   printf("%d ",active[i]->no);
   printf("\n");
+  #endif
 }
 
 void co_push(struct co *now)
