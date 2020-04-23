@@ -69,10 +69,10 @@ void co_end()//stack_switch_call的终点
 {
 asm volatile(
 #if __x86_64__
-      "push %%rbp"
+      "push %%rbx"
       ::
 #else
-      "push %%ebp"
+      "push %%ebx"
       ::
 #endif
  );
@@ -85,10 +85,10 @@ co_push(current->waiter);
 }
 asm volatile(
 #if __x86_64__
-    "pop %%rbp"
+    "pop %%rbx"
     ::
 #else
-    "pop %%ebp"
+    "pop %%ebx"
     ::
 #endif
  );
