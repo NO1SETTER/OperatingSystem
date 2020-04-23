@@ -72,7 +72,8 @@ asm volatile(
       "push %%rbp"
 #else
       "push %%ebp"
-#endif);
+#endif
+ );
 printf("no %d coroutine is ended\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
@@ -85,7 +86,8 @@ asm volatile(
     "pop %%rbp"
 #else
     "pop %%ebp"
-#endif);
+#endif
+ );
 co_yield();
 }
 
