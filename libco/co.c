@@ -49,6 +49,7 @@ void co_push(struct co *now)
   #endif
   active[active_num++]=now;
   }
+
 void co_remove(struct co *now)
 { 
   #ifdef _DEBUG
@@ -67,6 +68,7 @@ void co_remove(struct co *now)
     active[i]=active[i+1];
   active_num=active_num-1;
 }
+
 
 void align_check(struct co* now)
 {
