@@ -123,6 +123,7 @@ __attribute__((constructor)) void set_main()
 
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
+  printf("arg=%s\n",(char*)arg);
   struct co* newco=(struct co*)malloc(sizeof(struct co));
   align_check(newco);
   newco->name=name;
