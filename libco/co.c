@@ -23,7 +23,7 @@ struct co {
   enum co_status status;  // 协程的状态
   struct co *    waiter;  // 是否有其他协程在等待当前协程
   jmp_buf        context; // 寄存器现场 (setjmp.h)
-  uint8_t     __declspec(aligned(64))   stack[STACK_SIZE]; // 协程的堆栈
+  uint8_t  stack[STACK_SIZE]; // 协程的堆栈
 }__attribute__((aligned(64)));
 
 struct co *current;//当前协程
@@ -67,7 +67,7 @@ printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
 
 void co_end()//stack_switch_call的终点
 {
-
+asm volatile
 printf("no %d coroutine is ended\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
