@@ -67,7 +67,11 @@ printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
 
 void co_end()//stack_switch_call的终点
 {
-asm volatile
+asm volatile(#if __x86_64__
+"push %%rbp";
+#else
+"push %%ebp"
+#endif);
 printf("no %d coroutine is ended\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
@@ -75,6 +79,11 @@ if(current->waiter)
 {current->waiter->status=CO_RUNNING;
 co_push(current->waiter);
 }
+asm volatile(#if __x86_64__
+"pop %%rbp";
+#else
+"pop %%ebp"
+#endif);
 co_yield();
 }
 
