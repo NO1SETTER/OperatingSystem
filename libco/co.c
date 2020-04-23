@@ -40,13 +40,15 @@ void co_check()
 }
 
 void co_push(struct co *now)
-{ #ifdef _DEBUG
+{  
+  #ifdef _DEBUG
   printf("No %d is activated\n",now->no);
   #endif
   active[active_num++]=now;
   }
 void co_remove(struct co *now)
-{ #ifdef _DEBUG
+{ 
+  #ifdef _DEBUG
   co_check();
   printf("No %d is removed\n",now->no);
   #endif
