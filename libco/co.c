@@ -70,8 +70,10 @@ void co_end()//stack_switch_call的终点
 asm volatile(
 #if __x86_64__
       "push %%rbp"
+      ::
 #else
       "push %%ebp"
+      ::
 #endif
  );
 printf("no %d coroutine is ended\n",current->no);
