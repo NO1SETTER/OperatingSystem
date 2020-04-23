@@ -67,7 +67,7 @@ printf("co->stack at %p\n",(void *)&now->stack[STACK_SIZE-1]);
 
 void co_end()//stack_switch_call的终点
 {
-/*asm volatile(
+asm volatile(
 #if __x86_64__
       "push %%rbp"
       ::
@@ -75,7 +75,7 @@ void co_end()//stack_switch_call的终点
       "push %%ebp"
       ::
 #endif
- );*/
+ );
 printf("no %d coroutine is ended\n",current->no);
 current->status=CO_DEAD;
 co_remove(current);
@@ -83,7 +83,7 @@ if(current->waiter)
 {current->waiter->status=CO_RUNNING;
 co_push(current->waiter);
 }
-/*asm volatile(
+asm volatile(
 #if __x86_64__
     "pop %%rbp"
     ::
@@ -91,7 +91,7 @@ co_push(current->waiter);
     "pop %%ebp"
     ::
 #endif
- );*/
+ );
 co_yield();
 }
 
@@ -162,7 +162,7 @@ void co_yield() {
     if(nxtco->status==CO_NEW)//调用新的协程，切换堆栈即可
     {
       nxtco->status=CO_RUNNING;
-      stack_switch_call(&nxtco->stack[STACK_SIZE-1],nxtco->func,(uintptr_t)nxtco->arg);
+      stack_switch_call(&nxtco->stack[STACK_SIZE-5],nxtco->func,(uintptr_t)nxtco->arg);
     
     }
     else if(nxtco->status==CO_RUNNING)//调用已经开始的协程，直接恢复寄存器现场即可
