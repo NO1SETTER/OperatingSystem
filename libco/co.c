@@ -97,6 +97,7 @@ co_yield();
 
 
 static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
+  printf("arg=%s\n",(char*)arg);
   uintptr_t endfunc=(uintptr_t)co_end;
   printf("stack at %p\n",sp);
   asm volatile (//stack_switch_call本身可以不返回,
@@ -123,7 +124,6 @@ __attribute__((constructor)) void set_main()
 
 
 struct co *co_start(const char *name, void (*func)(void *), void *arg) {
-  printf("arg=%s\n",(char*)arg);
   struct co* newco=(struct co*)malloc(sizeof(struct co));
   align_check(newco);
   newco->name=name;
