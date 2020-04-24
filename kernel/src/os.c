@@ -11,7 +11,7 @@ static void os_run() {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
   srand(0);
-  for(int i=0;i<1000;i++)
+  for(int i=0;i<50;i++)
   {printf("New round");
     int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc
