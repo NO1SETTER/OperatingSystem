@@ -12,7 +12,7 @@ static void os_run() {
   }
   srand(0);
   for(int i=0;i<1000;i++)
-  {
+  {printf("New round");
     int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc
     {
