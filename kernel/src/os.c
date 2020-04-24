@@ -17,6 +17,7 @@ static void os_run() {
     if(rand_seed!=0)//kalloc
     {
       int size=rand()%2048;
+      assert(0);
       void* ptr=pmm->alloc(size);
       #ifdef _DEBUG
       printf("Allocated block at [%p,%p)\n",ptr,ptr+size);
