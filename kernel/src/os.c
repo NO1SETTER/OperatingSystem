@@ -12,14 +12,13 @@ static void os_run() {
   }
   srand(0);
   for(int i=0;i<50;i++)
-  {printf("New round");
-    int rand_seed=rand()%5;
+  { int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc
     {
       int size=rand()%2048;
       void* ptr=pmm->alloc(size);
       #ifdef _DEBUG
-      printf("Allocated block at [%p,%p)\n",ptr,ptr+size);
+      printf("Allocated block of size %d at [%p,%p)\n",size,ptr,ptr+size);
       #endif
       
       allocated[num++]=ptr;
