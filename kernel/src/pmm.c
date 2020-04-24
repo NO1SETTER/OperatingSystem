@@ -124,8 +124,8 @@ static void *kalloc(size_t size) {
       alloc_blk->start=valid_addr;
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
-      assert(0);
       binsert(alloc_head,alloc_blk,0);
+      assert(0);
       return (void*)valid_addr;
     }
     else if(valid_addr+size==ptr->end)
