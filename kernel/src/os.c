@@ -20,7 +20,6 @@ static void os_run() {
       void* ptr=pmm->alloc(size);
       #ifdef _DEBUG
       printf("Allocated block at [%p,%p)\n",ptr,ptr+size);
-      assert(0);
       #endif
       
       allocated[num++]=ptr;
