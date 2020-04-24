@@ -154,9 +154,10 @@ static void *kalloc(size_t size) {
     uintptr_t valid_addr=GetValidAddress(ptr->start,size);
     if(valid_addr+size<=ptr->end)
     {
-      printf("a\n");//四种情况,靠头，靠尾，既靠头又靠尾，两不靠
+    //四种情况,靠头，靠尾，既靠头又靠尾，两不靠
     if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
-    {bdelete(ptr);
+    {printf("a\n");
+    bdelete(ptr);
     binsert(alloc_head,ptr,0);//整个节点直接挪过来
     return (void *)valid_addr;
     }
