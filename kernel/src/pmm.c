@@ -95,7 +95,7 @@ void print_block(struct block *ptr)
 {
   while(ptr)
   {
-    printf("[%p,%p)\\",ptr->start,ptr->end);
+    printf("[%p,%p)\n",ptr->start,ptr->end);
     ptr=ptr->next;
   }
 }
