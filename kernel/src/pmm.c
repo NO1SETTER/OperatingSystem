@@ -176,7 +176,7 @@ static void *kalloc(size_t size) {
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
-      assert(0);
+      return (void*)valid_addr;
     }
     }
     ptr=ptr->next;
