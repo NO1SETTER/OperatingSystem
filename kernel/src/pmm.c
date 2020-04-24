@@ -12,6 +12,21 @@ struct block* next;
 struct block* free_head;
 struct block* alloc_head;//两个都是空的节点
 
+void sp_lockinit(lock_t* lk)
+{lk->locked=0;
+}
+
+void sp_lock(lock_t* lk)
+{
+  while(_atomic_xchg(&lk->locked,1))
+  {
+  }
+}
+
+void sp_unlock(lock_t *lk)
+{
+  _atomic_xchg(&lk->locked,0);
+}
 
 void blink(struct block* pre,struct block*nxt)//直接连接
 {
@@ -93,6 +108,7 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 
 void print_FreeBlock()
 {
+  #ifdef _DEBUG
   struct block* ptr=free_head->next;
   printf("Free blocks:\n");
   while(ptr)
@@ -100,11 +116,13 @@ void print_FreeBlock()
     printf("[%p,%p)\n",ptr->start,ptr->end);
     ptr=ptr->next;
   }
+  #endif
 }
 
 
 void print_AllocatedBlock()
 {
+  #ifdef _DEBUG
   struct block* ptr=alloc_head->next;
   printf("Allocated blocks:\n");
   while(ptr)
@@ -112,6 +130,7 @@ void print_AllocatedBlock()
     printf("[%p,%p)\n",ptr->start,ptr->end);
     ptr=ptr->next;
   }
+  #endif
 }
 
 uintptr_t GetValidAddress(uintptr_t start,int align)//返回从start开始对齐align的最小地址

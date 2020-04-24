@@ -20,3 +20,12 @@ MODULE(pmm) {
   void *(*alloc)(size_t size);
   void  (*free)(void *ptr);
 };
+
+typedef struct 
+{
+  intptr_t locked;
+}lock_t;
+
+void sp_lockinit(lock_t* lk);
+void sp_lock(lock_t* lk);
+void sp_unlock(lock_t *lk);
