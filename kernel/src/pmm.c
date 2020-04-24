@@ -85,13 +85,20 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
       }
       else//两不沾
       binsert(ptr1,nxt,0);
-      
-
   }
 
   //is_merge代表连成一段的直接合并
 }
 
+
+void print_block(struct block *ptr)
+{
+  while(ptr)
+  {
+    printf("[%p,%p)\\",ptr->start,ptr->end);
+    ptr=ptr->next;
+  }
+}
 uintptr_t GetValidAddress(uintptr_t start,int align)//返回从start开始对齐align的最小地址
 {
 uint32_t temp=1;

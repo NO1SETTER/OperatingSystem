@@ -6,6 +6,9 @@ static void os_init() {
 
 void* allocated[1005];
 int num=0;
+extern struct block* free_head;
+extern struct block* alloc_head;//两个都是空的节点
+extern void print_block(struct block *ptr);
 static void os_run() {
   for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
@@ -35,6 +38,10 @@ static void os_run() {
       printf("Successfully freed\n");
       #endif
     }
+    printf("Allocated blocks:\\");
+    print_block(alloc_head);
+    printf("Free blocks:\\");
+    print_block(free_head);
   }
   while (1) ;
 }
