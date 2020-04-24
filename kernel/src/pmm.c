@@ -170,6 +170,7 @@ static void *kalloc(size_t size) {
       alloc_blk->start=valid_addr;
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
+      printf("ishis\n");
       binsert(alloc_head,alloc_blk,0);
       printf("leo\n");
      
