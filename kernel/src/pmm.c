@@ -169,7 +169,9 @@ static void *kalloc(size_t size) {
       printf("lala\n");
       assert(alloc_blk);
       alloc_blk->start=valid_addr;
+      printf("ishis\n");
       alloc_blk->end=valid_addr+size;
+      printf("ishis\n");
       alloc_blk->size=size;
       printf("ishis\n");
       binsert(alloc_head,alloc_blk,0);
