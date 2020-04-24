@@ -114,6 +114,7 @@ static void *kalloc(size_t size) {
     if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
     {bdelete(ptr);
     binsert(alloc_head,ptr,0);//整个节点直接挪过来
+    assert(0);
     return (void *)valid_addr;
     }
     else if(valid_addr==ptr->start)
