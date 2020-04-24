@@ -11,13 +11,13 @@ static void os_run() {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
   srand(0);
+  assert(0);
   for(int i=0;i<1000;i++)
   {
     int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc
     {
       int size=rand()%2048;
-      assert(0);
       void* ptr=pmm->alloc(size);
       #ifdef _DEBUG
       printf("Allocated block at [%p,%p)\n",ptr,ptr+size);
