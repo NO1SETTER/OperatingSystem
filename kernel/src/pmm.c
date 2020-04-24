@@ -105,8 +105,8 @@ return (uintptr_t)ret;
 
 
 static void *kalloc(size_t size) {
-  struct block*ptr=free_head->next;
   assert(0);
+  struct block*ptr=free_head->next;
   while(ptr)
   {
     uintptr_t valid_addr=GetValidAddress(ptr->start,size);
