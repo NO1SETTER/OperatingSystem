@@ -41,7 +41,7 @@ static void os_run() {
     print_FreeBlock();
     print_AllocatedBlock();
   }
- // while (1) ;
+  while (1) ;
 }
 
 MODULE_DEF(os) = {
