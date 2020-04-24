@@ -163,6 +163,7 @@ static void *kalloc(size_t size) {
     }
     else
     {
+      assert(0);
       struct block*alloc_blk=(struct block*)malloc(sizeof(struct block));
       struct block*free_blk=(struct block*)malloc(sizeof(struct block));
       free_blk->end=ptr->end;
