@@ -1,5 +1,5 @@
 #include <am.h>
-
+#define _DEBUG
 #define MODULE(mod) \
   typedef struct mod_##mod##_t mod_##mod##_t; \
   extern mod_##mod##_t *mod; \
