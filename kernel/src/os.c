@@ -11,7 +11,6 @@ static void os_run() {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
   srand(0);
-  assert(0);
   for(int i=0;i<1000;i++)
   {
     int rand_seed=rand()%5;
@@ -26,6 +25,7 @@ static void os_run() {
     }
     else//kfree
     {
+      if(num==0) continue;
       int r=rand()%num;
       #ifdef _DEBUG
       printf("Trying to free %p\n",allocated[r]);
