@@ -1,5 +1,9 @@
 #include <common.h>
 
+typedef struct 
+{
+  intptr_t locked;
+}lock_t;
 
 struct block//管理空闲块或非空闲块的数据结构
 {
@@ -20,8 +24,7 @@ void sp_lockinit(lock_t* lk)
 void sp_lock(lock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1))
-  {
-  }
+  {            }
 }
 
 void sp_unlock(lock_t *lk)
@@ -30,7 +33,8 @@ void sp_unlock(lock_t *lk)
 }
 
 void block_init(struct block *blk)
-{sp_lockinit(&blk->lk);}
+{
+  sp_lockinit(&blk->lk);}
 void block_lock(struct block *blk)
 {
   #ifdef _DEBUG
@@ -272,7 +276,6 @@ static void pmm_init() {
   blk->size=blk->end-blk->end;
   blk->prev=free_head;
   free_head->next=blk;
-  sp_lockinit(&global_lock);
 }
 
 MODULE_DEF(pmm) = {
