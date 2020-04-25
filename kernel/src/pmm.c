@@ -7,7 +7,7 @@ uintptr_t start,end;//[start,end)
 uint32_t size;
 struct block* prev;
 struct block* next;
-//lock_t lk;
+lock_t lk;
 };
 
 struct block* free_head;
