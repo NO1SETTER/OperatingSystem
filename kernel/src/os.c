@@ -17,7 +17,7 @@ static void os_run() {
   { 
     #ifdef _DEBUG
     
-    printf("Round %d\n",i);
+    //printf("Round %d\n",i);
     #endif
     int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc
@@ -42,8 +42,8 @@ static void os_run() {
       //printf("Successfully freed\n");
       #endif
     }
-    print_FreeBlock();
-    print_AllocatedBlock();
+    //print_FreeBlock();
+    //print_AllocatedBlock();
   }
   while (1) ;
 }
