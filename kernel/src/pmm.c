@@ -54,7 +54,6 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 {
   //把next接在pre后
   //assert(pre&&nxt);
-  printf("haha\n");
   if(!is_merge)
   {
     if(pre->next==NULL)
@@ -168,17 +167,10 @@ static void *kalloc(size_t size) {
       ptr->size=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)malloc(sizeof(struct block));
       assert(alloc_blk);
-      printf("a\n");
-      printf("alloc_blk->start at %d\n",(int)alloc_blk->start);
-      printf("valid_addr=%p\n",valid_addr);
       alloc_blk->start=valid_addr;
-      printf("b\n");
       alloc_blk->end=valid_addr+size;
-      printf("c\n");
       alloc_blk->size=size;
-      printf("d\n");
       binsert(alloc_head,alloc_blk,0);
-      printf("e\n");
       return (void*)valid_addr;
     }
     else if(valid_addr+size==ptr->end)
