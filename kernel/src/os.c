@@ -10,6 +10,7 @@ void* allocated[1005];
 int num=0;
 extern void print_FreeBlock();
 extern void print_AllocatedBlock();
+extern void lock_check();
 static void os_run() {
   for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
@@ -46,6 +47,7 @@ static void os_run() {
     }
     print_FreeBlock();
     print_AllocatedBlock();
+    lock_check();//(仅单线程用)检查所有锁,应该全为为上锁的状态
   }
   while (1) ;
 }

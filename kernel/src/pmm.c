@@ -218,6 +218,34 @@ static void bfree(struct block* blk)
   sp_unlock(&blk_lock);
 }
 
+void lock_check()
+{
+  if(blk_lock.locked)
+  {
+    printf("blk_lock still locked\n");
+    assert(0);
+  }
+  struct block *ptr=alloc_head;
+  while(ptr)
+  {
+    if((ptr->lk).locked)
+    {
+      printf("allocated block [%p,%p) still locked\n",ptr->start,ptr->end);
+      assert(0);
+    }
+  }
+  ptr=free_head;
+  while(ptr)
+  {
+    if((ptr->lk).locked)
+    {
+      printf("free block [%p,%p) still locked\n",ptr->start,ptr->end);
+      assert(0);
+    }
+  }
+
+}
+
 static void *kalloc(size_t size) {
     struct block*ptr=free_head->next;
   while(ptr)
