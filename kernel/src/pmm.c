@@ -296,7 +296,6 @@ static void kfree(void *ptr) {
 static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
-  printf("sizeof block is %d\n",sizeof(struct block));
   assert(0);
   mset.size=0;
   bstart=(uintptr_t)_heap.end-0x2000000;
