@@ -40,7 +40,7 @@ static void os_run() {
       printf("ptr at %p\n",ptr);
       sp_unlock(&lkk);
       #ifdef _DEBUG
-      //printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
+      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
       #endif
       allocated[num++]=ptr;
     }
@@ -53,7 +53,7 @@ static void os_run() {
       #endif
       pmm->free(allocated[r]);      
       #ifdef _DEBUG
-      //printf("Successfully freed\n");
+      printf("Successfully freed\n");
       #endif
     }
     print_FreeBlock();
