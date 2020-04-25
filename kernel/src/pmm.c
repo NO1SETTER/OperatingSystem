@@ -222,7 +222,7 @@ static void bfree(struct block* blk)
 
 void block_check(void *ptr)
 {
-  sp_lock(&alloc_lock);
+  //sp_lock(&alloc_lock);
  /* printf("CHECKING\n");
   uintptr_t sstart=((struct block *)ptr)->start;
   uintptr_t eend=((struct block *)ptr)->end;
@@ -235,7 +235,7 @@ void block_check(void *ptr)
     }
     aptr=aptr->next;
   }*/
-  sp_unlock(&alloc_lock);
+   //sp_unlock(&alloc_lock);
 }
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
 { sp_lock(&alloc_lock);
