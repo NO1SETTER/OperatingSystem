@@ -49,6 +49,7 @@ static void os_run() {
     print_FreeBlock();
     print_AllocatedBlock();
   }
+  printf("Thread %d finished\n",_cpu());
   while (1) ;
 }
 
