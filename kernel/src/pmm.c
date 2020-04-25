@@ -305,11 +305,9 @@ static void pmm_init() {
 
   struct block *blk=(struct block *)balloc(sizeof(struct block));
   blk->start=(uintptr_t)_heap.start;
-  blk->end=(uintptr_t)_heap.end;
+  blk->end=(uintptr_t)(_heap.end-0x2000000);
   blk->size=blk->end-blk->end;
   blk->prev=free_head;
-  assert(blk);
-  printf("blk at %p , blk->start=%p,blk->end=%p\n",blk,blk->start,blk->end);
   free_head->next=blk;
   
 
