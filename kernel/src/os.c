@@ -34,7 +34,9 @@ static void os_run() {
     else//kfree
     {
       sp_lock(&global_lock);
-      if(num==0) continue;
+      if(num==0) {
+        sp_unlock(&global_lock);
+        continue;}
       sp_unlock(&global_lock);
       int r=rand()%num;
       #ifdef _DEBUG
