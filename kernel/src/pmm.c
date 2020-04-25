@@ -15,6 +15,7 @@ struct block* next;
 lock_t lk;
 };
 
+lock_t blk_lock;//专门管理blk分配的锁,这一部分直接全局大锁
 static void *balloc();
 static void bfree(struct block* blk);
 struct block* free_head;
@@ -43,16 +44,24 @@ void block_init(struct block *blk)
 void block_lock(struct block *blk)
 {
   #ifdef _DEBUG
+  if(blk)
   printf("block[%p,%p)acquiring lock\n",blk->start,blk->end);
+  else
+  printf("locking NULL\n");
   #endif
   sp_lock(&blk->lk);}
 void block_unlock(struct block *blk)
 {
+
   #ifdef _DEBUG
-  printf("block[%p,%p) unlocking\n",blk->start,blk->end);
+  if(blk)
+  printf("block[%p,%p) unlocked\n",blk->start,blk->end);
+  else
+  printf("unlocking NULL\n");
   #endif
   sp_unlock(&blk->lk);}
 
+//锁pre,nxt;
 void blink(struct block* pre,struct block*nxt)//直接连接
 {
   if(pre)
@@ -61,8 +70,10 @@ void blink(struct block* pre,struct block*nxt)//直接连接
   nxt->prev=pre;
 }
 
+//锁blk,blk->prev,blk->next;
 void bdelete(struct block* blk)//删除
-{if(blk->next)
+{
+ if(blk->next)
 {
 (blk->prev)->next=blk->next;
 (blk->next)->prev=blk->prev;
@@ -71,6 +82,7 @@ else
 (blk->prev)->next=NULL;
 }
 
+//锁pre,pre->next,nxt
 void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 {
   //把next接在pre后
@@ -86,9 +98,8 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
       (nxt->next)->prev=nxt;
       (nxt->prev)->next=nxt;
     }
-    return;
   }
-    //合并
+  else  //合并
     if(pre->next==NULL)
     {
       if(pre->end==nxt->start)
@@ -180,35 +191,54 @@ int maxpos=0;//当前已经分配到的最大位置，当mset为空时从这里�
 uintptr_t bstart;
 static void *balloc()//专门给block分配空间用,直接从某一位置开始往上垒不用对齐
 {
+  sp_lock(&blk_lock);
+  uintptr_t ret;
   if(mset.size)
   {
     int no=sfindpos();
     maxpos=maxpos>no?maxpos:no;
-    return (void *)(bstart+no*sizeof(struct block));
+    ret=(uintptr_t)(bstart+no*sizeof(struct block));
   }
-  uintptr_t ret=(uintptr_t)(bstart+maxpos*sizeof(struct block));
+  else
+  {
+  ret=(uintptr_t)(bstart+maxpos*sizeof(struct block));
   maxpos=maxpos+1;
+  }
+  block_init((struct block*)ret);//分配时完成锁的初始化
+  sp_unlock(&blk_lock);
   return (void *)ret;
 }
-
 static void bfree(struct block* blk)
 {
+  sp_lock(&blk_lock);
   int no =((uintptr_t)blk-bstart)/sizeof(struct block);
   spush(no);
+  sp_unlock(&blk_lock);
 }
 
 static void *kalloc(size_t size) {
     struct block*ptr=free_head->next;
   while(ptr)
   {
+    block_lock(ptr);//获得该block的独占访问
     uintptr_t valid_addr=GetValidAddress(ptr->start,size);
     if(valid_addr+size<=ptr->end)
     {
     //四种情况,靠头，靠尾，既靠头又靠尾，两不靠
     if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
     {
+    block_lock(ptr->prev);
+    block_lock(ptr->next);
     bdelete(ptr);
+    block_unlock(ptr->prev);
+    block_unlock(ptr->next);
+    
+    block_lock(alloc_head);
+    block_lock(alloc_head->next);
     binsert(alloc_head,ptr,0);//整个节点直接挪过来
+    block_unlock(alloc_head);
+    block_unlock(alloc_head->next);
+    block_unlock(ptr);
     return (void *)valid_addr;
     }
     else if(valid_addr==ptr->start)
@@ -216,11 +246,17 @@ static void *kalloc(size_t size) {
       ptr->start=valid_addr+size;
       ptr->size=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
-      assert(alloc_blk);
+      block_lock(alloc_head);
+      block_lock(alloc_head->next);
+      block_lock(alloc_blk);
       alloc_blk->start=valid_addr;
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
+      block_unlock(alloc_head);
+      block_unlock(alloc_head->next);
+      block_unlock(alloc_blk);
+      block_unlock(ptr);
       return (void*)valid_addr;
     }
     else if(valid_addr+size==ptr->end)
@@ -228,16 +264,29 @@ static void *kalloc(size_t size) {
       ptr->end=valid_addr;
       ptr->end=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
+      block_lock(alloc_head);
+      block_lock(alloc_head->next);
+      block_lock(alloc_blk);
       alloc_blk->start=valid_addr;
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
+      block_unlock(alloc_head);
+      block_unlock(alloc_head->next);
+      block_unlock(alloc_blk);
+      block_unlock(ptr);
       return (void*)valid_addr;
     }
     else
     {
       struct block*alloc_blk=(struct block*)balloc(sizeof(struct block));
       struct block*free_blk=(struct block*)balloc(sizeof(struct block));
+      block_lock(alloc_head);
+      block_lock(alloc_head->next);
+      block_lock(alloc_blk);
+      block_lock(free_blk);
+      block_lock(ptr->next);
+      //简单点一把锁了防止ABBA
       free_blk->end=ptr->end;
       free_blk->start=valid_addr+size;
       free_blk->size=free_blk->end-free_blk->start;
@@ -248,9 +297,16 @@ static void *kalloc(size_t size) {
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
+      block_unlock(alloc_head);
+      block_unlock(alloc_head->next);
+      block_unlock(alloc_blk);
+      block_unlock(free_blk);
+      block_unlock(ptr->next);
+      block_unlock(ptr);//返回时要把未能解锁的ptr解锁了
       return (void*)valid_addr;
     }
     }
+    block_unlock(ptr);
     ptr=ptr->next;
   }
    return NULL;
@@ -261,30 +317,45 @@ static void kfree(void *ptr) {
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
   {
+    block_lock(blk_ptr);
     if(blk_ptr->start==start)//找到了相应的块
     {
+      block_lock(blk_ptr->prev);
+      block_lock(blk_ptr->next);
       bdelete(blk_ptr);
+      block_unlock(blk_ptr->prev);
+      block_unlock(blk_ptr->next);
       struct block *loc_ptr=free_head;//找到合适的插入free的位置
       while(loc_ptr)
       {
+        block_lock(loc_ptr);
         if(loc_ptr->end<=start)
         {
+           block_lock(loc_ptr->next);
           if(loc_ptr->next==NULL)
-          {
-            bdelete(blk_ptr);
+          {                      
             binsert(loc_ptr,blk_ptr,1);
+            block_unlock(blk_ptr);
+            block_unlock(loc_ptr);
+            block_unlock(loc_ptr->next);
             return;
           }
           if((loc_ptr->next)->start>=blk_ptr->end)//这两种情况均可以插入
           {
-            bdelete(blk_ptr);
             binsert(loc_ptr,blk_ptr,1);
+            block_unlock(blk_ptr);
+            block_unlock(loc_ptr);
+            block_unlock(loc_ptr->next);
             return;
           }
+          block_unlock(loc_ptr->next);
         }
+        block_unlock(loc_ptr);
         loc_ptr=loc_ptr->next;
       }
+      
     }
+    block_unlock(blk_ptr);
     blk_ptr=blk_ptr->next;
   }
   #ifdef _DEBUG
@@ -298,6 +369,7 @@ static void pmm_init() {
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
   mset.size=0;
   bstart=(uintptr_t)_heap.end-0x2000000;
+  sp_lockinit(&blk_lock);
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
   free_head->start=free_head->end=free_head->size=0;
@@ -309,8 +381,6 @@ static void pmm_init() {
   blk->size=blk->end-blk->end;
   blk->prev=free_head;
   free_head->next=blk;
-  
-
 }
 
 MODULE_DEF(pmm) = {
