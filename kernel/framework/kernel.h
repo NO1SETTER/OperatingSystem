@@ -26,6 +26,7 @@ typedef struct
   intptr_t locked;
 }lock_t;
 
+lock_t global_lock;
 void sp_lockinit(lock_t* lk);
 void sp_lock(lock_t* lk);
 void sp_unlock(lock_t *lk);

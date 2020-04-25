@@ -272,6 +272,7 @@ static void pmm_init() {
   blk->size=blk->end-blk->end;
   blk->prev=free_head;
   free_head->next=blk;
+  sp_lockinit(&global_lock);
 }
 
 MODULE_DEF(pmm) = {
