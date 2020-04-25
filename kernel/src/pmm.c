@@ -183,7 +183,7 @@ static void *balloc()//专门给block分配空间用,直接从某一位置开始
   if(mset.size)
   {
     int no=sfindpos();
-    maxpos=max(maxpos,no);
+    maxpos=maxpos>no?maxpos:no;
     return (void *)(bstart+no*sizeof(struct block));
   }
   uintptr_t ret=(uintptr_t)(bstart+maxpos*sizeof(struct block));
