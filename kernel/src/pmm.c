@@ -220,35 +220,22 @@ static void bfree(struct block* blk)
   sp_unlock(&blk_lock);
 }
 
-void lock_check()
+void block_check(void *ptr)
 {
-  if(blk_lock.locked)
+  sp_lock(&alloc_lock);
+  uintptr_t sstart=((struct block *)ptr)->start;
+  uintptr_t eend=((struct block *)ptr)->end;
+  struct block* aptr=alloc_head->next;
+  while(aptr)
   {
-    printf("blk_lock still locked\n");
+    if(aptr->start==sstart&&aptr->end!=eend)
+    {printf("OVERLAPPED\n");
     assert(0);
-  }
-  struct block *ptr=alloc_head;
-  while(ptr)
-  {
-    if((ptr->lk).locked)
-    {
-      printf("allocated block [%p,%p) still locked\n",ptr->start,ptr->end);
-      assert(0);
     }
-    ptr=ptr->next;
+    aptr=aptr->next;
   }
-  ptr=free_head;
-  while(ptr)
-  {
-    if((ptr->lk).locked)
-    {
-      printf("free block [%p,%p) still locked\n",ptr->start,ptr->end);
-      assert(0);
-    }
-    ptr=ptr->next;
-  }
+  sp_unlock(&alloc_lock);
 }
-
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
 { sp_lock(&alloc_lock);
   struct block*ptr=free_head->next;
