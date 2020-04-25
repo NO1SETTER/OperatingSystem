@@ -306,9 +306,9 @@ static void pmm_init() {
   blk->end=(uintptr_t)_heap.end;
   blk->size=blk->end-blk->end;
   blk->prev=free_head;
+  printf("blk at %p , blk->start=%p,blk->end=%p\n",blk,blk->start,blk->end);
   free_head->next=blk;
   mset.size=0;
-  assert(0);
   bstart=(uintptr_t)_heap.end-0x2000000;
 }
 
