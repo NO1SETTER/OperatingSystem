@@ -18,23 +18,27 @@ struct block* free_head;
 struct block* alloc_head;//两个都是空的节点
 
 void sp_lockinit(lock_t* lk)
-{lk->locked=0;
+{if(lk==NULL) assert(0);
+  lk->locked=0;
 }
 
 void sp_lock(lock_t* lk)
 {
+  if(lk==NULL) return;
   while(_atomic_xchg(&lk->locked,1))
   {            }
 }
 
 void sp_unlock(lock_t *lk)
 {
+  if(lk==NULL) return;
   _atomic_xchg(&lk->locked,0);
 }
 
 void block_init(struct block *blk)
 {
   sp_lockinit(&blk->lk);}
+
 void block_lock(struct block *blk)
 {
   #ifdef _DEBUG
