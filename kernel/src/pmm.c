@@ -246,9 +246,9 @@ static void *kalloc(size_t size) {
       ptr->start=valid_addr+size;
       ptr->size=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
-      assert(0);
       block_lock(alloc_head);
       block_lock(alloc_head->next);
+      assert(0);
       block_lock(alloc_blk);
       alloc_blk->start=valid_addr;
       alloc_blk->end=valid_addr+size;
