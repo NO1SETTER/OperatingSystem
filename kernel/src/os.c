@@ -46,7 +46,6 @@ static void os_run() {
     }
     print_FreeBlock();
     print_AllocatedBlock();
-    printf("DISPLAYED DISPLAYED DISPLAYED DISPLAYED DISPLAYED DISPLAYED\n");
   }
   while (1) ;
 }
