@@ -169,6 +169,7 @@ static void *kalloc(size_t size) {
       struct block *alloc_blk=(struct block*)malloc(sizeof(struct block));
       assert(alloc_blk);
       printf("a\n");
+      printf("valid_addr=%p\n",valid_addr);
       alloc_blk->start=valid_addr;
       printf("b\n");
       alloc_blk->end=valid_addr+size;
