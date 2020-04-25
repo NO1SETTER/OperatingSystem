@@ -296,6 +296,8 @@ static void kfree(void *ptr) {
 static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
+  mset.size=0;
+  bstart=(uintptr_t)_heap.end-0x2000000;
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
   free_head->start=free_head->end=free_head->size=0;
@@ -309,8 +311,8 @@ static void pmm_init() {
   assert(blk);
   printf("blk at %p , blk->start=%p,blk->end=%p\n",blk,blk->start,blk->end);
   free_head->next=blk;
-  mset.size=0;
-  bstart=(uintptr_t)_heap.end-0x2000000;
+  
+
 }
 
 MODULE_DEF(pmm) = {
