@@ -1,5 +1,5 @@
 #include <common.h>
-//#define _DEBUG
+#define _DEBUG
 typedef struct 
 {
   intptr_t locked;
