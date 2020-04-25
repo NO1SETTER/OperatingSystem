@@ -48,7 +48,6 @@ static void os_run() {
     print_FreeBlock();
     print_AllocatedBlock();
     lock_check();//(仅单线程用)检查所有锁,应该全为为上锁的状态
-    assert(0);
   }
   while (1) ;
 }
