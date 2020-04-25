@@ -52,10 +52,9 @@ else
 
 void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 {
-  assert(0);
   //把next接在pre后
   assert(pre&&nxt);
-  printf("haha");
+  printf("haha\n");
   if(!is_merge)
   {
     if(pre->next==NULL)
