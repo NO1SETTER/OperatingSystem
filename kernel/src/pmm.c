@@ -54,7 +54,7 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 {
   //把next接在pre后
   //assert(pre&&nxt);
-  printf("haha\n");
+  assert(0);
   if(!is_merge)
   {
     if(pre->next==NULL)
@@ -152,35 +152,31 @@ static void *kalloc(size_t size) {
     struct block*ptr=free_head->next;
   while(ptr)
   {
-    printf("haha\n");
     uintptr_t valid_addr=GetValidAddress(ptr->start,size);
     if(valid_addr+size<=ptr->end)
     {
     //四种情况,靠头，靠尾，既靠头又靠尾，两不靠
     if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
-    {printf("a\n");
+    {
     bdelete(ptr);
     binsert(alloc_head,ptr,0);//整个节点直接挪过来
     return (void *)valid_addr;
     }
     else if(valid_addr==ptr->start)
-    {printf("b\n");
+    {
       ptr->start=valid_addr+size;
       ptr->size=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)malloc(sizeof(struct block));
-      printf("lala\n");
       assert(alloc_blk);
       //printf("alloc->start=%p\n",alloc_blk->start);
       alloc_blk->start=valid_addr;
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
-      printf("leo\n");
-     
       return (void*)valid_addr;
     }
     else if(valid_addr+size==ptr->end)
-    {printf("c\n");
+    {
       ptr->end=valid_addr;
       ptr->end=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)malloc(sizeof(struct block));
@@ -191,7 +187,7 @@ static void *kalloc(size_t size) {
       return (void*)valid_addr;
     }
     else
-    {printf("%d\n");
+    {
       struct block*alloc_blk=(struct block*)malloc(sizeof(struct block));
       struct block*free_blk=(struct block*)malloc(sizeof(struct block));
       free_blk->end=ptr->end;
