@@ -49,6 +49,7 @@ void block_lock(struct block *blk)
   else
   printf("locking NULL\n");
   #endif
+  if(blk==NULL) return;
   sp_lock(&blk->lk);}
 void block_unlock(struct block *blk)
 {
@@ -59,6 +60,7 @@ void block_unlock(struct block *blk)
   else
   printf("unlocking NULL\n");
   #endif
+  if(blk==NULL) return;
   sp_unlock(&blk->lk);}
 
 //锁pre,nxt;
