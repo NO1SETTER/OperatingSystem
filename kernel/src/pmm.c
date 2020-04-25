@@ -235,7 +235,7 @@ void lock_check()
       assert(0);
     }
   }
-  printf("haha\n");
+  printf("hahaaa\n");
   ptr=free_head;
   while(ptr)
   {
