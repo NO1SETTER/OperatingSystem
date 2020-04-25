@@ -21,6 +21,7 @@ void sp_lock(lock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1))
   {
+    printf("nmsl");
   }
 }
 
