@@ -27,7 +27,7 @@ static void os_run() {
       int size=rand()%2048;
       //printf("Allocating\n");
       void* ptr=pmm->alloc(size);
-      block_check(ptr);
+      //block_check(ptr);
       #ifdef _DEBUG
       printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
       #endif
