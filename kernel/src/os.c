@@ -4,6 +4,10 @@ static void os_init() {
   pmm->init();
 }
 
+typedef struct 
+{
+  intptr_t locked;
+}lock_t;
 void* allocated[1005];
 int num=0;
 extern void print_FreeBlock();
