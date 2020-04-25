@@ -322,7 +322,7 @@ static void kfree(void *ptr) {
     blk_ptr=blk_ptr->next;
   }
   #ifdef _DEBUG
-  printf("Block at %p has not been allocated or already freed\n",ptr);
+  //printf("Block at %p has not been allocated or already freed\n",ptr);
   #endif
   sp_unlock(&alloc_lock);
   return;
