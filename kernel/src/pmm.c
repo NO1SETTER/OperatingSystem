@@ -29,6 +29,21 @@ void sp_unlock(lock_t *lk)
   _atomic_xchg(&lk->locked,0);
 }
 
+void block_init(struct block *blk)
+{sp_lockinit(&blk->lk);}
+void block_lock(struct block *blk)
+{
+  #ifdef _DEBUG
+  printf("block[%p,%p)acquiring lock\n",blk->start,blk->end);
+  #endif
+  sp_lock(&blk->lk);}
+void block_unlock(struct block *blk)
+{
+  #ifdef _DEBUG
+  printf("block[%p,%p) unlocking\n",blk->start,blk->end);
+  #endif
+  sp_unlock(&blk->lk);}
+
 void blink(struct block* pre,struct block*nxt)//直接连接
 {
   if(pre)
