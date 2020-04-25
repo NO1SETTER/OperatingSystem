@@ -225,6 +225,7 @@ void lock_check()
     printf("blk_lock still locked\n");
     assert(0);
   }
+  printf("haha\n");
   struct block *ptr=alloc_head;
   while(ptr)
   {
