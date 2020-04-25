@@ -43,22 +43,22 @@ void block_init(struct block *blk)
 
 void block_lock(struct block *blk)
 {
-  /*#ifdef _DEBUG
+  #ifdef _DEBUG
   if(blk)
   printf("block[%p,%p)acquiring lock\n",blk->start,blk->end);
   else
   printf("locking NULL\n");
-  #endif*/
+  #endif
   sp_lock(&blk->lk);}
 void block_unlock(struct block *blk)
 {
 
-  /*#ifdef _DEBUG
+  #ifdef _DEBUG
   if(blk)
   printf("block[%p,%p) unlocked\n",blk->start,blk->end);
   else
   printf("unlocking NULL\n");
-  #endif*/
+  #endif
   sp_unlock(&blk->lk);}
 
 //锁pre,nxt;
@@ -247,7 +247,6 @@ static void *kalloc(size_t size) {
       ptr->size=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
       block_lock(alloc_head);
-      assert(0);
       block_lock(alloc_head->next);
       assert(0);
       block_lock(alloc_blk);
