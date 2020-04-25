@@ -224,10 +224,9 @@ static void *kalloc(size_t size) {
     uintptr_t valid_addr=GetValidAddress(ptr->start,size);
     if(valid_addr+size<=ptr->end)
     {
-      assert(0);
     //四种情况,靠头，靠尾，既靠头又靠尾，两不靠
     if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
-    {
+    {printf("case 1\n");
     block_lock(ptr->prev);
     block_lock(ptr->next);
     bdelete(ptr);
@@ -243,7 +242,7 @@ static void *kalloc(size_t size) {
     return (void *)valid_addr;
     }
     else if(valid_addr==ptr->start)
-    {
+    { printf("case 2\n");
       ptr->start=valid_addr+size;
       ptr->size=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
@@ -261,7 +260,7 @@ static void *kalloc(size_t size) {
       return (void*)valid_addr;
     }
     else if(valid_addr+size==ptr->end)
-    {
+    { printf("case 3\n");
       ptr->end=valid_addr;
       ptr->end=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
@@ -279,7 +278,7 @@ static void *kalloc(size_t size) {
       return (void*)valid_addr;
     }
     else
-    {
+    { printf("case 4\n");
       struct block*alloc_blk=(struct block*)balloc(sizeof(struct block));
       struct block*free_blk=(struct block*)balloc(sizeof(struct block));
       block_lock(alloc_head);
