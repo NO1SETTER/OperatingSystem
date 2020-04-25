@@ -10,7 +10,6 @@ void* allocated[1005];
 int num=0;
 extern void print_FreeBlock();
 extern void print_AllocatedBlock();
-extern void block_check(void *ptr);
 static void os_run() {
   for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
@@ -27,7 +26,6 @@ static void os_run() {
       int size=rand()%2048;
       //printf("Allocating\n");
       void* ptr=pmm->alloc(size);
-      //block_check(ptr);
       #ifdef _DEBUG
       printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
       #endif
@@ -49,7 +47,6 @@ static void os_run() {
     print_FreeBlock();
     print_AllocatedBlock();
   }
-  printf("Thread %d finished\n",_cpu());
   while (1) ;
 }
 
