@@ -5,7 +5,6 @@ typedef struct
   intptr_t locked;
 }lock_t;
 
-
 struct block//管理空闲块或非空闲块的数据结构
 {
 uintptr_t start,end;//管理[start,end)

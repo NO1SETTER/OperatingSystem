@@ -4,8 +4,6 @@ static void os_init() {
   pmm->init();
 }
 
-
-
 void* allocated[1005];
 int num=0;
 extern void print_FreeBlock();
@@ -18,6 +16,7 @@ static void os_run() {
   for(int i=0;i<50;i++)
   { 
     #ifdef _DEBUG
+    
     printf("Round %d\n",i);
     #endif
     int rand_seed=rand()%5;
@@ -27,7 +26,7 @@ static void os_run() {
       //printf("Allocating\n");
       void* ptr=pmm->alloc(size);
       #ifdef _DEBUG
-      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
+      //printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
       #endif
       allocated[num++]=ptr;
     }
@@ -36,11 +35,11 @@ static void os_run() {
       if(num==0) continue;
       int r=rand()%num;
       #ifdef _DEBUG
-      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
+      //printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
       #endif
       pmm->free(allocated[r]);      
       #ifdef _DEBUG
-      printf("Successfully freed\n");
+      //printf("Successfully freed\n");
       #endif
     }
     print_FreeBlock();
