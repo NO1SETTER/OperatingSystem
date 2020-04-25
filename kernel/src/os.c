@@ -33,8 +33,7 @@ static void os_run() {
     }
     else//kfree
     {
-      if(num==0) {
-        continue;}
+      if(num==0) continue;
       int r=rand()%num;
       #ifdef _DEBUG
       printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
