@@ -53,6 +53,7 @@ void block_lock(struct block *blk)
   #endif
   if(blk==NULL) return;
   sp_lock(&blk->lk);}
+
 void block_unlock(struct block *blk)
 {
 
@@ -145,6 +146,7 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 
 void print_FreeBlock()
 {
+  sp_lock(&alloc_lock);
   #ifdef _DEBUG
   struct block* ptr=free_head->next;
   printf("Free blocks:\n");
@@ -154,10 +156,12 @@ void print_FreeBlock()
     ptr=ptr->next;
   }
   #endif
+  sp_unlock(&alloc_lock);
 }
 
 void print_AllocatedBlock()
 {
+  sp_lock(&alloc_lock);
   #ifdef _DEBUG
   struct block* ptr=alloc_head->next;
   printf("Allocated blocks:\n");
@@ -167,6 +171,7 @@ void print_AllocatedBlock()
     ptr=ptr->next;
   }
   #endif
+  sp_unlock(&alloc_lock);
 }
 
 uintptr_t GetValidAddress(uintptr_t start,int align)//返回从start开始对齐align的最小地址
