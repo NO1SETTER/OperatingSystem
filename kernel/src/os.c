@@ -8,6 +8,12 @@ typedef struct
 {
   intptr_t locked;
 }lock_t;
+
+lock_t lkk;
+
+extern void sp_lock(lock_t* lk);
+extern void sp_unlock(lock_t *lk);
+
 void* allocated[1005];
 int num=0;
 extern void print_FreeBlock();
@@ -20,8 +26,9 @@ static void os_run() {
   for(int i=0;i<50;i++)
   { 
     #ifdef _DEBUG
-    
-    //printf("Round %d\n",i);
+    sp_lock(&lkk);
+    printf("Round %d for CPU#%d\n",i,_cpu());
+    sp_unlock(&lkk);
     #endif
     int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc

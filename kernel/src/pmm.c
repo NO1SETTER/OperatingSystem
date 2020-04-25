@@ -17,6 +17,7 @@ lock_t lk;
 lock_t blk_lock;//专门管理blk分配的锁,这一部分直接全局大锁
 lock_t free_lock;//管理free链表的锁
 lock_t alloc_lock;//管理alloc链表的锁
+extern lock_t lkk;
 static void *balloc();
 static void bfree(struct block* blk);
 struct block* free_head;
@@ -335,6 +336,7 @@ static void pmm_init() {
   sp_lockinit(&blk_lock);
   sp_lockinit(&free_lock);
   sp_lockinit(&alloc_lock);
+  sp_lockinit(&lkk);
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
   free_head->start=free_head->end=free_head->size=0;
