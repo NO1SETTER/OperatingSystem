@@ -308,6 +308,7 @@ static void pmm_init() {
   blk->prev=free_head;
   free_head->next=blk;
   mset.size=0;
+  assert(0);
   bstart=(uintptr_t)_heap.end-0x2000000;
 }
 
