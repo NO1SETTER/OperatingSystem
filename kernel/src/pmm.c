@@ -224,6 +224,7 @@ static void *kalloc(size_t size) {
     uintptr_t valid_addr=GetValidAddress(ptr->start,size);
     if(valid_addr+size<=ptr->end)
     {
+      assert(0);
     //四种情况,靠头，靠尾，既靠头又靠尾，两不靠
     if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
     {
