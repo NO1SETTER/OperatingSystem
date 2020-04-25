@@ -247,6 +247,7 @@ static void *kalloc(size_t size) {
       ptr->size=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
       block_lock(alloc_head);
+      assert(0);
       block_lock(alloc_head->next);
       assert(0);
       block_lock(alloc_blk);
