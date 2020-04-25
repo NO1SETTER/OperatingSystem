@@ -26,7 +26,7 @@ static void os_run() {
       sp_lock(&global_lock);
       void* ptr=pmm->alloc(size);
       #ifdef _DEBUG
-      printf("Allocated block of size %d at [%p,%p)\n",size,ptr,ptr+size);
+      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
       #endif
       allocated[num++]=ptr;
       sp_unlock(&global_lock);
@@ -40,7 +40,7 @@ static void os_run() {
       sp_unlock(&global_lock);
       int r=rand()%num;
       #ifdef _DEBUG
-      printf("Trying to free %p\n",allocated[r]);
+      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
       #endif
       sp_lock(&global_lock);
       pmm->free(allocated[r]);      
