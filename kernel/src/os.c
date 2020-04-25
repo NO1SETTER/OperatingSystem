@@ -4,6 +4,8 @@ static void os_init() {
   pmm->init();
 }
 
+
+
 void* allocated[1005];
 int num=0;
 extern void print_FreeBlock();
@@ -23,28 +25,21 @@ static void os_run() {
     {
       int size=rand()%2048;
       printf("Allocating\n");
-      sp_lock(&global_lock);
       void* ptr=pmm->alloc(size);
       #ifdef _DEBUG
       printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
       #endif
       allocated[num++]=ptr;
-      sp_unlock(&global_lock);
     }
     else//kfree
     {
-      sp_lock(&global_lock);
       if(num==0) {
-        sp_unlock(&global_lock);
         continue;}
-      sp_unlock(&global_lock);
       int r=rand()%num;
       #ifdef _DEBUG
       printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
       #endif
-      sp_lock(&global_lock);
       pmm->free(allocated[r]);      
-      sp_unlock(&global_lock);
       #ifdef _DEBUG
       printf("Successfully freed\n");
       #endif
