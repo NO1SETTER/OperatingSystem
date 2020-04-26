@@ -244,13 +244,17 @@ void check_allocblock(uintptr_t start,uintptr_t end)
 void check_freeblock()
 {
   struct block* fptr=free_head->next;
-  intptr_t end=-1;
+  uintptr_t end=0;
   while(fptr)
   {
-    if(fptr->start<=end)
+    if(fptr->start<end)
     {
       print_FreeBlock();
       assert(0);
+    }
+    else if(fptr->start==end)
+    {
+      printf("Not merged\n");
     }
     assert(fptr->end>fptr->start);
   
