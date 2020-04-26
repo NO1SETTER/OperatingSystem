@@ -14,6 +14,7 @@ struct block* prev;
 struct block* next;
 lock_t lk;
 };
+
 int lock_num=0;
 lock_t blk_lock;//专门管理blk分配的锁,这一部分直接全局大锁
 lock_t free_lock;//管理free链表的锁
@@ -34,7 +35,7 @@ void sp_lock(lock_t* lk)
 {
   if(lk==NULL) return;
   while(_atomic_xchg(&lk->locked,1))
-  {}
+  {printf("Acquiring lock for %s\n",lk->name);}
 }
 void sp_unlock(lock_t *lk)
 {
