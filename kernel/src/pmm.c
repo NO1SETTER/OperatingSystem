@@ -244,7 +244,7 @@ void check_allocblock(uintptr_t start,uintptr_t end)
   {
     if(aptr->start==start&&aptr->end!=end)
     { printf("Allocated block overlapped\n");
-      //assert(0);
+      assert(0);
     }
     aptr=aptr->next;
   }
@@ -259,12 +259,12 @@ void check_freeblock()
       if(!(fptr->start>=end))
       {
         printf("FreeBlock %p overlapped\n",fptr->start);
-        //assert(0);
+        assert(0);
       }
       if(!(fptr->end>fptr->start))
       {
         printf("end > start\n");
-        //assert(0);
+        assert(0);
       }
       end=fptr->end;
       fptr=fptr->next;
