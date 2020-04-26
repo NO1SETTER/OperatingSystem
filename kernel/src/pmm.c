@@ -223,7 +223,6 @@ static void *balloc()//专门给block分配空间用,直接从某一位置开始
 }
 static void bfree(struct block* blk)
 {
-  printf("Delete block controlling [%p,%p)\n",blk->start,blk->end);
   sp_lock(&blk_lock);
   int no =((uintptr_t)blk-bstart)/sizeof(struct block);
   spush(no);
