@@ -38,7 +38,7 @@ static void os_run() {
 
 static void test1()
 { printf("Conducting test1\n"); 
-  for(int i=0;i<50;i++)
+  for(int i=0;i<100;i++)
   { 
     #ifdef _DEBUG
     sp_lock(&lkk);
