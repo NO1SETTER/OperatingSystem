@@ -53,8 +53,8 @@ static void os_run() {
       printf("Successfully freed\n");
       #endif
     }
-    print_FreeBlock();
-    print_AllocatedBlock();
+    //print_FreeBlock();
+    //print_AllocatedBlock();
   }
   while (1) ;
 }

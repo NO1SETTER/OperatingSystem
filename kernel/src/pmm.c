@@ -55,6 +55,7 @@ void block_lock(struct block *blk)
   sp_lock(&blk->lk);}
 
 
+
 void block_unlock(struct block *blk)
 {
 
@@ -66,6 +67,9 @@ void block_unlock(struct block *blk)
   #endif
   if(blk==NULL) return;
   sp_unlock(&blk->lk);}
+
+
+
 
 //锁pre,nxt;
 void blink(struct block* pre,struct block*nxt)//直接连接
@@ -289,7 +293,6 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
     ptr=ptr->next;
   }
   sp_unlock(&alloc_lock);
-  assert(0);
   return NULL;
 }
 
