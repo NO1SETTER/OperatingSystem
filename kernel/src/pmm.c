@@ -235,7 +235,8 @@ void check_allocblock(uintptr_t start,uintptr_t end)
   struct block* aptr=alloc_head->next;
   while(aptr)
   {
-    panic_on(aptr->start==start&&aptr->end!=end,"allocated block overlapped\n");
+    if(aptr->start==start&&aptr->end!=end)
+    assert(0);
     aptr=aptr->next;
   }
 }
@@ -246,8 +247,8 @@ void check_freeblock()
   uintptr_t end=0;
   while(fptr)
   {
-    panic_on(fptr->start>=end,"free block \n");
-    panic_on(fptr->end>fptr->start,"end > start\n");
+    assert(fptr->start>=end);
+    assert(fptr->end>fptr->start);
   
     end=fptr->end;
     fptr=fptr->next;
