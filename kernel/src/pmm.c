@@ -247,7 +247,7 @@ void check_freeblock()
   uintptr_t end=0;
   while(fptr)
   {
-    assert(fptr->start>=end);
+    panic_on(fptr->start>=end,"free block wrong!");
     assert(fptr->end>fptr->start);
   
     end=fptr->end;
