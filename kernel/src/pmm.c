@@ -150,7 +150,7 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 
 void print_FreeBlock()
 {
-  sp_lock(&alloc_lock);
+  //sp_lock(&alloc_lock);
   #ifdef _DEBUG
   struct block* ptr=free_head->next;
   printf("Free blocks:\n");
@@ -160,7 +160,7 @@ void print_FreeBlock()
     ptr=ptr->next;
   }
   #endif
-  sp_unlock(&alloc_lock);
+  //sp_unlock(&alloc_lock);
 }
 
 void print_AllocatedBlock()
@@ -249,7 +249,7 @@ void check_freeblock()
   {
     if(fptr->start>end)
     {
-      //print_FreeBlock();
+      print_FreeBlock();
       assert(0);
     }
     assert(fptr->end>fptr->start);
