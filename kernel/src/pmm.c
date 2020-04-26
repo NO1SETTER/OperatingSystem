@@ -249,7 +249,7 @@ void check_freeblock()
   {
     if(fptr->start>end)
     {
-      print_FreeBlock();
+      //print_FreeBlock();
       assert(0);
     }
     assert(fptr->end>fptr->start);
