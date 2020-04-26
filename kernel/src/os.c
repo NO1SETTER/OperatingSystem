@@ -1,5 +1,5 @@
 #include <common.h>
-#define _DEBUG
+//#define _DEBUG
 static void os_init() {
   pmm->init();
 }
@@ -20,12 +20,25 @@ void* allocated[1005];
 int num=0;
 extern void print_FreeBlock();
 extern void print_AllocatedBlock();
+static void test1();
+static void test2();
+
 static void os_run() {
   for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
   srand(0);
-  for(int i=0;i<100;i++)
+  int sel=0;
+  if(sel==0)
+  test1();
+  else if(sel==2)
+  test2();
+
+  while (1) ;
+}
+
+static void test1()
+{  for(int i=0;i<100;i++)
   { 
     #ifdef _DEBUG
     sp_lock(&lkk);
@@ -59,10 +72,13 @@ static void os_run() {
     }
     //print_FreeBlock();
     //print_AllocatedBlock();
-  }
-  while (1) ;
+    }
 }
 
+static void test2()
+{
+  printf("haha\n");
+}
 MODULE_DEF(os) = {
   .init = os_init,
   .run  = os_run,

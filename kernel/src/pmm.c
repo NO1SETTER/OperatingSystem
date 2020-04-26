@@ -247,15 +247,7 @@ void check_freeblock()
   uintptr_t end=0;
   while(fptr)
   {
-    if(fptr->start<end)
-    {
-      print_FreeBlock();
-      assert(0);
-    }
-    else if(fptr->start==end)
-    {
-      printf("Not merged\n");
-    }
+    assert(fptr->start>=end);
     assert(fptr->end>fptr->start);
   
     end=fptr->end;
