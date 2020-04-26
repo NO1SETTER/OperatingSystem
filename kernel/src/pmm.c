@@ -123,6 +123,7 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
       struct block* ptr2=pre->next;
       if(ptr1->end==nxt->start&&ptr2->start==nxt->end)
       {//三合一
+      ptr1->next=ptr2->next;//别忘了！
       ptr1->end=ptr2->end;
       ptr1->size=ptr1->end-ptr1->start;
       bfree(nxt);
