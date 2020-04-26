@@ -81,8 +81,8 @@ static void test1()
      sp_lock(&lkk);
      printf("Finishing Round %d for CPU#%d\n",i,_cpu());
      sp_unlock(&lkk);
-     print_FreeBlock();
-     print_AllocatedBlock();
+     //print_FreeBlock();
+     //print_AllocatedBlock();
     }
 }
 
