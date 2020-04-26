@@ -38,7 +38,8 @@ static void os_run() {
 }
 
 static void test1()
-{  for(int i=0;i<100;i++)
+{ printf("Conducting test1\n"); 
+  for(int i=0;i<100;i++)
   { 
     #ifdef _DEBUG
     sp_lock(&lkk);
@@ -76,8 +77,46 @@ static void test1()
 }
 
 static void test2()
-{
-  printf("haha\n");
+{ printf("Conducting test2\n");
+  
+  for(int i=0;i<1000;i++)//小内存大内存交替分配释放
+  {
+    #ifdef _DEBUG
+    sp_lock(&lkk);
+    printf("Round %d for CPU#%d\n",i,_cpu());
+    sp_unlock(&lkk);
+    #endif
+    int rand_seed=rand()%5;
+    int size;
+    if(i%2)
+    size=rand()%16;
+    else
+    size=rand()%2048+2048;
+    if(rand_seed!=0)//kalloc
+    {
+      #ifdef _DEBUG
+      printf("Allocating size %d\n",size);
+      #endif
+      void* ptr=pmm->alloc(size);
+      #ifdef _DEBUG
+      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
+      #endif
+      allocated[num++]=ptr;
+    }
+    else//kfree
+    {
+      if(num==0) continue;
+      int r=rand()%num;
+      #ifdef _DEBUG
+      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
+      #endif
+      pmm->free(allocated[r]);      
+      #ifdef _DEBUG
+      printf("Successfully freed\n");
+      #endif
+    }
+
+  }
 }
 MODULE_DEF(os) = {
   .init = os_init,
