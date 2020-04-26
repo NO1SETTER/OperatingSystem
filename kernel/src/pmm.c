@@ -344,7 +344,6 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       ptr=ptr->next;
     }
     sp_unlock(&alloc_lock);
-    #define las
     return NULL;
 }
 
