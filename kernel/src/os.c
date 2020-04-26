@@ -28,10 +28,10 @@ static void os_run() {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
   srand(0);
-  int sel=0;
+  int sel=1;
   if(sel==0)
   test1();
-  else if(sel==2)
+  else if(sel==1)
   test2();
 
   while (1) ;
