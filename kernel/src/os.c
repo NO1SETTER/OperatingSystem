@@ -1,5 +1,5 @@
 #include <common.h>
-//#define _DEBUG
+#define _DEBUG
 static void os_init() {
   pmm->init();
 }
@@ -14,6 +14,8 @@ lock_t lkk;
 extern void sp_lock(lock_t* lk);
 extern void sp_unlock(lock_t *lk);
 
+extern void check_allocblock(void *ptr);
+extern void check_freeblock();
 void* allocated[1005];
 int num=0;
 extern void print_FreeBlock();

@@ -229,6 +229,17 @@ static void bfree(struct block* blk)
   sp_unlock(&blk_lock);
 }
 
+void check_allocblock(uintptr_t start,uintptr_t end)
+{
+  struct block* aptr=alloc_head->next;
+  while(aptr)
+  {
+    if(aptr->start==start&&aptr->end!=end)
+    assert(0);
+    aptr=aptr->next;
+  }
+}
+
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
 { sp_lock(&alloc_lock);
   struct block*ptr=free_head->next;
@@ -242,6 +253,9 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
     { //printf("case 1\n");
     bdelete(ptr);
     binsert(alloc_head,ptr,0);//整个节点直接挪过来
+    #ifdef _DEBUG
+    check_allocblock(valid_addr,valid_addr+size);
+    #endif
     sp_unlock(&alloc_lock);
     return (void *)valid_addr;
     }
@@ -254,7 +268,10 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
-      sp_unlock(&alloc_lock);
+      #ifdef _DEBUG
+      check_allocblock(valid_addr,valid_addr+size);
+      #endif
+       sp_unlock(&alloc_lock);
       return (void*)valid_addr;
     }
     else if(valid_addr+size==ptr->end)
@@ -266,6 +283,9 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
+      #ifdef _DEBUG
+      check_allocblock(valid_addr,valid_addr+size);
+      #endif
       sp_unlock(&alloc_lock);
       return (void*)valid_addr;
     }
@@ -283,6 +303,9 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       alloc_blk->end=valid_addr+size;
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
+      #ifdef _DEBUG
+      check_allocblock(valid_addr,valid_addr+size);
+      #endif
       sp_unlock(&alloc_lock);
       return (void*)valid_addr;
     }
