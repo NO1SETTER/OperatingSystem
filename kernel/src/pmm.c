@@ -235,8 +235,8 @@ void check_allocblock(uintptr_t start,uintptr_t end)
   struct block* aptr=alloc_head->next;
   while(aptr)
   {
-    if(!(aptr->start==start&&aptr->end!=end))
-    {printf("Allocated overlapped\n");
+    if(aptr->start==start&&aptr->end!=end)
+    {printf("Allocated block overlapped\n");
       assert(0);}
     aptr=aptr->next;
   }
