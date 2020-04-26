@@ -256,7 +256,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
     else if(valid_addr+size==ptr->end)
     { printf("case 3\n");
       ptr->end=valid_addr;
-      ptr->end=ptr->end-ptr->start;
+      ptr->size=ptr->end-ptr->start;
       struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
       alloc_blk->start=valid_addr;
       alloc_blk->end=valid_addr+size;
