@@ -2,6 +2,7 @@
 #define _DEBUG
 typedef struct 
 {
+  const char *name;
   intptr_t locked;
 }lock_t;
 
@@ -13,7 +14,7 @@ struct block* prev;
 struct block* next;
 lock_t lk;
 };
-
+int lock_num=0;
 lock_t blk_lock;//专门管理blk分配的锁,这一部分直接全局大锁
 lock_t free_lock;//管理free链表的锁
 lock_t alloc_lock;//管理alloc链表的锁
@@ -23,8 +24,9 @@ static void bfree(struct block* blk);
 struct block* free_head;
 struct block* alloc_head;//两个都是空的节点
 
-void sp_lockinit(lock_t* lk)
+void sp_lockinit(lock_t* lk,const char *name)
 {if(lk==NULL) assert(0);
+  lk->name=name;
   lk->locked=0;
 }
 
@@ -39,9 +41,9 @@ void sp_unlock(lock_t *lk)
   if(lk==NULL) return;
   _atomic_xchg(&lk->locked,0);
 }
-void block_init(struct block *blk)
+void block_init(struct block *blk,const char *name)
 {
-  sp_lockinit(&blk->lk);}
+  sp_lockinit(&blk->lk,name);}
 
 void block_lock(struct block *blk)
 {
@@ -217,7 +219,9 @@ static void *balloc()//专门给block分配空间用,直接从某一位置开始
   ret=(uintptr_t)(bstart+maxpos*sizeof(struct block));
   maxpos=maxpos+1;
   }
-  block_init((struct block*)ret);//分配时完成锁的初始化
+  char name[20];
+  sprintf(name,"Lock %d",lock_num++);
+  block_init((struct block*)ret,name);//分配时完成锁的初始化
   sp_unlock(&blk_lock);
   return (void *)ret;
 }
@@ -247,104 +251,104 @@ void check_allocblock(uintptr_t start,uintptr_t end)
 
 void check_freeblock()
 {
-  struct block* fptr=free_head->next;
-  uintptr_t end=0;
-  while(fptr)
-  {
-    if(!(fptr->start>=end))
+    struct block* fptr=free_head->next;
+    uintptr_t end=0;
+    while(fptr)
     {
-      printf("FreeBlock %p overlapped\n",fptr->start);
-      assert(0);
+      if(!(fptr->start>=end))
+      {
+        printf("FreeBlock %p overlapped\n",fptr->start);
+        assert(0);
+      }
+      if(!(fptr->end>fptr->start))
+      {
+        printf("end > start\n");
+        assert(0);
+      }
+      end=fptr->end;
+      fptr=fptr->next;
     }
-    if(!(fptr->end>fptr->start))
-    {
-      printf("end > start\n");
-      assert(0);
-    }
-    end=fptr->end;
-    fptr=fptr->next;
-  }
 
 }
 
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
-{ sp_lock(&alloc_lock);
-  struct block*ptr=free_head->next;
-  while(ptr)
-  {
-    uintptr_t valid_addr=GetValidAddress(ptr->start,size);
-    if(valid_addr+size<=ptr->end)
+  { sp_lock(&alloc_lock);
+    struct block*ptr=free_head->next;
+    while(ptr)
     {
-    //四种情况,靠头，靠尾，既靠头又靠尾，两不靠
-    if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
-    { //printf("case 1\n");
-    bdelete(ptr);
-    binsert(alloc_head,ptr,0);//整个节点直接挪过来
-    #ifdef _DEBUG
-    check_freeblock();
-    check_allocblock(valid_addr,valid_addr+size);
-    #endif
+      uintptr_t valid_addr=GetValidAddress(ptr->start,size);
+      if(valid_addr+size<=ptr->end)
+      {
+      //四种情况,靠头，靠尾，既靠头又靠尾，两不靠
+      if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
+      { //printf("case 1\n");
+      bdelete(ptr);
+      binsert(alloc_head,ptr,0);//整个节点直接挪过来
+      #ifdef _DEBUG
+      check_freeblock();
+      check_allocblock(valid_addr,valid_addr+size);
+      #endif
+      sp_unlock(&alloc_lock);
+      return (void *)valid_addr;
+      }
+      else if(valid_addr==ptr->start)
+      { //printf("case 2\n");
+        ptr->start=valid_addr+size;
+        ptr->size=ptr->end-ptr->start;
+        struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
+        alloc_blk->start=valid_addr;
+        alloc_blk->end=valid_addr+size;
+        alloc_blk->size=size;
+        binsert(alloc_head,alloc_blk,0);
+        #ifdef _DEBUG
+        check_freeblock();
+        check_allocblock(valid_addr,valid_addr+size);
+        #endif
+        sp_unlock(&alloc_lock);
+        return (void*)valid_addr;
+      }
+      else if(valid_addr+size==ptr->end)
+      { //printf("case 3\n");
+        ptr->end=valid_addr;
+        ptr->size=ptr->end-ptr->start;
+        struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
+        alloc_blk->start=valid_addr;
+        alloc_blk->end=valid_addr+size;
+        alloc_blk->size=size;
+        binsert(alloc_head,alloc_blk,0);
+        #ifdef _DEBUG
+        check_freeblock();
+        check_allocblock(valid_addr,valid_addr+size);
+        #endif
+        sp_unlock(&alloc_lock);
+        return (void*)valid_addr;
+      }
+      else
+      { //printf("case 4\n");
+        struct block*alloc_blk=(struct block*)balloc(sizeof(struct block));
+        struct block*free_blk=(struct block*)balloc(sizeof(struct block));
+        free_blk->end=ptr->end;
+        free_blk->start=valid_addr+size;
+        free_blk->size=free_blk->end-free_blk->start;
+        ptr->end=valid_addr;
+        ptr->size=ptr->end-ptr->start;
+        binsert(ptr,free_blk,0);
+        alloc_blk->start=valid_addr;
+        alloc_blk->end=valid_addr+size;
+        alloc_blk->size=size;
+        binsert(alloc_head,alloc_blk,0);
+        #ifdef _DEBUG
+        check_freeblock();
+        check_allocblock(valid_addr,valid_addr+size);
+        #endif
+        sp_unlock(&alloc_lock);
+        return (void*)valid_addr;
+      }
+      }
+      ptr=ptr->next;
+    }
     sp_unlock(&alloc_lock);
-    return (void *)valid_addr;
-    }
-    else if(valid_addr==ptr->start)
-    { //printf("case 2\n");
-      ptr->start=valid_addr+size;
-      ptr->size=ptr->end-ptr->start;
-      struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
-      alloc_blk->start=valid_addr;
-      alloc_blk->end=valid_addr+size;
-      alloc_blk->size=size;
-      binsert(alloc_head,alloc_blk,0);
-      #ifdef _DEBUG
-      check_freeblock();
-      check_allocblock(valid_addr,valid_addr+size);
-      #endif
-       sp_unlock(&alloc_lock);
-      return (void*)valid_addr;
-    }
-    else if(valid_addr+size==ptr->end)
-    { //printf("case 3\n");
-      ptr->end=valid_addr;
-      ptr->size=ptr->end-ptr->start;
-      struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
-      alloc_blk->start=valid_addr;
-      alloc_blk->end=valid_addr+size;
-      alloc_blk->size=size;
-      binsert(alloc_head,alloc_blk,0);
-      #ifdef _DEBUG
-      check_freeblock();
-      check_allocblock(valid_addr,valid_addr+size);
-      #endif
-      sp_unlock(&alloc_lock);
-      return (void*)valid_addr;
-    }
-    else
-    { //printf("case 4\n");
-      struct block*alloc_blk=(struct block*)balloc(sizeof(struct block));
-      struct block*free_blk=(struct block*)balloc(sizeof(struct block));
-      free_blk->end=ptr->end;
-      free_blk->start=valid_addr+size;
-      free_blk->size=free_blk->end-free_blk->start;
-      ptr->end=valid_addr;
-      ptr->size=ptr->end-ptr->start;
-      binsert(ptr,free_blk,0);
-      alloc_blk->start=valid_addr;
-      alloc_blk->end=valid_addr+size;
-      alloc_blk->size=size;
-      binsert(alloc_head,alloc_blk,0);
-      #ifdef _DEBUG
-      check_freeblock();
-      check_allocblock(valid_addr,valid_addr+size);
-      #endif
-      sp_unlock(&alloc_lock);
-      return (void*)valid_addr;
-    }
-    }
-    ptr=ptr->next;
-  }
-  sp_unlock(&alloc_lock);
-  return NULL;
+    return NULL;
 }
 
 static void kfree(void *ptr) {
@@ -398,10 +402,10 @@ static void pmm_init() {
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
   mset.size=0;
   bstart=(uintptr_t)_heap.end-0x2000000;
-  sp_lockinit(&blk_lock);
-  sp_lockinit(&free_lock);
-  sp_lockinit(&alloc_lock);
-  sp_lockinit(&lkk);
+  sp_lockinit(&blk_lock,"blk_lock");
+  sp_lockinit(&free_lock,"free_lock");
+  sp_lockinit(&alloc_lock,"alloc_lock");
+  sp_lockinit(&lkk,"lkk");
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
   free_head->start=free_head->end=free_head->size=0;
