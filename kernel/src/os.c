@@ -115,7 +115,8 @@ static void test2()
       printf("Successfully freed\n");
       #endif
     }
-
+    print_AllocatedBlock();
+    print_FreeBlock();
   }
 }
 MODULE_DEF(os) = {
