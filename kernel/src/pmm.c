@@ -235,7 +235,7 @@ void check_allocblock(uintptr_t start,uintptr_t end)
   struct block* aptr=alloc_head->next;
   while(aptr)
   {
-    if(aptr->start==start&&aptr->end!=end)
+    if(!(aptr->start==start&&aptr->end!=end))
     {printf("Allocated overlapped\n");
       assert(0);}
     aptr=aptr->next;
@@ -248,12 +248,12 @@ void check_freeblock()
   uintptr_t end=0;
   while(fptr)
   {
-    if(fptr->start>=end)
+    if(!(fptr->start>=end))
     {
       printf("FreeBlock %p overlapped\n",fptr->start);
       assert(0);
     }
-    if(fptr->end>fptr->start)
+    if(!(fptr->end>fptr->start))
     {
       printf("end > start\n");
       assert(0);
