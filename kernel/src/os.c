@@ -79,13 +79,11 @@ static void test1()
 static void test2()
 { printf("Conducting test2\n");
   
-  for(int i=0;i<200;i++)//小内存大内存交替分配释放
+  for(int i=0;i<1000;i++)//小内存大内存交替分配释放
   {
-    #ifdef _DEBUG
     sp_lock(&lkk);
     printf("Round %d for CPU#%d\n",i,_cpu());
     sp_unlock(&lkk);
-    #endif
     int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc
     {
