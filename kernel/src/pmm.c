@@ -1,5 +1,5 @@
 #include <common.h>
-#define _DEBUG
+//#define _DEBUG
 typedef struct 
 {
   const char *name;
@@ -57,10 +57,8 @@ void block_lock(struct block *blk)
   if(blk==NULL) return;
   sp_lock(&blk->lk);}
 
-
 void block_unlock(struct block *blk)
 {
-
   #ifdef _DEBUG
   if(blk)
   printf("block[%p,%p) unlocked\n",blk->start,blk->end);
@@ -69,9 +67,6 @@ void block_unlock(struct block *blk)
   #endif
   if(blk==NULL) return;
   sp_unlock(&blk->lk);}
-
-
-
 
 //锁pre,nxt;
 void blink(struct block* pre,struct block*nxt)//直接连接
@@ -109,8 +104,9 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
       (nxt->next)->prev=nxt;
       (nxt->prev)->next=nxt;
     }
+    return;
   }
-  else  //合并
+    //合并
     if(pre->next==NULL)
     {
       if(pre->end==nxt->start)
@@ -128,7 +124,7 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
       struct block* ptr2=pre->next;
       if(ptr1->end==nxt->start&&ptr2->start==nxt->end)
       {//三合一
-      ptr1->next=ptr2->next;//别忘了！
+      blink(ptr1,ptr2->next);
       ptr1->end=ptr2->end;
       ptr1->size=ptr1->end-ptr1->start;
       bfree(nxt);
@@ -238,7 +234,6 @@ static void bfree(struct block* blk)
 
 void check_allocblock(uintptr_t start,uintptr_t end)
 {
-
   struct block* aptr=alloc_head->next;
   while(aptr)
   {
@@ -349,6 +344,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       ptr=ptr->next;
     }
     sp_unlock(&alloc_lock);
+    #define las
     return NULL;
 }
 

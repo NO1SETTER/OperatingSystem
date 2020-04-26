@@ -83,7 +83,7 @@ static void test1()
      sp_unlock(&lkk);
      //print_FreeBlock();
      //print_AllocatedBlock();
-    }
+  }
 }
 
 static void test2()
