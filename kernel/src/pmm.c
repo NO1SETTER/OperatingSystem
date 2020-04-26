@@ -32,7 +32,7 @@ void sp_lock(lock_t* lk)
 {
   if(lk==NULL) return;
   while(_atomic_xchg(&lk->locked,1))
-  {            }
+  {printf("lkk\n");         }
 }
 void sp_unlock(lock_t *lk)
 {
