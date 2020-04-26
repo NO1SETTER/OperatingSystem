@@ -23,7 +23,7 @@ static void os_run() {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
   srand(0);
-  for(int i=0;i<100;i++)
+  for(int i=0;i<120;i++)
   { 
     #ifdef _DEBUG
     sp_lock(&lkk);
