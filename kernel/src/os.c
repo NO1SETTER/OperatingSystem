@@ -87,13 +87,14 @@ static void test2()
     sp_unlock(&lkk);
     #endif
     int rand_seed=rand()%5;
-    int size;
-    if(i%2)
-    size=rand()%16;
-    else
-    size=rand()%2048+2048;
     if(rand_seed!=0)//kalloc
     {
+      int size;
+      if(i%2)
+      size=rand()%16;
+      else
+      size=rand()%2048+2048;
+      if(size==0) continue;
       #ifdef _DEBUG
       printf("Allocating size %d\n",size);
       #endif
