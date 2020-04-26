@@ -241,6 +241,21 @@ void check_allocblock(uintptr_t start,uintptr_t end)
   }
 }
 
+void check_freeblock()
+{
+  struct block* fptr=free_head->next;
+  intptr_t end=-1;
+  while(fptr)
+  {
+    assert(fptr->start>end);
+    assert(fptr->end>fptr->start);
+  
+    end=fptr->end;
+    fptr=fptr->next;
+  }
+
+}
+
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
 { sp_lock(&alloc_lock);
   struct block*ptr=free_head->next;
@@ -255,6 +270,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
     bdelete(ptr);
     binsert(alloc_head,ptr,0);//整个节点直接挪过来
     #ifdef _DEBUG
+    check_freeblock();
     check_allocblock(valid_addr,valid_addr+size);
     #endif
     sp_unlock(&alloc_lock);
@@ -270,6 +286,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
       #ifdef _DEBUG
+      check_freeblock();
       check_allocblock(valid_addr,valid_addr+size);
       #endif
        sp_unlock(&alloc_lock);
@@ -285,6 +302,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
       #ifdef _DEBUG
+      check_freeblock();
       check_allocblock(valid_addr,valid_addr+size);
       #endif
       sp_unlock(&alloc_lock);
@@ -305,6 +323,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       alloc_blk->size=size;
       binsert(alloc_head,alloc_blk,0);
       #ifdef _DEBUG
+      check_freeblock();
       check_allocblock(valid_addr,valid_addr+size);
       #endif
       sp_unlock(&alloc_lock);
@@ -334,12 +353,18 @@ static void kfree(void *ptr) {
           if(loc_ptr->next==NULL)
           {                      
             binsert(loc_ptr,blk_ptr,1);
+            #ifdef _DEBUG
+            check_freeblock();
+            #endif
             sp_unlock(&alloc_lock);
             return;
           }
           if((loc_ptr->next)->start>=blk_ptr->end)//这两种情况均可以插入
           {
             binsert(loc_ptr,blk_ptr,1);
+            #ifdef _DEBUG
+            check_freeblock();
+            #endif
             sp_unlock(&alloc_lock);
             return;
           }
@@ -350,7 +375,8 @@ static void kfree(void *ptr) {
     blk_ptr=blk_ptr->next;
   }
   #ifdef _DEBUG
-  //printf("Block at %p has not been allocated or already freed\n",ptr);
+  printf("Block at %p has not been allocated or already freed\n",ptr);
+  check_freeblock();
   #endif
   sp_unlock(&alloc_lock);
   return;
