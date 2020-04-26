@@ -225,6 +225,8 @@ static void bfree(struct block* blk)
 {
   sp_lock(&blk_lock);
   int no =((uintptr_t)blk-bstart)/sizeof(struct block);
+  blk->next=NULL;
+  blk->prev=NULL;
   spush(no);
   sp_unlock(&blk_lock);
 }
