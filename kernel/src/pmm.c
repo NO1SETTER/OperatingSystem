@@ -247,7 +247,11 @@ void check_freeblock()
   intptr_t end=-1;
   while(fptr)
   {
-    assert(fptr->start>end);
+    if(fptr->start>end)
+    {
+      print_FreeBlock();
+      assert(0);
+    }
     assert(fptr->end>fptr->start);
   
     end=fptr->end;
