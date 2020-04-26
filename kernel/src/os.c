@@ -34,7 +34,7 @@ static void os_run() {
     if(rand_seed!=0)//kalloc
     {
       int size=rand()%2048;
-      //printf("Allocating\n");
+      printf("Allocating size %d\n",size);
       void* ptr=pmm->alloc(size);
       #ifdef _DEBUG
       printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
@@ -46,7 +46,7 @@ static void os_run() {
       if(num==0) continue;
       int r=rand()%num;
       #ifdef _DEBUG
-      //printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
+      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
       #endif
       pmm->free(allocated[r]);      
       #ifdef _DEBUG
