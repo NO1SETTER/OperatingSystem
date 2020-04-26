@@ -79,7 +79,7 @@ static void test1()
 static void test2()
 { printf("Conducting test2\n");
   
-  for(int i=0;i<1000;i++)//小内存大内存交替分配释放
+  for(int i=0;i<50;i++)//小内存大内存交替分配释放
   {
     #ifdef _DEBUG
     sp_lock(&lkk);
