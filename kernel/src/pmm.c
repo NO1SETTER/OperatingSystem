@@ -364,6 +364,7 @@ static void kfree(void *ptr) {
   printf("CPU#%d KFREE\n",_cpu());
   sp_unlock(&print_lock,0);
   sp_lock(&glb_lock,1);
+  printf("haha\n");
   uintptr_t start=(uintptr_t)ptr;
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
@@ -423,7 +424,7 @@ static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
   bstart=(uintptr_t)_heap.end-0x2000000;
-  sp_lockinit(&alloc_lock,"alloc_lock",0);
+  sp_lockinit(&alloc_lock,"balloc_lock",0);
   sp_lockinit(&glb_lock,"glb_lock",1);
   sp_lockinit(&print_lock,"print_lock",2);
   free_head=(struct block *)balloc(sizeof(struct block));
