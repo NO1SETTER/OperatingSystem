@@ -25,7 +25,7 @@ struct block* free_head;
 struct block* alloc_head;//两个都是空的节点
 
 void sp_lockinit(lock_t* lk,const char *name)
-{if(lk==NULL) assert(0);
+{
   lk->name=name;
   lk->locked=0;
 }
@@ -174,6 +174,7 @@ int maxpos=0;//当前已经分配到的最大位置，当mset为空时从这里�
 uintptr_t bstart;
 static void *balloc()//专门给block分配空间用,直接从某一位置开始往上垒不用对齐
 {
+  printf("BALLOC\n");
   assert(maxpos<max_block_num);
   sp_lock(&alloc_lock);
   
@@ -195,6 +196,7 @@ static void *balloc()//专门给block分配空间用,直接从某一位置开始
 
 static void bfree(struct block* blk)
 {
+  printf("BFREE\n");
   sp_lock(&alloc_lock);
   int no =((uintptr_t)blk-bstart)/sizeof(struct block);
   blk->next=NULL;
@@ -312,7 +314,6 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         sp_unlock(&print_lock);
         struct block*alloc_blk=(struct block*)balloc(sizeof(struct block));
         struct block*free_blk=(struct block*)balloc(sizeof(struct block));
-        printf("hehe\n");
         free_blk->end=ptr->end;
         free_blk->start=valid_addr+size;
         free_blk->size=free_blk->end-free_blk->start;
