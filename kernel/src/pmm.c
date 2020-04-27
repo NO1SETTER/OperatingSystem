@@ -156,7 +156,6 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 
 void print_FreeBlock()
 {
-  sp_lock(&glb_lock);
   #ifdef _DEBUG
   sp_lock(&print_lock);
   struct block* ptr=free_head->next;
@@ -168,12 +167,10 @@ void print_FreeBlock()
   }
   sp_unlock(&print_lock);
   #endif
-  sp_unlock(&glb_lock);
 }
 
 void print_AllocatedBlock()
 {
-  sp_lock(&glb_lock);
   #ifdef _DEBUG
   sp_lock(&print_lock);
   struct block* ptr=alloc_head->next;
@@ -185,7 +182,6 @@ void print_AllocatedBlock()
   }
   sp_unlock(&print_lock);
   #endif
-  sp_unlock(&glb_lock);
 }
 
 uintptr_t GetValidAddress(uintptr_t start,int align)//返回从start开始对齐align的最小地址
