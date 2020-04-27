@@ -36,7 +36,7 @@ void sp_lock(lock_t* lk)
   while(_atomic_xchg(&lk->locked,1))
   {
     //assert(lk->name);
-    printf("CPU#%d Acquiring lock for %s\n",_cpu(),lk->name);
+    //printf("CPU#%d Acquiring lock for %s\n",_cpu(),lk->name);
   }
 }
 void sp_unlock(lock_t *lk)
@@ -243,7 +243,10 @@ void check_freeblock()
 }
 
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
-  { sp_lock(&glb_lock);
+  { sp_lock(&print_lock);
+    printf("KALLOC\n");
+    sp_unlock(&print_lock);
+    sp_lock(&glb_lock);
     struct block*ptr=free_head->next;
     while(ptr)
     {
@@ -340,6 +343,9 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
 }
 
 static void kfree(void *ptr) {
+  sp_lock(&print_lock);
+  printf("KFREE\n");
+  sp_unlock(&print_lock);
   sp_lock(&glb_lock);
   uintptr_t start=(uintptr_t)ptr;
   struct block* blk_ptr=alloc_head->next;
