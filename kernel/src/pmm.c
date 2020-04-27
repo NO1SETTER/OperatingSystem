@@ -260,8 +260,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       #ifdef _DEBUG
       print_FreeBlock();
       print_AllocatedBlock();
-      check_freeblock();
-      check_allocblock(valid_addr,valid_addr+size);
+      //check_freeblock();
+      //check_allocblock(valid_addr,valid_addr+size);
       #endif
       sp_unlock(&glb_lock);
       return (void *)valid_addr;
@@ -280,8 +280,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         #ifdef _DEBUG
         print_FreeBlock();
         print_AllocatedBlock();
-        check_freeblock();
-        check_allocblock(valid_addr,valid_addr+size);
+        //check_freeblock();
+        //check_allocblock(valid_addr,valid_addr+size);
         #endif
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
@@ -300,8 +300,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         #ifdef _DEBUG
         print_FreeBlock();
         print_AllocatedBlock();
-        check_freeblock();
-        check_allocblock(valid_addr,valid_addr+size);
+        //check_freeblock();
+        //check_allocblock(valid_addr,valid_addr+size);
         #endif
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
@@ -325,8 +325,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         #ifdef _DEBUG
         print_FreeBlock();
         print_AllocatedBlock();
-        check_freeblock();
-        check_allocblock(valid_addr,valid_addr+size);
+        //check_freeblock();
+        //check_allocblock(valid_addr,valid_addr+size);
         #endif
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
@@ -359,7 +359,7 @@ static void kfree(void *ptr) {
             #ifdef _DEBUG
             print_FreeBlock();
             print_AllocatedBlock();
-            check_freeblock();
+            //check_freeblock();
             #endif
             sp_unlock(&glb_lock);
             return;
@@ -368,7 +368,7 @@ static void kfree(void *ptr) {
           {
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
-            check_freeblock();
+            //check_freeblock();
             #endif
             print_FreeBlock();
             print_AllocatedBlock();
