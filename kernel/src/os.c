@@ -22,7 +22,6 @@ int num=0;
 
 static void test1();
 static void test2();
-
 static void os_run() {
   for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
