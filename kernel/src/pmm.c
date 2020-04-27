@@ -292,6 +292,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       bdelete(ptr);
       binsert(alloc_head,ptr,0);//整个节点直接挪过来
       #ifdef _DEBUG
+      print_FreeBlock();
+      print_AllocatedBlock();
       check_freeblock();
       check_allocblock(valid_addr,valid_addr+size);
       #endif
@@ -308,6 +310,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
@@ -324,6 +328,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
@@ -345,6 +351,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
@@ -355,6 +363,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       ptr=ptr->next;
     }
     sp_unlock(&glb_lock);
+    assert(0);
     return NULL;
 }
 
@@ -376,6 +385,8 @@ static void kfree(void *ptr) {
           {                      
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
+            print_FreeBlock();
+            print_AllocatedBlock();
             check_freeblock();
             #endif
             sp_unlock(&glb_lock);
@@ -387,6 +398,8 @@ static void kfree(void *ptr) {
             #ifdef _DEBUG
             check_freeblock();
             #endif
+            print_FreeBlock();
+            print_AllocatedBlock();
             sp_unlock(&glb_lock);
             return;
           }
