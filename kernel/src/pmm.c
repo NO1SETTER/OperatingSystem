@@ -3,6 +3,7 @@
 typedef struct 
 {
   const char *name;
+  int lockid;
   intptr_t locked;
 }lock_t;
 
@@ -25,10 +26,11 @@ static void bfree(struct block* blk);
 struct block* free_head;
 struct block* alloc_head;//两个都是空的节点
 
-void sp_lockinit(lock_t* lk,const char *name)
+void sp_lockinit(lock_t* lk,const char *name,int id)
 {
   lk->name=name;
   lk->locked=0;
+  lk->lockid=id;
 }
 
 void ssp_lock(lock_t* lk)
@@ -49,7 +51,6 @@ void sp_lock(lock_t* lk)
     //ssp_unlock(&spc_lock); 
   }
   ssp_lock(&spc_lock);
-  if(strcmp(lk->name,"print_lock")!=0)
   printf("CPU#%d Acquires lock  %s\n",_cpu(),lk->name);
   ssp_unlock(&spc_lock);
 }
@@ -57,6 +58,7 @@ void sp_unlock(lock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
   ssp_lock(&spc_lock);
+  if(lk->lockid!=2)
   printf("CPU#%d Frees lock  %s\n",_cpu(),lk->name);
   ssp_unlock(&spc_lock);
 }
@@ -424,10 +426,10 @@ static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
   bstart=(uintptr_t)_heap.end-0x2000000;
-  sp_lockinit(&alloc_lock,"alloc_lock");
-  sp_lockinit(&glb_lock,"glb_lock");
-  sp_lockinit(&print_lock,"print_lock");
-  sp_lockinit(&spc_lock,"spc_lock");
+  sp_lockinit(&alloc_lock,"alloc_lock",0);
+  sp_lockinit(&glb_lock,"glb_lock",1);
+  sp_lockinit(&print_lock,"print_lock",2);
+  sp_lockinit(&spc_lock,"spc_lock",3);
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
   free_head->start=free_head->end=free_head->size=0;
