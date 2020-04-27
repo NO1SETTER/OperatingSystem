@@ -28,11 +28,9 @@ static void os_run() {
   }
     for(int i=0;i<1000;i++)
   { 
-    #ifdef _DEBUG
     sp_lock(&print_lock);
     printf("Round %d for CPU#%d\n",i,_cpu());
     sp_unlock(&print_lock);
-    #endif
     int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc
     {
