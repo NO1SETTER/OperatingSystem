@@ -374,7 +374,9 @@ static void kfree(void *ptr) {
         if(loc_ptr->end<=start)
         {
           if(loc_ptr->next==NULL)
-          {                      
+          { sp_lock(&print_lock);
+            printf("case 5\n");
+            sp_unlock(&print_lock);
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
             print_FreeBlock();
@@ -386,6 +388,9 @@ static void kfree(void *ptr) {
           }
           if((loc_ptr->next)->start>=blk_ptr->end)//这两种情况均可以插入
           {
+            sp_lock(&print_lock);
+            printf("case 6\n");
+            sp_unlock(&print_lock);
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
             //check_freeblock();
