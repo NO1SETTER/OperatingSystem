@@ -51,6 +51,7 @@ void sp_lock(lock_t* lk)
     //ssp_unlock(&spc_lock); 
   }
   ssp_lock(&spc_lock);
+    if(lk->lockid!=2)
   printf("CPU#%d Acquires lock  %s\n",_cpu(),lk->name);
   ssp_unlock(&spc_lock);
 }
