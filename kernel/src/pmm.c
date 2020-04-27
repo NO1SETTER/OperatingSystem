@@ -35,14 +35,14 @@ void sp_lock(lock_t* lk)
   if(lk==NULL) return;
   while(_atomic_xchg(&lk->locked,1))
   {
-    //assert(lk->name);
   }
-      printf("CPU#%d Acquires lock for %s\n",_cpu(),lk->name);
+  printf("CPU#%d Acquires lock  %s\n",_cpu(),lk->name);
 }
 void sp_unlock(lock_t *lk)
 {
   if(lk==NULL) return;
   _atomic_xchg(&lk->locked,0);
+  printf("CPU#%d Acquires lock  %s\n",_cpu(),lk->name);
 }
 
 //锁pre,nxt;
