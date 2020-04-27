@@ -312,6 +312,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         sp_unlock(&print_lock);
         struct block*alloc_blk=(struct block*)balloc(sizeof(struct block));
         struct block*free_blk=(struct block*)balloc(sizeof(struct block));
+        printf("hehe\n");
         free_blk->end=ptr->end;
         free_blk->start=valid_addr+size;
         free_blk->size=free_blk->end-free_blk->start;
