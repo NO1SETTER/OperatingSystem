@@ -12,7 +12,6 @@ uintptr_t start,end;//管理[start,end)
 uint32_t size;
 struct block* prev;
 struct block* next;
-lock_t lk;
 };
 
 int lock_num=0;
@@ -45,35 +44,6 @@ void sp_unlock(lock_t *lk)
   if(lk==NULL) return;
   _atomic_xchg(&lk->locked,0);
 }
-void block_init(struct block *blk,const char *name)
-{
-  sp_lockinit(&blk->lk,name);}
-
-void block_lock(struct block *blk)
-{
-  #ifdef _DEBUG
-  sp_lock(&print_lock);
-  if(blk)
-  printf("block[%p,%p)acquiring lock\n",blk->start,blk->end);
-  else
-  printf("locking NULL\n");
-  sp_unlock(&print_lock);
-  #endif
-  if(blk==NULL) return;
-  sp_lock(&blk->lk);}
-
-void block_unlock(struct block *blk)
-{
-  #ifdef _DEBUG
-  sp_lock(&print_lock);
-  if(blk)
-  printf("block[%p,%p) unlocked\n",blk->start,blk->end);
-  else
-  printf("unlocking NULL\n");
-  sp_unlock(&print_lock);
-  #endif
-  if(blk==NULL) return;
-  sp_unlock(&blk->lk);}
 
 //锁pre,nxt;
 void blink(struct block* pre,struct block*nxt)//直接连接
@@ -223,7 +193,6 @@ static void *balloc()//专门给block分配空间用,直接从某一位置开始
   ret=(uintptr_t)(bstart+maxpos*sizeof(struct block));
   maxpos=maxpos+1;
   }
-  block_init((struct block*)ret,NULL);//分配时完成锁的初始化
   sp_unlock(&alloc_lock);
   return (void *)ret;
 }
