@@ -156,36 +156,34 @@ void print_AllocatedBlock()
 
 uintptr_t GetValidAddress(uintptr_t start,int align)//返回从start开始对齐align的最小地址
 {
-uint32_t temp=1;
-while(align%2==0)
-{temp=temp*2;
- align=align/2;
-}
-uint32_t ret=(((uint32_t)(start-1)/temp)+1)*temp;
-return (uintptr_t)ret;
+  uint32_t temp=1;
+    while(align%2==0)
+    {temp=temp*2;
+    align=align/2;
+    }
+    uint32_t ret=(((uint32_t)(start-1)/temp)+1)*temp;
+    return (uintptr_t)ret;
 }
 
 const int max_block_num=0x2000000/sizeof(struct block);
 //最多给管理的块分配0x2000000的空间
-struct SET
-{
-  int s[20000];
-  int size;
-}mset;//记录被释放后的块的位置，方便直接使用
+int FreeAllocNo[20000];
+int FreeAllocNoNum=0;//记录被释放后的块的位置，方便直接使用
 void spush(int x)
-{mset.s[mset.size++]=x;}
+{FreeAllocNo[FreeAllocNoNum++]=x;}
 int sfindpos()//只是要一个位置,无所谓分到哪一个
-{return mset.s[--mset.size];}
+{return FreeAllocNo[--FreeAllocNoNum];}
 int maxpos=0;//当前已经分配到的最大位置，当mset为空时从这里开始分配
 uintptr_t bstart;
 static void *balloc()//专门给block分配空间用,直接从某一位置开始往上垒不用对齐
 {
+  assert(maxpos<max_block_num);
   sp_lock(&alloc_lock);
+  
   uintptr_t ret;
-  if(mset.size)
+  if(FreeAllocNoNum)
   {
-    int no=sfindpos();
-    maxpos=maxpos>no?maxpos:no;
+    int no=sfindpos();//no不会大于maxpos
     ret=(uintptr_t)(bstart+no*sizeof(struct block));
   }
   else
@@ -193,6 +191,7 @@ static void *balloc()//专门给block分配空间用,直接从某一位置开始
   ret=(uintptr_t)(bstart+maxpos*sizeof(struct block));
   maxpos=maxpos+1;
   }
+  
   sp_unlock(&alloc_lock);
   return (void *)ret;
 }
@@ -395,7 +394,6 @@ static void kfree(void *ptr) {
 static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
-  mset.size=0;
   bstart=(uintptr_t)_heap.end-0x2000000;
   sp_lockinit(&glb_lock,"glb_lock");
   sp_lockinit(&print_lock,"print_lock");
