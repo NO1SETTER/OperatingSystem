@@ -49,6 +49,7 @@ void sp_lock(lock_t* lk)
     //ssp_unlock(&spc_lock); 
   }
   ssp_lock(&spc_lock);
+  if(strcmp(lk->name,"print_lock")!=0)
   printf("CPU#%d Acquires lock  %s\n",_cpu(),lk->name);
   ssp_unlock(&spc_lock);
 }
