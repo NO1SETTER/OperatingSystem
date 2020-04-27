@@ -182,30 +182,26 @@ const int max_block_num=0x2000000/sizeof(struct block);
 //最多给管理的块分配0x2000000的空间
 int FreeAllocNo[20000];
 int FreeAllocNoNum=0;//记录被释放后的块的位置，方便直接使用
-void spush(int x)
-{FreeAllocNo[FreeAllocNoNum++]=x;}
-int sfindpos()//只是要一个位置,无所谓分到哪一个
-{return FreeAllocNo[--FreeAllocNoNum];}
 int maxpos=0;//当前已经分配到的最大位置，当mset为空时从这里开始分配
 uintptr_t bstart;
 static void *balloc()//专门给block分配空间用,直接从某一位置开始往上垒不用对齐
 {
+  sp_lock(&print_lock,0);
   printf("CPU#%d BALLOC\n",_cpu());
-  assert(maxpos<max_block_num);
+  sp_unlock(&print_lock,0);
   sp_lock(&alloc_lock,1);
   
   uintptr_t ret;
   if(FreeAllocNoNum)
   {
-    int no=sfindpos();//no不会大于maxpos
+    int no=FreeAllocNo[--FreeAllocNoNum];//no不会大于maxpos
     ret=(uintptr_t)(bstart+no*sizeof(struct block));
   }
   else
   {
   ret=(uintptr_t)(bstart+maxpos*sizeof(struct block));
   maxpos=maxpos+1;
-  }
-  
+  }  
   sp_unlock(&alloc_lock,1);
   return (void *)ret;
 }
@@ -219,7 +215,7 @@ static void bfree(struct block* blk)
   int no =((uintptr_t)blk-bstart)/sizeof(struct block);
   blk->next=NULL;
   blk->prev=NULL;
-  spush(no);
+  FreeAllocNo[FreeAllocNoNum++]=no;
   sp_unlock(&alloc_lock,1);
 }
 
