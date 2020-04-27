@@ -18,6 +18,7 @@ int lock_num=0;
 lock_t glb_lock;//管理两个链表的锁
 lock_t alloc_lock;//管理balloc和bfree并发性的锁
 lock_t print_lock;//printf的锁,保证完整性
+lock_t spc_lock;
 
 static void *balloc();
 static void bfree(struct block* blk);
@@ -30,16 +31,30 @@ void sp_lockinit(lock_t* lk,const char *name)
   lk->locked=0;
 }
 
+void ssp_lock(lock_t* lk)
+{
+  while(_atomic_xchg(&lk->locked,1))
+  {  }
+}
+void ssp_unlock(lock_t *lk)
+{
+  _atomic_xchg(&lk->locked,0);
+}
+
 void sp_lock(lock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1))
   {  }
+  ssp_lock(&spc_lock);
   printf("CPU#%d Acquires lock  %s\n",_cpu(),lk->name);
+  ssp_unlock(&spc_lock);
 }
 void sp_unlock(lock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
+  ssp_lock(&spc_lock);
   printf("CPU#%d Frees lock  %s\n",_cpu(),lk->name);
+  ssp_unlock(&spc_lock);
 }
 
 //锁pre,nxt;
@@ -403,6 +418,7 @@ static void pmm_init() {
   sp_lockinit(&alloc_lock,"alloc_lock");
   sp_lockinit(&glb_lock,"glb_lock");
   sp_lockinit(&print_lock,"print_lock");
+  sp_lockinit(&spc_lock,"spc_lock");
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
   free_head->start=free_head->end=free_head->size=0;
