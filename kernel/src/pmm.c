@@ -35,7 +35,8 @@ void sp_lock(lock_t* lk)
 {
   if(lk==NULL) return;
   while(_atomic_xchg(&lk->locked,1))
-  {//printf("Acquiring lock for %s\n",lk->name);
+  {
+    printf("Acquiring lock for %s\n",lk->name);
   }
 }
 void sp_unlock(lock_t *lk)
