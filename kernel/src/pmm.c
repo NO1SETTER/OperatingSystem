@@ -377,6 +377,7 @@ static void kfree(void *ptr) {
       {
         if(loc_ptr->end<=start)
         {
+          printf("CPU#%d LOCATED",_cpu());
           if(loc_ptr->next==NULL)
           { sp_lock(&print_lock,0);
             printf("CPU#%d case 5\n",_cpu());
