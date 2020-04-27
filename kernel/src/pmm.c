@@ -378,7 +378,9 @@ static void kfree(void *ptr) {
         if(loc_ptr->end<=start)
         {
           if(loc_ptr->next==NULL)
-          { sp_lock(&print_lock,0);
+          { 
+            printf("LOCATED\n");
+            sp_lock(&print_lock,0);
             printf("CPU#%d case 5\n",_cpu());
             sp_unlock(&print_lock,0);
             binsert(loc_ptr,blk_ptr,1);
@@ -392,6 +394,7 @@ static void kfree(void *ptr) {
           }
           if((loc_ptr->next)->start>=blk_ptr->end)//这两种情况均可以插入
           {
+            printf("LOCATED\n");
             sp_lock(&print_lock,0);
             printf("CPU#%d case 6\n",_cpu());
             sp_unlock(&print_lock,0);
