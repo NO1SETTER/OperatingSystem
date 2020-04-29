@@ -92,7 +92,7 @@ void print_message()
   printf("%d ARGS:\n",arg_num);
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
-  printf("%d ENV:\n",env[i]);
+  printf("%d ENV:\n",env_num);
   for(int i=0;i<env_num;i++)
   printf("env[%d]:%s\n",i,exec_env[i]);
   printf("Strace at %s\n",strace_path);
