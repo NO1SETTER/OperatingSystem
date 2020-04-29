@@ -97,6 +97,7 @@ void print_message()
 int get_strace=0;
 void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 {
+  assert(0);
   printf("basepeth: %s\n",basepath);
   DIR* dir;
   struct dirent* ptr;
