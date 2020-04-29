@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
   }
   else//parent writes to pipefd[1]
   {
+    assert(0);
     execve(strace_path,exec_argv,exec_env);
   }
 
