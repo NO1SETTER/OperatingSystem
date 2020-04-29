@@ -50,6 +50,7 @@ for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
 }
 
+assert(0);
 for(int i=0;i<env_num;i++)
 { assert(0);
   printf("env[%d]:%s",i,exec_envp[i]);
