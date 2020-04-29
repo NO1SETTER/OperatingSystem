@@ -137,7 +137,7 @@ getcwd(basepath,sizeof(basepath));
 if(get_strace) return;
 
 get_strace=0;
-for(int i=0;i<n;i++)
+for(int i=0;i<env_num;i++)
 {
   strcpy(basepath,exec_envp[i]);
   find_strace_path(basepath);
