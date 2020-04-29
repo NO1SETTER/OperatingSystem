@@ -85,6 +85,8 @@ int pos=0;
     sprintf(env[pos],"%s",s);
   }
 env_num=pos;
+exec_env[0]=path;
+exec_env[1]=NULL;
 }
 
 void print_message()
@@ -153,16 +155,4 @@ for(int i=0;i<env_num;i++)
   if(get_strace) break;
   get_strace=0;
 }
-}
-
-void modify_path()
-{
-  char temp[200];
-  for(int i=0;i<env_num;i++)
-  {
-    strcpy(temp,env[i]);
-    sprintf(env[i],"PATH=%s",temp);
-    exec_env[i]=env[i];
-  }
-  exec_env[env_num]=NULL;
 }
