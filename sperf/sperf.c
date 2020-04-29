@@ -94,7 +94,7 @@ void print_message()
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
   printf("%d ENV:\n",env_num);
-  for(int i=0;i<env_num;i++)
+  for(int i=0;i<1;i++)
   printf("env[%d]:%s\n",i,env[i]);
   printf("Strace at %s\n",strace_path);
 }
@@ -123,7 +123,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
       {
       strcat(base,"/");
       strcat(base,ptr->d_name);
-      strcpy(strace_path,basepath);
+      strcpy(strace_path,base);
         get_strace=1;
       }
     }
@@ -150,7 +150,7 @@ for(int i=0;i<env_num;i++)
 {
   strcpy(basepath,env[i]);
   read_all_file(basepath);
-  if(get_strace) break;
+  if(get_strace) return;
   get_strace=0;
 }
 }
