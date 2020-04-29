@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   find_strace_path();
   modify_path();
   print_message();
-  
+
   /*char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_env[] = { "PATH=/bin", NULL, };
   execve("strace",          exec_argv, exec_env);
@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
   pid_t cpid;
   
   cpid=fork();
+  assert(0);
   if(cpid == -1)
   {
     perror("fork");
