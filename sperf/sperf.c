@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
   cpid=fork();
   if(cpid == -1)
   {
+    assert(0);
     perror("fork");
     exit(EXIT_FAILURE);
   }
