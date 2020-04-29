@@ -45,6 +45,7 @@ for(int i=0;(s=strtok(NULL,":"))!=NULL;i++)
 
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
+  assert(0);
   /*char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_envp[] = { "PATH=/bin", NULL, };
   execve("strace",          exec_argv, exec_envp);
