@@ -12,7 +12,7 @@ extern char **environ;
 
 char *path;//path环境变量
 char *exec_argv[10];//最多传十个参数
-char *exec_envp[1000];
+char exec_envp[100][1000];
 int arg_num;
 int env_num;
 
@@ -76,7 +76,6 @@ char *s;
 int pos=0;
   for(;(s=strtok(NULL,":"))!=NULL;pos++)
   {
-    assert(0);
     sprintf(exec_envp[pos],"PATH=%s",s);
   }
 env_num=pos;
