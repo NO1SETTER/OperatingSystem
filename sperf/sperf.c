@@ -35,6 +35,14 @@ int main(int argc, char *argv[]) {
   int pipefd[2];
   pid_t cpid;
   
+  if(pipe(pipefd)==-1)
+  {
+    perror("pipe");
+    exit(EXIT_FAILURE);
+  }
+
+  dup2(STDOUT,pipefd[1]);
+  dup2(STDIN,pipefd[0]);
   cpid=fork();
   if(cpid == -1)
   {
@@ -50,7 +58,6 @@ int main(int argc, char *argv[]) {
   {
    
     execve(strace_path,exec_argv,exec_env);
-    assert(0);
   }
 
 
