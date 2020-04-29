@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   find_strace_path();
   modify_path();
   print_message();
-  assert(0);
+  
   /*char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_env[] = { "PATH=/bin", NULL, };
   execve("strace",          exec_argv, exec_env);
