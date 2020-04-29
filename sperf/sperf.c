@@ -40,28 +40,25 @@ char *s;
 int pos=0;
   for(;(s=strtok(NULL,":"))!=NULL;pos++)
   {
-    printf("%s\n",s);
     exec_envp[pos]=s;
-      printf("%s\n",exec_envp[pos]);
   }
 env_num=pos;
-
-//printf("arg_num=%d env_num=%d\n",arg_num,env_num);
-/*for(int i=0;i<arg_num;i++)
-{
-  printf("arg[%d]:%s\n",i,exec_argv[i]);
-}*/
-
-
-for(int i=0;i<env_num;i++)
-{ assert(0);
-  printf("env[%d]:%s",i,exec_envp[i]);
 }
 
+void print_message()
+{
+  printf("COMMAND:%s\n",command);
+  printf("ARGS:\\");
+  for(int i=0;i<arg_num;i++)
+  printf("arg[%d]:%s\n",i,exec_argv[i]);
+  printf("ENV:\\");
+  for(int i=0;i<arg_num;i++)
+  printf("env[%d]:%s\n",i,exec_envp[i];)
 }
 
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
+  print_message();
   assert(0);
   /*char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_envp[] = { "PATH=/bin", NULL, };
