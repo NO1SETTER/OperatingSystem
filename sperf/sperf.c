@@ -20,11 +20,13 @@ char strace_path[50];
 void parse_args_envp(int argc,char **argv);
 void print_message();
 void find_strace_path();
+void modify_path();//修改环境变量的版本
+
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
-  print_message();
   find_strace_path();
-  printf("strace at %s\n",strace_path);
+  modify_path();
+  print_message();
   assert(0);
   /*char *exec_argv[] = { "strace", "ls", NULL, };
   char *exec_envp[] = { "PATH=/bin", NULL, };
@@ -92,6 +94,7 @@ void print_message()
   printf("ENV:\n");
   for(int i=0;i<env_num;i++)
   printf("env[%d]:%s\n",i,exec_envp[i]);
+  printf("Strace at %s\n",strace_path);
 }
 
 int get_strace=0;
@@ -149,4 +152,10 @@ for(int i=0;i<env_num;i++)
   if(get_strace) break;
   get_strace=0;
 }
+}
+
+void modify_path()
+{
+  for(int i=0;i<env_num;i++)
+  sprintf(exec_envp[i],"PATH=%s",exec_envp[i]);
 }
