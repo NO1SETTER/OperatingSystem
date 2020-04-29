@@ -23,9 +23,11 @@ exec_argv[argc-1]=NULL;
 char **ptr=environ;
 while(*ptr)
   {
-    if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
+    if(strlen(*ptr)>=5)
+    {if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
     {path==*ptr;
     break;}
+    }
     ptr++;
   }
 
