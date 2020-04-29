@@ -48,10 +48,10 @@ env_num=pos;
 void print_message()
 {
   printf("COMMAND:%s\n",command);
-  printf("ARGS:\\");
+  printf("ARGS:\n");
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
-  printf("ENV:\\");
+  printf("ENV:\n");
   for(int i=0;i<arg_num;i++)
   printf("env[%d]:%s\n",i,exec_envp[i]);
 }
