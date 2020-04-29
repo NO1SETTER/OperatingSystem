@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     close(pipefd[1]);
     char buf;
     while(read(pipefd[0],&buf,1)>0)
-    {printf("READ%s",buf);}
+    {printf("READ%c",buf);}
   }
   else//parent writes to pipefd[1]
   {
