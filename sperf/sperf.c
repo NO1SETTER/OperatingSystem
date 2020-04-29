@@ -8,8 +8,6 @@
 #include <dirent.h>
 
 extern char **environ;
-
-
 char *path;//path环境变量
 char *exec_argv[100];//最多传一百个参数
 char *exec_env[100];
@@ -91,10 +89,10 @@ env_num=pos;
 
 void print_message()
 {
-  printf("ARGS:\n");
+  printf("%d ARGS:\n",arg_num);
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
-  printf("ENV:\n");
+  printf("%d ENV:\n",env_num);
   for(int i=0;i<env_num;i++)
   printf("env[%d]:%s\n",i,exec_env[i]);
   printf("Strace at %s\n",strace_path);
