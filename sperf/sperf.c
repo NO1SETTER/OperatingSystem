@@ -52,11 +52,11 @@ int main(int argc, char *argv[]) {
 
   if(cpid==0)//child reads from pipefd[0]
   {
-    assert(0);
+    close(pipefd[1]);
   }
   else//parent writes to pipefd[1]
   {
-   
+    close(pipefd[0]);
     execve(strace_path,exec_argv,exec_env);
   }
 
