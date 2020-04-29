@@ -40,7 +40,7 @@ int pos=0;
   {
     exec_envp[pos]=s;
   }
-env_num=i;
+env_num=pos;
 
 for(int i=0;i<arg_num;i++)
 {
