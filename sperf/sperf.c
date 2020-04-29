@@ -11,7 +11,7 @@ extern char **environ;
 
 
 char *path;//path环境变量
-char *exec_argv[10];//最多传十个参数
+char *exec_argv[100];//最多传一百个参数
 char exec_envp[100][1000];
 int arg_num;
 int env_num;
@@ -49,6 +49,7 @@ int main(int argc, char *argv[]) {
   }
   else//parent writes to pipefd[1]
   {
+    execve(strace_path,exec_argv,exec_envp);
   }
 
 
@@ -162,4 +163,5 @@ void modify_path()
     strcpy(temp,exec_envp[i]);
     sprintf(exec_envp[i],"PATH=%s",temp);
   }
+  env[env_num]=NULL;
 }
