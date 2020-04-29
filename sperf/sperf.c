@@ -31,7 +31,7 @@ while(*ptr)
     }
     ptr++;
   }
-assert(0);
+
 exec_envp[0] = strtok(path,":");
 assert(0);
 char *s;
