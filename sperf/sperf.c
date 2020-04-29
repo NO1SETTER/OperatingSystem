@@ -79,7 +79,7 @@ char *s;
 int pos=0;
   for(;(s=strtok(NULL,":"))!=NULL;pos++)
   {
-    sprintf(exec_envp[pos],"PATH=%s",s);
+    sprintf(exec_envp[pos],"%s",s);
   }
 env_num=pos;
 }
