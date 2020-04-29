@@ -97,8 +97,8 @@ void print_message()
 int get_strace=0;
 void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 {
-  assert(0);
-  printf("basepeth: %s\n",basepath);
+  //assert(0);
+  //printf("basepeth: %s\n",basepath);
   DIR* dir;
   struct dirent* ptr;
   char base[200];
@@ -136,15 +136,14 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
 char basepath[200];
 memset(basepath,0,sizeof(basepath));
 getcwd(basepath,sizeof(basepath));
-find_strace_path(basepath);
-assert(0);
+read_all_file(basepath);
 if(get_strace) return;
 
 get_strace=0;
 for(int i=0;i<env_num;i++)
 {
   strcpy(basepath,exec_envp[i]);
-  find_strace_path(basepath);
+  read_all_file(basepath);
   if(get_strace) break;
   get_strace=0;
 }
