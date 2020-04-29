@@ -12,7 +12,8 @@ extern char **environ;
 
 char *path;//path环境变量
 char *exec_argv[100];//最多传一百个参数
-char exec_envp[100][1000];
+char *exec_env[100];
+char exec_env[100][1000];
 int arg_num;
 int env_num;
 char strace_path[50];
@@ -29,10 +30,10 @@ int main(int argc, char *argv[]) {
   print_message();
   assert(0);
   /*char *exec_argv[] = { "strace", "ls", NULL, };
-  char *exec_envp[] = { "PATH=/bin", NULL, };
-  execve("strace",          exec_argv, exec_envp);
-  execve("/bin/strace",     exec_argv, exec_envp);
-  execve("/usr/bin/strace", exec_argv, exec_envp);*/
+  char *exec_env[] = { "PATH=/bin", NULL, };
+  execve("strace",          exec_argv, exec_env);
+  execve("/bin/strace",     exec_argv, exec_env);
+  execve("/usr/bin/strace", exec_argv, exec_env);*/
   int pipefd[2];
   pid_t cpid;
   
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
   }
   else//parent writes to pipefd[1]
   {
-    execve(strace_path,exec_argv,exec_envp);
+    execve(strace_path,exec_argv,exec_env);
   }
 
 
@@ -82,7 +83,7 @@ char *s;
 int pos=0;
   for(;(s=strtok(NULL,":"))!=NULL;pos++)
   {
-    sprintf(exec_envp[pos],"%s",s);
+    sprintf(exec_env[pos],"%s",s);
   }
 env_num=pos;
 }
@@ -94,7 +95,7 @@ void print_message()
   printf("arg[%d]:%s\n",i,exec_argv[i]);
   printf("ENV:\n");
   for(int i=0;i<env_num;i++)
-  printf("env[%d]:%s\n",i,exec_envp[i]);
+  printf("env[%d]:%s\n",i,exec_env[i]);
   printf("Strace at %s\n",strace_path);
 }
 
@@ -148,7 +149,7 @@ if(get_strace) return;
 get_strace=0;
 for(int i=0;i<env_num;i++)
 {
-  strcpy(basepath,exec_envp[i]);
+  strcpy(basepath,exec_env[i]);
   read_all_file(basepath);
   if(get_strace) break;
   get_strace=0;
@@ -160,8 +161,9 @@ void modify_path()
   char temp[200];
   for(int i=0;i<env_num;i++)
   {
-    strcpy(temp,exec_envp[i]);
-    sprintf(exec_envp[i],"PATH=%s",temp);
+    strcpy(temp,exec_env[i]);
+    sprintf(exec_env[i],"PATH=%s",temp);
+    exec_env[i]=exec_env[i];
   }
-  env[env_num]=NULL;
+  exec_env[env_num]=NULL;
 }
