@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  dup2(STDOUT,pipefd[1]);
-  dup2(STDIN,pipefd[0]);
+  dup2(stdout,pipefd[1]);
+  dup2(stdin,pipefd[0]);
   cpid=fork();
   if(cpid == -1)
   {
