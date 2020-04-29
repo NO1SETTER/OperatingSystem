@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
   {
    
     execve(strace_path,exec_argv,exec_env);
+    assert(0);
   }
 
 
