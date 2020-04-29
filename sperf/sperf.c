@@ -39,12 +39,12 @@ char *s;
     exec_envp[i]=s;
   }
 
-for(int i=0;exec_argv[i];i++)
+for(int i=0;exec_argv[i]!=NULL;i++)
 {
   printf("arg[%d]:%s\n",i,exec_argv[i]);
 }
 
-for(int i=0;exec_envp[i];i++)
+for(int i=0;exec_envp[i]!=NULL;i++)
 {
   printf("env[%d]:%s",i,exec_envp[i]);
 }
