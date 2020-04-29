@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
   if(cpid==0)//child reads from pipefd[0]
   {
     close(pipefd[1]);
-    dup2(pipefd[0],STDIN_FILEIN);
+    dup2(pipefd[0],STDIN_FILENO);
     char buf;
     while(read(pipefd[0],&buf,1)>0)
     {printf("READ %c ",buf);}
