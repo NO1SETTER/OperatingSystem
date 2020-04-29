@@ -52,9 +52,9 @@ int main(int argc, char *argv[]) {
   if(cpid==0)//child reads from pipefd[0]
   {
     close(pipefd[1]);
-    char buf;
-    while(read(pipefd[0],&buf,1)>0)
-    {printf("READ%c",buf);}
+    //char buf;
+    //while(read(pipefd[0],&buf,1)>0)
+    //{printf("READ%c",buf);}
   }
   else//parent writes to pipefd[1]
   {
