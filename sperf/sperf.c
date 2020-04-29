@@ -100,14 +100,14 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
   printf("basepath: %s\n",basepath);
   DIR* dir;
   struct dirent* ptr;
-  char base[200];
-  strcpy(base,basepath);
-  if(dir=opendir(basepath)==NULL)
+  if((dir=opendir(basepath))==NULL)
   {
     printf("Failed open %s\n",basepath);
     assert(0);
   }
-  assert(dir);
+
+  char base[200];
+  strcpy(base,basepath);
   while((ptr=readdir(dir))!=NULL)
   {
     if(get_strace) break;
