@@ -131,9 +131,11 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 
 void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
 {
-char basepath[100];
+char basepath[200];
 memset(basepath,0,sizeof(basepath));
 getcwd(basepath,sizeof(basepath));
+assert(0);
+find_strace_path(basepath);
 if(get_strace) return;
 
 get_strace=0;
