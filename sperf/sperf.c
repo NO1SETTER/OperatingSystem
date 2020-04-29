@@ -53,7 +53,7 @@ void print_message()
   printf("arg[%d]:%s\n",i,exec_argv[i]);
   printf("ENV:\\");
   for(int i=0;i<arg_num;i++)
-  printf("env[%d]:%s\n",i,exec_envp[i];)
+  printf("env[%d]:%s\n",i,exec_envp[i]);
 }
 
 int main(int argc, char *argv[]) {
