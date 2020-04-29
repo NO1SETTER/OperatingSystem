@@ -18,8 +18,7 @@ int env_num;
 
 void parse_args_envp(int argc,char **argv);
 void print_message();
-void read_all_file();
-void find_path();
+
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   print_message();
@@ -57,16 +56,17 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
 exec_argv[0]="strace";
 for(int i=1;i<argc;i++)
 exec_argv[i]=argv[i];
-exec_argv[argc]=NULL;()
+exec_argv[argc]=NULL;
 arg_num=argc;
+
 
 char **ptr=environ;
   while(*ptr)
   {
     if(strlen(*ptr)>=5)
-    { if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
-      {path=*ptr;
-      break;}
+    {  if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
+       {path=*ptr;
+       break;}
     }
     ptr++;
   }
@@ -79,14 +79,13 @@ int pos=0;
   {
     strcat(temp,s);
     exec_envp[pos]=temp;
-    strcpy(temp,"PATH=");
+    strcpy(temp,"PATH=");.
   }
 env_num=pos;
 }
 
 void print_message()
 {
-  printf("COMMAND:%s\n",command);
   printf("ARGS:\n");
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
