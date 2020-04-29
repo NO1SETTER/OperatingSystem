@@ -32,15 +32,24 @@ while(*ptr)
     ptr++;
   }
 
-printf("%s\n",path);
-exec_envp[0] = strtok(path,"=");
-
+strtok(path,"=");
 char *s;
-for(int i=0;(s=strtok(NULL,":"))!=NULL;i++)
+  for(int i=0;(s=strtok(NULL,":"))!=NULL;i++)
+  {
+    printf("%s\n",s);
+    exec_envp[i]=s;
+  }
+
+for(int i=0;exec_argv[i];i++)
 {
-  printf("%s\n",s);
-  exec_envp[i]=s;
+  printf("arg[%d]:%s\n",i,exec_argv[i]);
 }
+
+for(int i=0;exec_envp[i];i++)
+{
+  printf("env[%d]:%s",i,exec_envp[i]);
+}
+
 }
 
 int main(int argc, char *argv[]) {
