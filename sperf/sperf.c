@@ -26,7 +26,7 @@ while(*ptr)
   {
     if(strlen(*ptr)>=5)
     { if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
-      {path==*ptr;
+      {path=*ptr;
       break;}
     }
     ptr++;
