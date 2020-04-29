@@ -46,7 +46,7 @@ int pos=0;
   }
 env_num=pos;
 
-printf("arg_num=%d env_num=%d\n",arg_num,env_num);
+//printf("arg_num=%d env_num=%d\n",arg_num,env_num);
 /*for(int i=0;i<arg_num;i++)
 {
   printf("arg[%d]:%s\n",i,exec_argv[i]);
