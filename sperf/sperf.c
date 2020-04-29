@@ -51,7 +51,7 @@ void print_message()
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
   printf("ENV:\n");
-  for(int i=0;i<arg_num;i++)
+  for(int i=0;i<env_num;i++)
   printf("env[%d]:%s\n",i,exec_envp[i]);
 }
 
