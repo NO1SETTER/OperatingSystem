@@ -25,7 +25,7 @@ char **ptr=environ;
 while(*ptr)
   {
     if(strlen(*ptr)>=5)
-    {assert(0);
+    {printf("%s\n",*ptr);
       if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
     {path==*ptr;
     break;}
