@@ -9,6 +9,7 @@
 
 extern char **environ;
 char *path;//path环境变量
+char Path[200];
 char *exec_argv[100];//最多传一百个参数
 char *exec_env[100];
 char env[100][1000];
@@ -76,7 +77,7 @@ char **ptr=environ;
     }
     ptr++;
   }
-
+strcpy(Path,path);
 strtok(path,"=");
 char *s;
 int pos=0;
@@ -85,6 +86,8 @@ int pos=0;
     sprintf(env[pos],"%s",s);
   }
 env_num=pos;
+exec_env[0]=Path;
+exec_env[1]=NULL;
 }
 
 void print_message()
@@ -94,7 +97,7 @@ void print_message()
   printf("arg[%d]:%s\n",i,exec_argv[i]);
   printf("%d ENV:\n",env_num);
   for(int i=0;i<env_num;i++)
-  printf("env[%d]:%s\n",i,exec_env[i]);
+  printf("env[%d]:%s\n",i,env[i]);
   printf("Strace at %s\n",strace_path);
 }
 
@@ -155,14 +158,3 @@ for(int i=0;i<env_num;i++)
 }
 }
 
-void modify_path()
-{
-  char temp[200];
-  for(int i=0;i<env_num;i++)
-  {
-    strcpy(temp,env[i]);
-    sprintf(env[i],"PATH=%s",temp);
-    exec_env[i]=env[i];
-  }
-  exec_env[env_num]=NULL;
-}
