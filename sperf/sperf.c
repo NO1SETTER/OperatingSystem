@@ -73,13 +73,10 @@ char **ptr=environ;
 
 strtok(path,"=");
 char *s;
-char temp[200]="PATH=";
 int pos=0;
   for(;(s=strtok(NULL,":"))!=NULL;pos++)
   {
-    strcat(temp,s);
-    exec_envp[pos]=temp;
-    strcpy(temp,"PATH=");
+    sprintf(exec_envp[pos],"PATH=%s",s);
   }
 env_num=pos;
 }
