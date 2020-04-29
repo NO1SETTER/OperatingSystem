@@ -40,6 +40,7 @@ int pos=0;
   {
     printf("%s\n",s);
     exec_envp[pos]=s;
+      printf("%s\n",exec_envp[pos]);
   }
 env_num=pos;
 
