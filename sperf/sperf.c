@@ -25,15 +25,15 @@ char **ptr=environ;
 while(*ptr)
   {
     if(strlen(*ptr)>=5)
-    {printf("%s\n",*ptr);
-      if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
-    {path==*ptr;
-    break;}
+    { if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
+      {path==*ptr;
+      break;}
     }
     ptr++;
   }
 assert(0);
 exec_envp[0] = strtok(path,":");
+assert(0);
 char *s;
 for(int i=1;(s=strtok(NULL,":"))!=NULL;i++)
 {
