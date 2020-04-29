@@ -19,10 +19,12 @@ char strace_path[50];
 void parse_args_envp(int argc,char **argv);
 void print_message();
 void find_strace_path();
+void modify_path();//修改环境变量的版本
 
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
+  modify_path();
   print_message();
 
   /*char *exec_argv[] = { "strace", "ls", NULL, };
@@ -83,8 +85,6 @@ int pos=0;
     sprintf(env[pos],"%s",s);
   }
 env_num=pos;
-exec_env[0]=path;
-exec_env[1]=NULL;
 }
 
 void print_message()
@@ -92,7 +92,7 @@ void print_message()
   printf("%d ARGS:\n",arg_num);
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
-  printf("%d ENV:\n",env_num);
+  printf("%d ENV:\n",env[i]);
   for(int i=0;i<env_num;i++)
   printf("env[%d]:%s\n",i,exec_env[i]);
   printf("Strace at %s\n",strace_path);
@@ -123,7 +123,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
       {
       strcat(base,"/");
       strcat(base,ptr->d_name);
-      strcpy(strace_path,base);
+      strcpy(strace_path,basepath);
         get_strace=1;
       }
     }
@@ -153,4 +153,16 @@ for(int i=0;i<env_num;i++)
   if(get_strace) break;
   get_strace=0;
 }
+}
+
+void modify_path()
+{
+  char temp[200];
+  for(int i=0;i<env_num;i++)
+  {
+    strcpy(temp,env[i]);
+    sprintf(env[i],"PATH=%s",temp);
+    exec_env[i]=env[i];
+  }
+  exec_env[env_num]=NULL;
 }
