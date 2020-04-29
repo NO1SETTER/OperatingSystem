@@ -13,16 +13,17 @@ char *path;
 char *command;
 char *exec_argv[10];//最多传十个参数
 char *exec_envp[1000];
-
+int arg_num;
+int env_num;
 void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解析了
 {
 command=argv[1];
 for(int i=2;i<argc;i++)
 exec_argv[i-1]=argv[i];
 exec_argv[argc-1]=NULL;
-
+arg_num=argc-2;
 char **ptr=environ;
-while(*ptr)
+  while(*ptr)
   {
     if(strlen(*ptr)>=5)
     { if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
@@ -34,20 +35,22 @@ while(*ptr)
 
 strtok(path,"=");
 char *s;
-  for(int i=0;(s=strtok(NULL,":"))!=NULL;i++)
+int pos=0;
+  for(;(s=strtok(NULL,":"))!=NULL;pos++)
   {
-    exec_envp[i]=s;
+    exec_envp[pos]=s;
   }
+env_num=i;
 
-for(int i=0;exec_argv[i]!=NULL;i++)
+for(int i=0;i<arg_num;i++)
 {
   printf("arg[%d]:%s\n",i,exec_argv[i]);
 }
 
-for(int i=0;exec_envp[i]!=NULL;i++)
+for(int i=0;i<env_num;i++)
 {
   printf("env[%d]:%s",i,exec_envp[i]);
-}
+}*/
 
 }
 
