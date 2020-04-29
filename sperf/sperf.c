@@ -90,12 +90,11 @@ exec_env[1]=NULL;
 
 void print_message()
 {
-  printf("%d ARGS:\n",arg_num);
+  printf("%d EXEC_ARGS:\n",arg_num);
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
   printf("%d ENV:\n",env_num);
-  for(int i=0;i<1;i++)
-  printf("env[%d]:%s\n",i,env[i]);
+  printf("EXEC_ENV:%s\n",exec_env[0]);
   printf("Strace at %s\n",strace_path);
 }
 
