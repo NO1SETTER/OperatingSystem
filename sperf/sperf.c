@@ -98,7 +98,7 @@ int get_strace=0;
 void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 {
   //assert(0);
-  printf("basepeth: %s\n",basepath);
+  printf("basepath: %s\n",basepath);
   DIR* dir;
   struct dirent* ptr;
   char base[200];
@@ -138,7 +138,7 @@ memset(basepath,0,sizeof(basepath));
 getcwd(basepath,sizeof(basepath));
 read_all_file(basepath);
 if(get_strace) return;
-
+assert(0);
 get_strace=0;
 for(int i=0;i<env_num;i++)
 {
