@@ -79,7 +79,7 @@ int pos=0;
   {
     strcat(temp,s);
     exec_envp[pos]=temp;
-    strcpy(temp,"PATH=");.
+    strcpy(temp,"PATH=");
   }
 env_num=pos;
 }
