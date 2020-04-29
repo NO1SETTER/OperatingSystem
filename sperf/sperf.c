@@ -13,7 +13,7 @@ extern char **environ;
 char *path;//path环境变量
 char *exec_argv[100];//最多传一百个参数
 char *exec_env[100];
-char exec_env[100][1000];
+char env[100][1000];
 int arg_num;
 int env_num;
 char strace_path[50];
@@ -83,7 +83,7 @@ char *s;
 int pos=0;
   for(;(s=strtok(NULL,":"))!=NULL;pos++)
   {
-    sprintf(exec_env[pos],"%s",s);
+    sprintf(env[pos],"%s",s);
   }
 env_num=pos;
 }
@@ -149,7 +149,7 @@ if(get_strace) return;
 get_strace=0;
 for(int i=0;i<env_num;i++)
 {
-  strcpy(basepath,exec_env[i]);
+  strcpy(basepath,env[i]);
   read_all_file(basepath);
   if(get_strace) break;
   get_strace=0;
@@ -161,9 +161,9 @@ void modify_path()
   char temp[200];
   for(int i=0;i<env_num;i++)
   {
-    strcpy(temp,exec_env[i]);
-    sprintf(exec_env[i],"PATH=%s",temp);
-    exec_env[i]=exec_env[i];
+    strcpy(temp,env[i]);
+    sprintf(env[i],"PATH=%s",temp);
+    exec_env[i]=env[i];
   }
   exec_env[env_num]=NULL;
 }
