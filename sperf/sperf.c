@@ -102,7 +102,11 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
   struct dirent* ptr;
   char base[200];
   strcpy(base,basepath);
-  dir=opendir(basepath);
+  if(dir=opendir(basepath)==NULL)
+  {
+    printf("Failed open %s\n",basepath);
+    assert(0);
+  }
   assert(dir);
   while((ptr=readdir(dir))!=NULL)
   {
