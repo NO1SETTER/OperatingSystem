@@ -19,12 +19,10 @@ char strace_path[50];
 void parse_args_envp(int argc,char **argv);
 void print_message();
 void find_strace_path();
-void modify_path();//修改环境变量的版本
 
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
-  modify_path();
   print_message();
 
   /*char *exec_argv[] = { "strace", "ls", NULL, };
