@@ -38,6 +38,7 @@ char *s;
 int pos=0;
   for(;(s=strtok(NULL,":"))!=NULL;pos++)
   {
+    printf("%s\n",s);
     exec_envp[pos]=s;
   }
 env_num=pos;
