@@ -156,6 +156,10 @@ for(int i=0;i<env_num;i++)
 
 void modify_path()
 {
+  char temp[200];
   for(int i=0;i<env_num;i++)
-  sprintf(exec_envp[i],"PATH=%s",exec_envp[i]);
+  {
+    strcpy(temp,exec_envp[i]);
+    sprintf(exec_envp[i],"PATH=%s",temp);
+  }
 }
