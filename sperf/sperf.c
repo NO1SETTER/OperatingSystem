@@ -25,7 +25,6 @@ void modify_path();//修改环境变量的版本
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
-  modify_path();
   print_message();
 
   /*char *exec_argv[] = { "strace", "ls", NULL, };
@@ -65,7 +64,6 @@ for(int i=1;i<argc;i++)
 exec_argv[i]=argv[i];
 exec_argv[argc]=NULL;
 arg_num=argc;
-
 
 char **ptr=environ;
   while(*ptr)
