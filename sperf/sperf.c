@@ -36,7 +36,6 @@ strtok(path,"=");
 char *s;
   for(int i=0;(s=strtok(NULL,":"))!=NULL;i++)
   {
-    printf("%s\n",s);
     exec_envp[i]=s;
   }
 
