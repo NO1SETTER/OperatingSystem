@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <assert.h>
 
 extern char **environ;
 
@@ -20,6 +21,7 @@ for(int i=2;i<argc;i++)
 exec_argv[i-1]=argv[i];
 exec_argv[argc-1]=NULL;
 
+assert(0);
 char **ptr=environ;
 while(*ptr)
   {
