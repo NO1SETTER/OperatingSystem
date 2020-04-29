@@ -21,10 +21,9 @@ for(int i=2;i<argc;i++)
 exec_argv[i-1]=argv[i];
 exec_argv[argc-1]=NULL;
 
-assert(0);
 char **ptr=environ;
 while(*ptr)
-  {
+  {assert(0);
     if(strlen(*ptr)>=5)
     {if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
     {path==*ptr;
