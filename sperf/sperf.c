@@ -54,7 +54,7 @@ printf("arg_num=%d env_num=%d\n",arg_num,env_num);
 
 
 for(int i=0;i<env_num;i++)
-{ 
+{ assert(0);
   printf("env[%d]:%s",i,exec_envp[i]);
 }
 
