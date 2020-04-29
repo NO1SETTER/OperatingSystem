@@ -33,6 +33,7 @@ while(*ptr)
   }
 
 exec_envp[0] = strtok(path,":");
+printf("%s\n",exec_envp);
 assert(0);
 char *s;
 for(int i=1;(s=strtok(NULL,":"))!=NULL;i++)
