@@ -6,9 +6,7 @@
 #include <string.h>
 #include <assert.h>
 #include <dirent.h>
-#define STDIN 0
-#define STDOUT 1
-#define STDERR 2
+
 extern char **environ;
 char *path;//path环境变量
 char Path[200];
@@ -43,8 +41,8 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  dup2(STDOUT,pipefd[1]);
-  dup2(STDIN,pipefd[0]);
+  dup2(STDOUT_FILENO,pipefd[1]);
+  dup2(STDIN_FILENO,pipefd[0]);
   cpid=fork();
   if(cpid == -1)
   {
