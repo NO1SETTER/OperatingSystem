@@ -19,7 +19,9 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
 {
 command=argv[1];
 for(int i=2;i<argc;i++)
-exec_argv[i-1]=argv[i];
+{exec_argv[i-2]=argv[i];
+printf("[][]%s\n",exec_argv[i-2]);
+}
 exec_argv[argc-1]=NULL;
 arg_num=argc-2;
 char **ptr=environ;
@@ -50,7 +52,7 @@ for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
 }
 
-assert(0);
+
 for(int i=0;i<env_num;i++)
 { assert(0);
   printf("env[%d]:%s",i,exec_envp[i]);
