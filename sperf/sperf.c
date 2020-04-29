@@ -32,10 +32,14 @@ while(*ptr)
     ptr++;
   }
 
-printf("PATH=%s\n",path);
+printf("%s\n",path);
 exec_envp[0] = strtok(path,":");
-for(int i=1;(exec_envp[i]=strtok(NULL,":"))!=NULL;i++);
 
+char *s;
+for(int i=1;(s=strtok(NULL,":"))!=NULL;i++)
+{
+  exec_envp[i]=s;
+}
 }
 
 int main(int argc, char *argv[]) {
