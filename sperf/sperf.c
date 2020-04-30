@@ -52,7 +52,8 @@ int main(int argc, char *argv[]) {
   if(cpid==0)//child reads from pipefd[0]
   {
     close(pipefd[1]);
-    dup2(pipefd[0],STDIN_FILENO);
+    int ret=dup2(pipefd[0],STDIN_FILENO);
+    assert(ret!=-1);
     char buf;
     while(read(pipefd[0],&buf,1)>0)
     {printf("READ %c ",buf);}
@@ -60,7 +61,8 @@ int main(int argc, char *argv[]) {
   else//parent writes to pipefd[1]
   {
     close(pipefd[0]);
-    dup2(pipefd[1],STDOUT_FILENO);
+    int ret=dup2(pipefd[1],STDOUT_FILENO);
+    assert(ret!=-1);
     execve(strace_path,exec_argv,exec_env);
   }
 
