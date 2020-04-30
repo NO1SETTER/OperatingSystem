@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     int ret=dup2(pipefd[1],STDOUT_FILENO);
     assert(ret!=-1);
     printf("%d\n\n",ret);
-    execve(strace_path,exec_argv,exec_env);
+    //execve(strace_path,exec_argv,exec_env);
   }
 
 
