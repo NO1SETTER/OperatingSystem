@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     close(pipefd[1]);
     printf("\n\nChild file descriptor turned from %d to",pipefd[0]);
     int ret=dup2(pipefd[0],STDIN_FILENO);
-    assert(ret!=-1);
+    assert(ret==STDIN_FILENO);
     printf("%d\n\n",ret);
     char buf;
     //while(read(pipefd[0],&buf,1)>0)
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     //close(pipefd[0]);
     printf("\n\nParent file descriptor turned from %d to",pipefd[0]);
     int ret=dup2(pipefd[1],STDOUT_FILENO);
-    assert(ret!=-1);
+    assert(ret==STDOUT_FILENO);
     printf("%d\n\n",ret);
     //execve(strace_path,exec_argv,exec_env);
   }
