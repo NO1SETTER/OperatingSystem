@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
           }
           len=0;
           gettimeofday(&nowtime,NULL);
-          if(nowtime.tv_usec-pretime.tv_usec>100000)
+          if(nowtime.tv_usec-pretime.tv_usec>1000000)
           {
             pretime=nowtime;
             break;
