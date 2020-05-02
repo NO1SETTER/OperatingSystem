@@ -28,7 +28,11 @@ struct SYSCTRL
   double t;
 }sysctrl[1000];
 int sys_num = 0;//已出现的系统调用
-//bool syscmp()
+bool syscmp(SYSCTRL a,SYSCTRL b);
+{
+  return a.t>b.t;
+}
+
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
@@ -119,6 +123,7 @@ int main(int argc, char *argv[]) {
         len=0;
       }
     }
+    sort(sysctrl,sysctrl+n,syscmp);
   }
   else//parent writes to pipefd[1]
   {
