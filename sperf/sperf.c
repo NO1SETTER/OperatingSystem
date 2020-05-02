@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
         }
         for(int i=0,pos;i<len;i++)
         {
-         if(buffer[i])=='<');
+         if(buffer[i])=='<')
            pos=i;
           if(i>pos)
            {
