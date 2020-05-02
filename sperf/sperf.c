@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
              tstr[i-pos-1]=buffer[i];
              else
              {
-             tstr[i]='\0';
+             tstr[i]='/0';
              printf("Pos=%d i=%d\n",pos,i);
              }
            }
