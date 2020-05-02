@@ -150,11 +150,11 @@ int main(int argc, char *argv[]) {
     //printf("sys_num=%d\n",sys_num);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
     //printf("TOTAL TIME=%f\n",total);
-   // printf("Time #%d\n",ct++);
+    printf("Time #%d\n",ct++);
     for(int i=0;i<5;i++)
     { 
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
-     // printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
+      printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }
     total=0;
     for(int i=0;i<sys_num;i++)//统计后清零
