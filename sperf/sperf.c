@@ -114,6 +114,7 @@ int main(int argc, char *argv[]) {
         if(pos==1000) t=0;
         else 
         t=atof(tstr);
+        total=total+t;
         printf("name=%s t=%f\n\n",name,t);
         int rec=0;
         for(int i=0;i<sys_num;i++)
