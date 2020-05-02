@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
           }
         }
       }
-    if(reachend) break;
+    
     printf("sys_num=%d\n",sys_num);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
     printf("TOTAL TIME=%f\n",total);
@@ -160,6 +160,7 @@ int main(int argc, char *argv[]) {
     total=0;
     for(int i=0;i<sys_num;i++)//统计后清零
       sysctrl[i].t=0;
+    if(reachend) break;
   }
   }
   else//parent writes to pipefd[1]
