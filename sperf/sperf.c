@@ -66,7 +66,6 @@ int main(int argc, char *argv[]) {
     perror("fork");
     exit(EXIT_FAILURE);
   }
-  assert(0);
   if(cpid==0)//child reads from pipefd[0]
   {
     close(pipefd[1]);
@@ -82,6 +81,7 @@ int main(int argc, char *argv[]) {
     int ct=1;
     while(1)
     {
+      assert(0);
       while(read(pipefd[0],&buf,1)>0)
       {
         if(buf!='\n') buffer[len++]=buf;
