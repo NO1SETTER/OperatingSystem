@@ -131,6 +131,7 @@ int main(int argc, char *argv[]) {
         len=0;
       }
     }
+    assert(0);
     qsort(sysctrl,sys_num,sizeof(sysctrl),syscmp);
     for(int i=0;i<5;i++)
     {
