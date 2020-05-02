@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     perror("fork");
     exit(EXIT_FAILURE);
   }
-
+  assert(0);
   if(cpid==0)//child reads from pipefd[0]
   {
     close(pipefd[1]);
