@@ -74,6 +74,8 @@ int main(int argc, char *argv[]) {
         printf("len=%d\n",len);
         char name[50];
         char tstr[20];
+        memset(name,0,sizeof(name));
+        memset(tstr,0,sizeof(tstr));
         double t;
         for(int i=0;i<len;i++)
         {
@@ -95,12 +97,12 @@ int main(int argc, char *argv[]) {
              tstr[i-pos-1]=buffer[i];
              else
              {
-             tstr[i]='/0';
+             tstr[i]='\0';
              printf("Pos=%d i=%d\n",pos,i);
              }
            }
         }
-        printf("name=%s t=%s\n\n",name,tstr);
+        printf("name=%s t=%s \n\n",name,tstr);
         
         len=0;
       }
