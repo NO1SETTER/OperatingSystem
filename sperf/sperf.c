@@ -37,7 +37,7 @@ static int syscmp(const void* ptr1,const void* ptr2)
 {
   SYSCTRL *a=(SYSCTRL *)ptr1;
   SYSCTRL *b=(SYSCTRL *)ptr2;
-  return a->t > b->t;
+  return a->t < b->t;
 }
 
 int main(int argc, char *argv[]) {
