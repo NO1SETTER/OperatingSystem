@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
       else
       {
         buffer[len]='0';
+        assert(buffer);
         printf("NMSL\n");
         len=0;
       }
