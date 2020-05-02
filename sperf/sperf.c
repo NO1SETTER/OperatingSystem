@@ -35,8 +35,8 @@ double total=0;//总时间
 int sys_num = 0;//已出现的系统调用
 static int syscmp(const void* ptr1,const void* ptr2)
 {
-  SYSCTRL *a=(SYSCTRL *)p1;
-  SYSCTRL *b=(SYSCTRL *)p2;
+  SYSCTRL *a=(SYSCTRL *)ptr1;
+  SYSCTRL *b=(SYSCTRL *)ptr2;
   return a->t>b->t;
 }
 
