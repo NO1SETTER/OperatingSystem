@@ -132,7 +132,6 @@ int main(int argc, char *argv[]) {
       }
       printf("buf = %c\n",buf);
     }
-    assert(0);
     
     qsort(sysctrl,sys_num,sizeof(sysctrl),syscmp);
     for(int i=0;i<5;i++)
