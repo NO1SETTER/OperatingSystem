@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
             sys_num=sys_num+1;
           }
           len=0;
-          gettimeofday(&nowtime);
+          gettimeofday(&nowtime,NULL);
           if(nowtime.tv_usec-pretime.tv_usec)
           {
             pretime=nowtime;
