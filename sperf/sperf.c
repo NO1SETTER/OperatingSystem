@@ -87,7 +87,8 @@ int main(int argc, char *argv[]) {
             break;
           }
         }
-        for(int i=0,pos=1000;i<len;i++)
+        int pos=1000;
+        for(int i=0;i<len;i++)
         {
          if(buffer[i]=='<')
            pos=i;
@@ -96,14 +97,12 @@ int main(int argc, char *argv[]) {
              if(buffer[i]!='>')
              tstr[i-pos-1]=buffer[i];
              else
-             {
              tstr[i]='\0';
-             printf("Pos=%d i=%d\n",pos,i);
-             }
            }
         }
-        printf("name=%s t=%s \n\n",name,tstr);
-        
+        if(pos==1000) t=0;
+        else 
+        t=atof(tstr);
         len=0;
       }
     }
