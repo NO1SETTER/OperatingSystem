@@ -44,7 +44,7 @@ static int syscmp(const void* ptr1,const void* ptr2)
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
-  //print_message();
+  print_message();
   for(int i=0;i<1000;i++)
   {
     memset(sysctrl[i].name,0,sizeof(sysctrl[i].name));
