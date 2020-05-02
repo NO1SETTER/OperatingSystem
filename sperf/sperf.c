@@ -29,8 +29,9 @@ typedef struct
 }SYSCTRL;
 
 SYSCTRL sysctrl[1000];
+
 int sys_num = 0;//已出现的系统调用
-int syscmp(SYSCTRL a,SYSCTRL b);
+int syscmp(SYSCTRL a,SYSCTRL b)
 {
   return a.t>b.t;
 }
