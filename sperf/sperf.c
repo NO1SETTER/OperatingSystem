@@ -156,10 +156,10 @@ int main(int argc, char *argv[]) {
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
       printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }*/
-    for(int i=0;i<6;i++)
-    { printf("\033[1A");
-      printf("\r\033[K");
-    }
+    //for(int i=0;i<6;i++)
+    //{ printf("\033[1A");
+    //  printf("\r\033[K");
+    //}
 
     printf("\nTime #%d\n",ct++);
     for(int i=0;i<5;i++)
