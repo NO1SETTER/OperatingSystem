@@ -119,7 +119,9 @@ int main(int argc, char *argv[]) {
         for(int i=0;i<sys_num;i++)
         {
           if(strcmp(name,sysctrl[i].name)==0)
-          sysctrl[i].t=sysctrl[i].t+t;
+          {sysctrl[i].t=sysctrl[i].t+t;
+          rec=1;
+          }
         }
         if(!rec)
         {
