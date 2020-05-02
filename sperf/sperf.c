@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解析了
 {
 exec_argv[0]="strace";
-exec_argv[1]="-T"
+exec_argv[1]="-T";
 for(int i=1;i<argc;i++)
 exec_argv[i+1]=argv[i];
 exec_argv[argc+1]=NULL;
