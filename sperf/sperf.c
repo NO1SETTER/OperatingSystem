@@ -22,13 +22,15 @@ void print_message();
 void find_strace_path();
 void modify_path();//修改环境变量的版本
 
-struct SYSCTRL
+typedef struct
 {
   char name[50];
   double t;
-}sysctrl[1000];
+}SYSCTRL;
+
+SYSCTRL sysctrl[1000];
 int sys_num = 0;//已出现的系统调用
-bool syscmp(SYSCTRL a,SYSCTRL b);
+int syscmp(SYSCTRL a,SYSCTRL b);
 {
   return a.t>b.t;
 }
