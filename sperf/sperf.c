@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
         len=0;
       }
     }
-    sort(sysctrl,sysctrl+n,syscmp);
+    sort(sysctrl,sysctrl+sys_num,syscmp);
   }
   else//parent writes to pipefd[1]
   {
