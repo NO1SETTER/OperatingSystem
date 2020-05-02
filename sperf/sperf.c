@@ -59,7 +59,6 @@ int main(int argc, char *argv[]) {
     perror("pipe");
     exit(EXIT_FAILURE);
   }
-  assert(0);
   cpid=fork();
   if(cpid == -1)
   {
