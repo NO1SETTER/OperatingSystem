@@ -147,15 +147,7 @@ int main(int argc, char *argv[]) {
         }
       }
     
-    //printf("sys_num=%d\n",sys_num);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
-    //printf("TOTAL TIME=%f\n",total);
-    /*printf("Show all\n");
-    for(int i=0;i<sys_num;i++)
-    { 
-      sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
-      printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
-    }*/
     if(ct!=1)
     {for(int i=0;i<6;i++)
     { printf("\033[1A");
