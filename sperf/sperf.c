@@ -55,8 +55,8 @@ int main(int argc, char *argv[]) {
     int ret=dup2(pipefd[0],STDIN_FILENO);
     assert(ret==STDIN_FILENO);
     char buf;
-    while(read(pipefd[0],&buf,1)>0)
-    {printf("%c",buf);}
+    //while(read(pipefd[0],&buf,1)>0)
+    //{printf("%c",buf);}
   }
   else//parent writes to pipefd[1]
   {
