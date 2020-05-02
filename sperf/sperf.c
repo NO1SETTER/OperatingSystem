@@ -157,8 +157,8 @@ int main(int argc, char *argv[]) {
       printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }*/
     for(int i=0;i<6;i++)
-    {printf("\r\033[K");
-    printf("\033[1A");
+    { printf("\033[1A");
+      printf("\r\033[K");
     }
 
     printf("\nTime #%d\n",ct++);
