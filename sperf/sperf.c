@@ -37,7 +37,6 @@ static int syscmp(const void* ptr1,const void* ptr2)
 {
   SYSCTRL *a=(SYSCTRL *)ptr1;
   SYSCTRL *b=(SYSCTRL *)ptr2;
-  assert(0);
   return a->t > b->t;
 }
 
@@ -136,7 +135,7 @@ int main(int argc, char *argv[]) {
     }
     
     printf("sys_num=%d\n",sys_num);
-    qsort(sysctrl,sys_num,sizeof(sysctrl),syscmp);
+    qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
     for(int i=0;i<5;i++)
     { 
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
