@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     perror("fork");
     exit(EXIT_FAILURE);
   }
-  if(cpid==0)//child reads from pipefd[0]
+  if(cpid!= 0)//parent reads from pipefd[0]
   {
     close(pipefd[1]);
     int ret=dup2(pipefd[0],STDIN_FILENO);
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
     if(reachend) break;
   }
   }
-  else//parent writes to pipefd[1]
+  else//child writes to pipefd[1]
   {
     close(pipefd[0]);
     int ret=dup2(pipefd[1],STDERR_FILENO);
