@@ -103,6 +103,7 @@ int main(int argc, char *argv[]) {
         if(pos==1000) t=0;
         else 
         t=atof(tstr);
+        printf("name=%s t=%f\n",name,t);
         len=0;
       }
     }
