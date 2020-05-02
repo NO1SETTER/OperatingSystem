@@ -149,19 +149,19 @@ int main(int argc, char *argv[]) {
       }
     
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
-    if(ct!=1)
+    /*if(ct!=1)
     {for(int i=0;i<6;i++)
     { printf("\033[1A");
       printf("\r\033[K");
     }
-    }
+    }*/
     printf("Time #%d\n",ct++);
     for(int i=0;i<5;i++)
     { 
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
       printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }
-    fflush(stdout);
+    //fflush(stdout);
     total=0;
     for(int i=0;i<sys_num;i++)//统计后清零
       sysctrl[i].t=0;
