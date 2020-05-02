@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
     struct timeval nowtime; 
     gettimeofday(&pretime,NULL);
     int reachend=0;//是否程序结束
+    int ct=1;
     while(1)
     {
       while(read(pipefd[0],&buf,1)>0)
@@ -149,13 +150,13 @@ int main(int argc, char *argv[]) {
         }
       }
     
-    printf("sys_num=%d\n",sys_num);
+    //printf("sys_num=%d\n",sys_num);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
-    printf("TOTAL TIME=%f\n",total);
+    //printf("TOTAL TIME=%f\n",total);
     for(int i=0;i<5;i++)
     { 
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
-      printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
+      printf("Time #%d\n%s(%d%%)\n",ct++,sysctrl[i].name,sysctrl[i].ratio);
     }
     total=0;
     for(int i=0;i<sys_num;i++)//统计后清零
