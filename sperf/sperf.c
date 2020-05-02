@@ -22,23 +22,24 @@ void print_message();
 void find_strace_path();
 void modify_path();//修改环境变量的版本
 
-typedef struct
+struct SYSCTRL
 {
   char name[50];
   double t;
 }sysctrl[1000];
 int sys_num = 0;//已出现的系统调用
-
+//bool syscmp()
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
   print_message();
 
-  /*char *exec_argv[] = { "strace", "ls", NULL, };
-  char *exec_env[] = { "PATH=/bin", NULL, };
-  execve("strace",          exec_argv, exec_env);
-  execve("/bin/strace",     exec_argv, exec_env);
-  execve("/usr/bin/strace", exec_argv, exec_env);*/
+  for(int i=0;i<1000;i++)
+  {
+    memset(sysctrl[i].name,0,sizeof(sysctrl[i].name));
+    sysctrl[i].t=0;
+  }
+
   int pipefd[2];
   pid_t cpid;
   
@@ -103,6 +104,18 @@ int main(int argc, char *argv[]) {
         else 
         t=atof(tstr);
         printf("name=%s t=%f\n\n",name,t);
+        int rec=0;
+        for(int i=0;i<sys_num;i++)
+        {
+          if(strcmp(name,sysctrl[i].name)==0)
+          sysctrl[i].t=sysctrl[i].t+t;
+        }
+        if(!rec)
+        {
+          strcpy(sysctrl[sys_num].name,name);
+          sysctrl[sys_num].t=t;
+          sys_num=sys_num+1;
+        }
         len=0;
       }
     }
