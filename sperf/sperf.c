@@ -22,6 +22,8 @@ void print_message();
 void find_strace_path();
 void modify_path();//修改环境变量的版本
 
+void test(char *s)
+{return;}
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
@@ -63,7 +65,7 @@ int main(int argc, char *argv[]) {
       else
       {
         buffer[len]='0';
-        assert(buffer);
+        test(buffer);
         printf("NMSL\n");
         len=0;
       }
