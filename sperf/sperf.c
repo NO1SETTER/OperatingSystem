@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
   else//parent writes to pipefd[1]
   {
     close(pipefd[0]);
-    int ret=dup2(pipefd[1],STDOUT_FILENO);
+    int ret=dup2(pipefd[1],STDERR_FILENO);
     assert(ret==STDOUT_FILENO);
     execve(strace_path,exec_argv,exec_env);
   }
