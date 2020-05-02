@@ -160,7 +160,7 @@ int main(int argc, char *argv[]) {
     //{ printf("\033[1A");
     //  printf("\r\033[K");
     //}
-
+assert(0);
     printf("\nTime #%d\n",ct++);
     for(int i=0;i<5;i++)
     { 
