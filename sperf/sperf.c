@@ -137,10 +137,11 @@ int main(int argc, char *argv[]) {
     
     printf("sys_num=%d\n",sys_num);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
+    printf("TOTAL TIME=%f\n",total);
     for(int i=0;i<5;i++)
     { 
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
-      printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
+      printf("%s(%f)(%d%%)\n",sysctrl[i].name,sysctrl[i].t,sysctrl[i].ratio);
     }
   }
   else//parent writes to pipefd[1]
