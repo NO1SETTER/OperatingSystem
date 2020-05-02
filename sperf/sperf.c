@@ -130,9 +130,9 @@ int main(int argc, char *argv[]) {
 
         len=0;
       }
-      printf("buf = %c\n",buf);
     }
     
+    printf("sys_num=%d\n",sys_num);
     qsort(sysctrl,sys_num,sizeof(sysctrl),syscmp);
     for(int i=0;i<5;i++)
     {
