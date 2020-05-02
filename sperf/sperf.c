@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
     for(int i=0;i<5;i++)
     { 
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
-      printf("%s(%f)(%d%%)\n",sysctrl[i].name,sysctrl[i].t,sysctrl[i].ratio);
+      printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }
   }
   else//parent writes to pipefd[1]
