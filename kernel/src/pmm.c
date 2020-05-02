@@ -37,11 +37,10 @@ void sp_lockinit(lock_t* lk,const char *name,int id)
 void sp_lock(lock_t* lk,int log)
 {
   while(_atomic_xchg(&lk->locked,1))
-  { //ssp_lock(&spc_lock);
+  { 
     sp_lock(&print_lock,0);
     printf("CPU#%d Acquiring lock  %s\n",_cpu(),lk->name);
     sp_unlock(&print_lock,0);
-    //ssp_unlock(&spc_lock); 
   }
   if(log)
   {
