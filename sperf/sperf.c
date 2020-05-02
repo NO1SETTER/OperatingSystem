@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
         if(buf!='\n') buffer[len++]=buf;
         else//读到一行终点
         {
+          printf("%c",buf);
           buffer[len]='\0';//读取了一行的数据,进行分析
           if(buffer[0]=='+') 
           {reachend=1;
