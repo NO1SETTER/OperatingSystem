@@ -94,7 +94,9 @@ int main(int argc, char *argv[]) {
              if(buffer[i]!='>')
              tstr[i-pos-1]=buffer[i];
              else
+             {
              tstr[i]='\0';
+             printf("ha\n");}
            }
         }
         printf("name=%s t=%s\n\n",name,tstr);
