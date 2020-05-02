@@ -80,7 +80,6 @@ int main(int argc, char *argv[]) {
     int ct=1;
     while(1)
     {
-      assert(0);
       while(read(pipefd[0],&buf,1)>0)
       {
         if(buf!='\n') buffer[len++]=buf;
