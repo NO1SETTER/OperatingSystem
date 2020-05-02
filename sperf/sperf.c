@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
           }
           len=0;
           gettimeofday(&nowtime,NULL);
-          if(nowtime.tv_usec-pretime.tv_usec)
+          if(nowtime.tv_usec-pretime.tv_usec>100000)
           {
             pretime=nowtime;
             break;
@@ -157,6 +157,7 @@ int main(int argc, char *argv[]) {
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
       printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }
+    total=0;
     for(int i=0;i<sys_num;i++)//统计后清零
       sysctrl[i].t=0;
   }
