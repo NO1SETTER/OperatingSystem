@@ -55,8 +55,18 @@ int main(int argc, char *argv[]) {
     int ret=dup2(pipefd[0],STDIN_FILENO);
     assert(ret==STDIN_FILENO);
     char buf;
+    char buffer[1000];
+    int len=0;
     while(read(pipefd[0],&buf,1)>0)
-    {printf("%c",buf);}
+    {
+      if(buf!='\n') buffer[len++0='buf'];
+      else
+      {
+        buffer[len]='0';
+        printf("NMSL\n");
+        len=0;
+      }
+    }
   }
   else//parent writes to pipefd[1]
   {
