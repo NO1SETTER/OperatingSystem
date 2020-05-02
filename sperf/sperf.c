@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
     int len=0;
     while(read(pipefd[0],&buf,1)>0)
     {
-      if(buf!='\n') buffer[len++0='buf'];
+      if(buf!='\n') buffer[len++]=buf;
       else
       {
         buffer[len]='0';
