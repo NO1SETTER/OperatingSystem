@@ -96,7 +96,8 @@ int main(int argc, char *argv[]) {
              else
              {
              tstr[i]='\0';
-             printf("ha\n");}
+             printf("Pos=%d i=%d\n",pos,i);
+             }
            }
         }
         printf("name=%s t=%s\n\n",name,tstr);
