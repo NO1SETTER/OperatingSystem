@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
       while(read(pipefd[0],&buf,1)>0)
       {
         if(buf!='\n') buffer[len++]=buf;
-        else//读到一行重点
+        else//读到一行终点
         {
           buffer[len]='\0';//读取了一行的数据,进行分析
           if(buffer[0]=='+') 
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
           {
           if(buffer[i]=='<')
             pos=i;
-            if(i>pos)
+          if(i>pos)
             {
               if(buffer[i]!='>')
               tstr[i-pos-1]=buffer[i];
@@ -158,9 +158,7 @@ int main(int argc, char *argv[]) {
       printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }
     for(int i=0;i<sys_num;i++)//统计后清零
-    {
       sysctrl[i].t=0;
-    }
   }
   }
   else//parent writes to pipefd[1]
