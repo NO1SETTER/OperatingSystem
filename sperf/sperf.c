@@ -26,9 +26,11 @@ typedef struct
 {
   char name[50];
   double t;
+  double ratio;
 }SYSCTRL;
-
 SYSCTRL sysctrl[1000];
+SYSCTRL* maxfive[5];//记录最大的五个
+double total=0;//总时间
 
 int sys_num = 0;//已出现的系统调用
 static int syscmp(SYSCTRL* a,SYSCTRL* b)
@@ -45,8 +47,8 @@ int main(int argc, char *argv[]) {
   {
     memset(sysctrl[i].name,0,sizeof(sysctrl[i].name));
     sysctrl[i].t=0;
+    sysctrl[i].ratio=0;
   }
-
   int pipefd[2];
   pid_t cpid;
   
@@ -56,7 +58,6 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
- 
   cpid=fork();
   if(cpid == -1)
   {
@@ -84,7 +85,7 @@ int main(int argc, char *argv[]) {
         memset(name,0,sizeof(name));
         memset(tstr,0,sizeof(tstr));
         double t;
-        for(int i=0;i<len;i++)
+        for(int i=0;i<len;i++)//定位名字
         {
           if(buffer[i]!='(')
           name[i]=buffer[i];
@@ -95,7 +96,7 @@ int main(int argc, char *argv[]) {
           }
         }
         int pos=1000;
-        for(int i=0;i<len;i++)
+        for(int i=0;i<len;i++)//定位时间
         {
          if(buffer[i]=='<')
            pos=i;
@@ -123,10 +124,10 @@ int main(int argc, char *argv[]) {
           sysctrl[sys_num].t=t;
           sys_num=sys_num+1;
         }
+        
         len=0;
       }
     }
-    qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
   }
   else//parent writes to pipefd[1]
   {
@@ -143,34 +144,34 @@ int main(int argc, char *argv[]) {
 
 void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解析了
 {
-exec_argv[0]="strace";
-exec_argv[1]="-T";
-for(int i=1;i<argc;i++)
-exec_argv[i+1]=argv[i];
-exec_argv[argc+1]=NULL;
-arg_num=argc+1;
+  exec_argv[0]="strace";
+  exec_argv[1]="-T";
+  for(int i=1;i<argc;i++)
+  exec_argv[i+1]=argv[i];
+  exec_argv[argc+1]=NULL;
+  arg_num=argc+1;
 
-char **ptr=environ;
-  while(*ptr)
-  {
-    if(strlen(*ptr)>=5)
-    {  if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
-       {path=*ptr;
-       break;}
+  char **ptr=environ;
+    while(*ptr)
+    {
+      if(strlen(*ptr)>=5)
+      {  if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
+        {path=*ptr;
+        break;}
+      }
+      ptr++;
     }
-    ptr++;
-  }
-strcpy(Path,path);
-strtok(path,"=");
-char *s;
-int pos=0;
-  for(;(s=strtok(NULL,":"))!=NULL;pos++)
-  {
-    sprintf(env[pos],"%s",s);
-  }
-env_num=pos;
-exec_env[0]=Path;
-exec_env[1]=NULL;
+  strcpy(Path,path);
+  strtok(path,"=");
+  char *s;
+  int pos=0;
+    for(;(s=strtok(NULL,":"))!=NULL;pos++)
+    {
+      sprintf(env[pos],"%s",s);
+    }
+  env_num=pos;
+  exec_env[0]=Path;
+  exec_env[1]=NULL;
 }
 
 void print_message()
@@ -224,18 +225,18 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 
 void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
 {
-char basepath[200];
-memset(basepath,0,sizeof(basepath));
-getcwd(basepath,sizeof(basepath));
-read_all_file(basepath);
-if(get_strace) return;
-get_strace=0;
-for(int i=0;i<env_num;i++)
-{
-  strcpy(basepath,env[i]);
+  char basepath[200];
+  memset(basepath,0,sizeof(basepath));
+  getcwd(basepath,sizeof(basepath));
   read_all_file(basepath);
   if(get_strace) return;
   get_strace=0;
-}
+  for(int i=0;i<env_num;i++)
+  {
+    strcpy(basepath,env[i]);
+    read_all_file(basepath);
+    if(get_strace) return;
+    get_strace=0;
+  }
 }
 
