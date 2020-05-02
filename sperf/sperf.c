@@ -26,7 +26,7 @@ typedef struct
 {
   char name[50];
   double t;
-  double ratio;
+  int ratio;//比例取整
 }SYSCTRL;
 SYSCTRL sysctrl[1000];
 SYSCTRL* maxfive[5];//记录最大的五个
@@ -132,6 +132,11 @@ int main(int argc, char *argv[]) {
       }
     }
     qsort(sysctrl,sys_num,sizeof(sysctrl),syscmp);
+    for(int i=0;i<5;i++)
+    {
+      sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
+      printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
+    }
   }
   else//parent writes to pipefd[1]
   {
