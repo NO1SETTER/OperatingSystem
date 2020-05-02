@@ -22,6 +22,13 @@ void print_message();
 void find_strace_path();
 void modify_path();//修改环境变量的版本
 
+typedef struct
+{
+  char name[50];
+  double t;
+}sysctrl[1000];
+int sys_num = 0;//已出现的系统调用
+
 int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
@@ -62,8 +69,33 @@ int main(int argc, char *argv[]) {
       if(buf!='\n') buffer[len++]=buf;
       else
       {
-        buffer[len]='\0';
-        printf("%s\n\n",buffer);
+        buffer[len]='\0';//读取了一行的数据,进行分析
+        char name[50];
+        char tstr[20];
+        double t;
+        for(int i=0;i<len;i++)
+        {
+          if(buffer[i]!='(')
+          name[i]=buffer[i];
+          else
+          {
+            name[i]='\0';
+            break;
+          }
+        }
+        for(int i=0,pos;i<n;i++)
+        {
+         if(buffer[i])=='<';
+           pos=i;
+          if(i>pos)
+           {
+             if(buffer[i]!='>')
+             tstr[i-pos-1]=buffer[i];
+             else
+             tstr[i]='\0';
+           }
+        }
+        printf("name=%s t=%s\n",name,tstr);
         len=0;
       }
     }
