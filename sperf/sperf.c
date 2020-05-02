@@ -33,8 +33,10 @@ SYSCTRL* maxfive[5];//记录最大的五个
 double total=0;//总时间
 
 int sys_num = 0;//已出现的系统调用
-static int syscmp(SYSCTRL* a,SYSCTRL* b)
+static int syscmp(const void* ptr1,const void* ptr2)
 {
+  SYSCTRL *a=(SYSCTRL *)p1;
+  SYSCTRL *b=(SYSCTRL *)p2;
   return a->t>b->t;
 }
 
@@ -124,10 +126,11 @@ int main(int argc, char *argv[]) {
           sysctrl[sys_num].t=t;
           sys_num=sys_num+1;
         }
-        
+
         len=0;
       }
     }
+    qsort(sysctrl,sys_num,sizeof(sysctrl),syscmp);
   }
   else//parent writes to pipefd[1]
   {
