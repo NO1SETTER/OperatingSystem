@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #include <string.h>
 #include <assert.h>
 #include <dirent.h>
@@ -75,66 +76,79 @@ int main(int argc, char *argv[]) {
     char buf;
     char buffer[1000];
     int len=0;
-    while(read(pipefd[0],&buf,1)>0)
+    struct timeval pretime;
+    struct timeval nowtime; 
+    gettimeofday(&pretime,NULL);
+    int reachend=0;//是否程序结束
+    while(1)
     {
-      if(buf!='\n') buffer[len++]=buf;
-      else
+      while(read(pipefd[0],&buf,1)>0)
       {
-        buffer[len]='\0';//读取了一行的数据,进行分析
-        if(buffer[0]=='+') break;
-        //printf("%s\n",buffer);
-        char name[50];
-        char tstr[20];
-        memset(name,0,sizeof(name));
-        memset(tstr,0,sizeof(tstr));
-        double t;
-        for(int i=0;i<len;i++)//定位名字
+        if(buf!='\n') buffer[len++]=buf;
+        else//读到一行重点
         {
-          if(buffer[i]!='(')
-          name[i]=buffer[i];
-          else
+          buffer[len]='\0';//读取了一行的数据,进行分析
+          if(buffer[0]=='+') 
+          {reachend=1;
+          break;}
+          //printf("%s\n",buffer);
+          char name[50];
+          char tstr[20];
+          memset(name,0,sizeof(name));
+          memset(tstr,0,sizeof(tstr));
+          double t;
+          for(int i=0;i<len;i++)//定位名字
           {
-            name[i]='\0';
+            if(buffer[i]!='(')
+            name[i]=buffer[i];
+            else
+            {
+              name[i]='\0';
+              break;
+            }
+          }
+          int pos=1000;
+          for(int i=0;i<len;i++)//定位时间
+          {
+          if(buffer[i]=='<')
+            pos=i;
+            if(i>pos)
+            {
+              if(buffer[i]!='>')
+              tstr[i-pos-1]=buffer[i];
+              else
+              tstr[i]='\0';
+            }
+          }
+          if(pos==1000) t=0;
+          else 
+          t=atof(tstr);
+          total=total+t;
+          //printf("name=%s t=%f\n\n",name,t);
+          int rec=0;
+          for(int i=0;i<sys_num;i++)
+          {
+            if(strcmp(name,sysctrl[i].name)==0)
+            {sysctrl[i].t=sysctrl[i].t+t;
+            rec=1;
+            }
+          }
+          if(!rec)
+          {
+            strcpy(sysctrl[sys_num].name,name);
+            sysctrl[sys_num].t=t;
+            sys_num=sys_num+1;
+          }
+          len=0;
+          gettimeofday(&nowtime);
+          if(nowtime.tv_usec-pretime.tv_usec)
+          {
+            pretime=nowtime;
             break;
           }
         }
-        int pos=1000;
-        for(int i=0;i<len;i++)//定位时间
-        {
-         if(buffer[i]=='<')
-           pos=i;
-          if(i>pos)
-           {
-             if(buffer[i]!='>')
-             tstr[i-pos-1]=buffer[i];
-             else
-             tstr[i]='\0';
-           }
-        }
-        if(pos==1000) t=0;
-        else 
-        t=atof(tstr);
-        total=total+t;
-        //printf("name=%s t=%f\n\n",name,t);
-        int rec=0;
-        for(int i=0;i<sys_num;i++)
-        {
-          if(strcmp(name,sysctrl[i].name)==0)
-          {sysctrl[i].t=sysctrl[i].t+t;
-          rec=1;
-          }
-        }
-        if(!rec)
-        {
-          strcpy(sysctrl[sys_num].name,name);
-          sysctrl[sys_num].t=t;
-          sys_num=sys_num+1;
-        }
-
-        len=0;
       }
-    }
-    
+    if(reachend) break;
     printf("sys_num=%d\n",sys_num);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
     printf("TOTAL TIME=%f\n",total);
@@ -143,6 +157,11 @@ int main(int argc, char *argv[]) {
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
       printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }
+    for(int i=0;i<sys_num;i++)//统计后清零
+    {
+      sysctrl[i].t=0;
+    }
+  }
   }
   else//parent writes to pipefd[1]
   {
