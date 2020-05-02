@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
       {
         buffer[len]='\0';//读取了一行的数据,进行分析
         printf("%s\n",buffer);
+        printf("len=%d\n",len);
         char name[50];
         char tstr[20];
         double t;
