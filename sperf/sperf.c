@@ -175,12 +175,11 @@ int main(int argc, char *argv[]) {
     int ret=dup2(pipefd[1],STDERR_FILENO);
     assert(ret==STDERR_FILENO);
     execve(strace_path,exec_argv,exec_env);
-    printf("\n\nNMSL\nNMSL\n\n");
-    assert(0);
+    
   }
 
 
-  perror(argv[0]);
+  //perror(argv[0]);
   exit(EXIT_FAILURE);
 }
 
