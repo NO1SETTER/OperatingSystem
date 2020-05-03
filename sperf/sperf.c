@@ -21,7 +21,6 @@ char strace_path[50];
 void parse_args_envp(int argc,char **argv);
 void print_message();
 void find_strace_path();
-void modify_path();//修改环境变量的版本
 
 typedef struct
 {
@@ -67,8 +66,8 @@ int main(int argc, char *argv[]) {
   if(cpid!= 0)//parent reads from pipefd[0]
   {
     close(pipefd[1]);
-    //int ret=dup2(pipefd[0],STDIN_FILENO);
-    //assert(ret==STDIN_FILENO);
+    int ret=dup2(pipefd[0],STDIN_FILENO);
+    assert(ret==STDIN_FILENO);
     char buf;
     char buffer[1000];
     int len=0;
