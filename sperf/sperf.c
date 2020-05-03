@@ -84,11 +84,11 @@ int main(int argc, char *argv[]) {
         else//读到一行终点
         {
           buffer[len]='\0';//读取了一行的数据,进行分析
+          printf("%s\n",buffer);
           if(buffer[0]=='+') 
           {reachend=1;
           assert(0);
           break;}
-          //printf("%s\n",buffer);
           char name[50];
           char tstr[20];
           memset(name,0,sizeof(name));
