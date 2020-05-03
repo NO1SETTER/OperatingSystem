@@ -159,7 +159,7 @@ int main(int argc, char *argv[]) {
       sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
       printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
     }
-    //fflush(stdout);
+    fflush(stdout);
     total=0;
     for(int i=0;i<sys_num;i++)//统计后清零
       sysctrl[i].t=0;
