@@ -171,7 +171,7 @@ int main(int argc, char *argv[]) {
     close(pipefd[0]);
     //close(STDOUT_FILENO);
     //int rec=pipefd[1];
-    /*int ret=*/dup2(pipefd[1],STDERR_FILENO);
+    int ret=dup2(pipefd[1],STDERR_FILENO);
     assert(ret==STDERR_FILENO);
     execve(strace_path,exec_argv,exec_env);
     //perror("After execve");
