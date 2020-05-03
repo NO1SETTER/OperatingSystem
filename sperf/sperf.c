@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
           }
           len=0;
           gettimeofday(&nowtime,NULL);
-          if(nowtime.tv_usec-pretime.tv_usec>250000)
+          if(nowtime.tv_usec-pretime.tv_usec>500000)
           {
             pretime=nowtime;
             break;
