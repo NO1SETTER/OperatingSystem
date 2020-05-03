@@ -87,7 +87,6 @@ int main(int argc, char *argv[]) {
           //printf("%s\n",buffer);
           if(buffer[0]=='+') 
           {reachend=1;
-          assert(0);
           break;}
           char name[50];
           char tstr[20];
