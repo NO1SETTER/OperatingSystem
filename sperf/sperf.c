@@ -30,7 +30,6 @@ typedef struct
   int ratio;//比例取整
 }SYSCTRL;
 SYSCTRL sysctrl[1000];
-SYSCTRL* maxfive[5];//记录最大的五个
 double total=0;//总时间
 
 int sys_num = 0;//已出现的系统调用
@@ -85,7 +84,6 @@ int main(int argc, char *argv[]) {
         if(buf!='\n') buffer[len++]=buf;
         else//读到一行终点
         {
-          printf("%c",buf);
           buffer[len]='\0';//读取了一行的数据,进行分析
           if(buffer[0]=='+') 
           {reachend=1;
@@ -171,16 +169,16 @@ int main(int argc, char *argv[]) {
   else//child writes to pipefd[1]
   {
     close(pipefd[0]);
-    close(STDOUT_FILENO);
-    int rec=pipefd[1];
-    int ret=dup2(pipefd[1],STDERR_FILENO);
+    //close(STDOUT_FILENO);
+    //int rec=pipefd[1];
+    /*int ret=*/dup2(pipefd[1],STDERR_FILENO);
     assert(ret==STDERR_FILENO);
     execve(strace_path,exec_argv,exec_env);
-    perror("After execve");
+    //perror("After execve");
   }
 
 
-  //perror(argv[0]);
+  perror(argv[0]);
   exit(EXIT_FAILURE);
 }
 
