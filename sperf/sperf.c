@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
           buffer[len]='\0';//读取了一行的数据,进行分析
           if(buffer[0]=='+') 
           {reachend=1;
+          assert(0);
           break;}
           //printf("%s\n",buffer);
           char name[50];
