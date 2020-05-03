@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
   else//child writes to pipefd[1]
   {
     close(pipefd[0]);
-    //close(STDOUT_FILENO);
+    close(STDOUT_FILENO);
     //int rec=pipefd[1];
     int ret=dup2(pipefd[1],STDERR_FILENO);
     assert(ret==STDERR_FILENO);
