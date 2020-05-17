@@ -166,6 +166,8 @@ int main(int argc, char *argv[]) {
       sysctrl[i].t=0;
     if(reachend) break;
   }
+  for(int i=0;i<80;i++)
+  printf("\0");
   }
   else//child writes to pipefd[1]
   {
