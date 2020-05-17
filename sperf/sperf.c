@@ -164,7 +164,6 @@ int main(int argc, char *argv[]) {
       sysctrl[i].t=0;
     if(reachend) break;
   }
-  assert(0);
   }
   else//child writes to pipefd[1]
   {
