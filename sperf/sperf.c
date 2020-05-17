@@ -71,9 +71,9 @@ int main(int argc, char *argv[]) {
     char buf;
     char buffer[1000];
     int len=0;
-    struct timeval pretime;
-    struct timeval nowtime; 
-    gettimeofday(&pretime,NULL);
+    time_t pretime;
+    time_t nowtime; 
+    time(&pretime);
     int reachend=0;//是否程序结束
     int ct=1;
     while(1)
@@ -136,9 +136,9 @@ int main(int argc, char *argv[]) {
             sys_num=sys_num+1;
           }
           len=0;
-          gettimeofday(&nowtime,NULL);
-          printf("nowtime=%ld\n",nowtime.tv_usec);
-          if(nowtime.tv_usec-pretime.tv_usec>500000)
+          time(%nowtime);
+          //printf("nowtime=%ld\n",nowtime.tv_usec);
+          if(nowtime-pretime>=1)
           {
             pretime=nowtime;
             break;
