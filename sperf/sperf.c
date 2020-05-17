@@ -14,12 +14,12 @@
 extern char **environ;
 char *path;//path环境变量
 char Path[200];
-char *exec_argv[100];//最多传一百个参数
-char *exec_env[100];
-char env[100][1000];
+char *exec_argv[200];//最多传一百个参数
+char *exec_env[200];
+char env[200][1000];
 int arg_num;
 int env_num;
-char strace_path[50];
+char strace_path[200];
 
 void parse_args_envp(int argc,char **argv);
 void print_message();
@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
     perror("fork");
     exit(EXIT_FAILURE);
   }
+
   if(cpid!= 0)//parent reads from pipefd[0]
   {
     close(pipefd[1]);
