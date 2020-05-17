@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
           gettimeofday(&nowtime,NULL);
           if(nowtime.tv_usec-pretime.tv_usec>500000)
           {
-            printf("nowtime=%d\n",nowtime.tv_usec);
+            printf("nowtime=%ld\n",nowtime.tv_usec);
             pretime=nowtime;
             break;
           }
