@@ -81,8 +81,8 @@ int main(int argc, char *argv[]) {
       while(read(pipefd[0],&buf,1)>0)
       {
         printf("haha\n");
-        if(buf!='\n') buffer[len++]=buf;
         printf("namsalkdas\n");
+        if(buf!='\n') buffer[len++]=buf;
         else//读到一行终点
         {
           buffer[len]='\0';//读取了一行的数据,进行分析
