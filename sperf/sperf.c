@@ -6,6 +6,7 @@
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
 #include <string.h>
 #include <assert.h>
 #include <dirent.h>
