@@ -179,9 +179,9 @@ int main(int argc, char *argv[]) {
     //int rec=pipefd[1];
     int devno=open("/dev/null",O_WRONLY);
     int ret1=dup2(devno,STDOUT_FILENO);
-    //assert(ret1==STDOUT_FILENO);
+    assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
-    //assert(ret2==STDERR_FILENO);
+    assert(ret2==STDERR_FILENO);
     execve(strace_path,exec_argv,exec_env);
     //perror("After execve");
   }
@@ -241,6 +241,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
   if((dir=opendir(basepath))==NULL)
   {
     printf("Failed open %s\n",basepath);
+    //assert(0);
   }
 
   char base[200];
