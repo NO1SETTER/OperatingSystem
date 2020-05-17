@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
       {
         printf("haha\n");
         if(buf!='\n') buffer[len++]=buf;
+        printf("namsalkdas\n");
         else//读到一行终点
         {
           buffer[len]='\0';//读取了一行的数据,进行分析
