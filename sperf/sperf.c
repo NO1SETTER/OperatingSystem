@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
             sys_num=sys_num+1;
           }
           len=0;
-          time(%nowtime);
+          time(&nowtime);
           //printf("nowtime=%ld\n",nowtime.tv_usec);
           if(nowtime-pretime>=1)
           {
