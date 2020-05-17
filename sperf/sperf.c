@@ -76,12 +76,10 @@ int main(int argc, char *argv[]) {
     gettimeofday(&pretime,NULL);
     int reachend=0;//是否程序结束
     int ct=1;
-    //int sd=0;
     while(1)
     {
       while(read(pipefd[0],&buf,1)>0)
       {
-        //printf("haha%d\n",sd++);
         if(buf!='\n') buffer[len++]=buf;
         else//读到一行终点
         {
@@ -139,8 +137,9 @@ int main(int argc, char *argv[]) {
           }
           len=0;
           gettimeofday(&nowtime,NULL);
-          if(nowtime.tv_usec-pretime.tv_usec>200000)
+          if(nowtime.tv_usec-pretime.tv_usec>500000)
           {
+            printf("nowtime=%d\n",nowtime.tv_usec);
             pretime=nowtime;
             break;
           }
