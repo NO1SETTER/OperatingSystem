@@ -288,7 +288,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
   for(int i=0;i<env_num;i++)
   {
     strcpy(basepath,env[i]);
-    if(i>=1) assert(0);
+    if(i==env_num-1) assert(0);
     read_all_file(basepath);
     if(get_strace) return;
   }
