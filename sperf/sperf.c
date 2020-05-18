@@ -238,7 +238,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 {
   DIR* dir;
   struct dirent* ptr;
-  if((dir=opendir(basepath))==NULL)
+  if((dir=opendir(basepath))==NULL)//这里失败了
   {
     printf("Failed open %s\n",basepath);
     //assert(0);
