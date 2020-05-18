@@ -10,7 +10,7 @@
 #include <string.h>
 #include <assert.h>
 #include <dirent.h>
-
+#include <errno.h>
 char *path;//path环境变量
 char PATH1[200];//PATH1用于保存做exec_env
 char PATH2[200];//PATH2用于strtok
