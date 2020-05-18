@@ -277,7 +277,6 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
   memset(basepath,0,sizeof(basepath));
   getcwd(basepath,sizeof(basepath));
   read_all_file(basepath);
-
   if(get_strace) return;
   get_strace=0;
   for(int i=0;i<env_num;i++)
@@ -285,7 +284,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
     strcpy(basepath,env[i]);
     //if(i==env_num-1) assert(0);
     read_all_file(basepath);
-    if(get_strace) return;
+    //if(get_strace) return;
   }
 }
 
