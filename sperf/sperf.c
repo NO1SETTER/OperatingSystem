@@ -202,6 +202,7 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
   arg_num=argc+1;
 
   path=getenv("PATH");//path直接指向环境变量
+  assert(0);
   strcpy(Path,path);//Path是保存的一个副本
   sprintf(exec_env[0],"PATH=%s",Path);//exev_env是要传递的一个参数版本
   strtok(Path,"=");
