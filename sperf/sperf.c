@@ -240,7 +240,8 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
   if((dir=opendir(basepath))==NULL)//这里失败了
   {
     printf("Failed opening %s\n",basepath);
-    //assert(0);
+    printf("errno is %d\n",errno);
+    assert(0);
   }
 
   char base[200];
@@ -262,6 +263,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
     }
     else
     {
+      char base[200];
       strcat(base,"/");
       strcat(base,ptr->d_name);
       read_all_file(base);
