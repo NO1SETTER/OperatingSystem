@@ -228,9 +228,10 @@ void print_message()
   printf("%d EXEC_ARGS:\n",arg_num);
   for(int i=0;i<arg_num;i++)
   printf("arg[%d]:%s\n",i,exec_argv[i]);
-  printf("%d ENV:\n",env_num);
   printf("EXEC_ENV:%s\n",exec_env[0]);
-  printf("Strace at %s\n",strace_path);
+  printf("%d ENV:\n",env_num);
+  for(int i=0;i<env_num;i++)
+  printf("%s\n",env[i]);
 }
 
 int get_strace=0;
