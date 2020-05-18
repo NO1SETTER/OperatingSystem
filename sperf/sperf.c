@@ -233,14 +233,14 @@ void print_message()
 }
 
 int get_strace=0;
-void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
+void read_all_file(char *basepath,int layer)//寻找strace,找到返回1，否则返回0
 {
   DIR* dir;
   struct dirent* ptr;
   if((dir=opendir(basepath))==NULL)//这里失败了
   {
     printf("Failed open %s\n",basepath);
-    //assert(0);
+    if(layer==0) assert(0);
   }
 
   char base[200];
@@ -265,7 +265,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
       char base[100];
       strcat(base,"/");
       strcat(base,ptr->d_name);
-      read_all_file(base);
+      read_all_file(base,layer+1);
     }
   }
   closedir(dir);
@@ -276,14 +276,13 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
   char basepath[200];
   memset(basepath,0,sizeof(basepath));
   getcwd(basepath,sizeof(basepath));
-  read_all_file(basepath);
+  read_all_file(basepath,0);
   if(get_strace) return;
   for(int i=0;i<env_num;i++)
   {
-    assert(env[i][999]==0);
     strcpy(basepath,env[i]);
     //if(i==env_num-1) assert(0);
-    read_all_file(basepath);
+    read_all_file(basepath,0);
     if(get_strace) return;
   }
 }
