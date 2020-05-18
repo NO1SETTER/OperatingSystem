@@ -233,14 +233,14 @@ void print_message()
 }
 
 int get_strace=0;
+DIR* dir;
+struct dirent* ptr;
 void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 {
-  DIR* dir;
-  struct dirent* ptr;
   if((dir=opendir(basepath))==NULL)//这里失败了
   {
     printf("Failed opening %s\n",basepath);
-    assert(0);
+    //assert(0);
   }
 
   char base[200];
@@ -277,6 +277,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
   getcwd(basepath,sizeof(basepath));
   read_all_file(basepath);
   if(get_strace) return;
+
   for(int i=0;i<env_num;i++)
   {
     strcpy(basepath,env[i]);
