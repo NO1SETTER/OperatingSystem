@@ -211,7 +211,7 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
       sprintf(env[pos],"%s",s);
     }
   env_num=pos;
-  exec_env[0]=Path;
+  sprintf(exec_env[0],"PATH=%s",Path);
   exec_env[1]=NULL;
 }
 
