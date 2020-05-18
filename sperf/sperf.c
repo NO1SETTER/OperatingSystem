@@ -43,6 +43,7 @@ static int syscmp(const void* ptr1,const void* ptr2)
 }
 
 int main(int argc, char *argv[]) {
+
   parse_args_envp(argc,argv);
   find_strace_path();
   print_message();
@@ -189,6 +190,7 @@ int main(int argc, char *argv[]) {
 
   perror(argv[0]);
   exit(EXIT_FAILURE);
+
 }
 
 void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解析了
@@ -232,6 +234,7 @@ void print_message()
   printf("%d ENV:\n",env_num);
   for(int i=0;i<env_num;i++)
   printf("%s\n",env[i]);
+  printf("Strace at %s\n",strace_path);
 }
 
 int get_strace=0;
