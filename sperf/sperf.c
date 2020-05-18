@@ -11,7 +11,6 @@
 #include <assert.h>
 #include <dirent.h>
 
-extern char **environ;
 char *path;//path环境变量
 char Path[200];
 char *exec_argv[200];//最多传一百个参数
@@ -202,18 +201,10 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
   exec_argv[argc+1]=NULL;
   arg_num=argc+1;
 
-  char **ptr=environ;
-    while(*ptr)
-    {
-      if(strlen(*ptr)>=5)
-      {  if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
-        {path=*ptr;
-        break;}
-      }
-      ptr++;
-    }
-  strcpy(Path,path);
-  strtok(path,"=");
+  path=getenv("PATH");//path直接指向环境变量
+  strcpy(Path,path);//Path是保存的一个副本
+  sprintf(exec_env[0],"PATH=%s",Path);//exev_env是要传递的一个参数版本
+  strtok(Path,"=");
   char *s;
   int pos=0;
     for(;(s=strtok(NULL,":"))!=NULL;pos++)
@@ -221,7 +212,6 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
       sprintf(env[pos],"%s",s);
     }
   env_num=pos;
-  exec_env[0]=Path;
   exec_env[1]=NULL;
 }
 
@@ -288,7 +278,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
   for(int i=0;i<env_num;i++)
   {
     strcpy(basepath,env[i]);
-    if(i==env_num-1) assert(0);
+    //if(i==env_num-1) assert(0);
     read_all_file(basepath);
     if(get_strace) return;
   }
