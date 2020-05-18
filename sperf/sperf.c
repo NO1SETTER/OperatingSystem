@@ -12,7 +12,8 @@
 #include <dirent.h>
 
 char *path;//path环境变量
-char Path[200];
+char PATH1[200];//PATH1用于保存做exec_env
+char PATH2[200];//PATH2用于strtok
 char *exec_argv[200];//最多传一百个参数
 char *exec_env[200];
 char env[200][1000];
@@ -201,9 +202,14 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
   exec_argv[argc+1]=NULL;
   arg_num=argc+1;
 
+  //path,exec_env都是空指针,Path,env是分配了空间的
   path=getenv("PATH");
-  strcpy(Path,path);
-  strtok(path,"=");
+  sprintf(PATH1,"PATH=%s",path);
+  strcpy(PATH2,PATH1);
+  exec_env[0]=PATH1;
+  exec_env[1]=NULL;
+  
+  strtok(PATH2,"=");
   char *s;
   int pos=0;
     for(;(s=strtok(NULL,":"))!=NULL;pos++)
@@ -211,8 +217,7 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
       sprintf(env[pos],"%s",s);
     }
   env_num=pos;
-  sprintf(exec_env[0],"PATH=%s",Path);
-  exec_env[1]=NULL;
+  
 }
 
 void print_message()
