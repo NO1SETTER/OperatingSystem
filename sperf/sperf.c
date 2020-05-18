@@ -13,13 +13,13 @@
 
 extern char **environ;
 char *path;//path环境变量
-char Path[200];
-char *exec_argv[200];//最多传一百个参数
-char *exec_env[200];
-char env[200][1000];
+char Path[500];
+char *exec_argv[500];//最多传一百个参数
+char *exec_env[500];
+char env[500][1000];
 int arg_num;
 int env_num;
-char strace_path[200];
+char strace_path[500];
 
 void parse_args_envp(int argc,char **argv);
 void print_message();
@@ -248,7 +248,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
     //assert(0);
   }
 
-  char base[200];
+  char base[500];
   strcpy(base,basepath);
   while((ptr=readdir(dir))!=NULL)
   {
@@ -267,7 +267,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
     }
     else
     {
-      char base[100];
+      char base[500];
       strcat(base,"/");
       strcat(base,ptr->d_name);
       read_all_file(base);
@@ -278,7 +278,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 
 void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
 {
-  char basepath[200];
+  char basepath[500];
   memset(basepath,0,sizeof(basepath));
   getcwd(basepath,sizeof(basepath));
   read_all_file(basepath);
