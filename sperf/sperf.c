@@ -239,10 +239,9 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
   struct dirent* ptr;
   if((dir=opendir(basepath))==NULL)//这里失败了
   {
-    printf("Failed opening %s\n",basepath);
-    assert(errno==ENOENT);
+    printf("Failed opening %s\n",basepath);//错误是ENOENT
+    return;
   }
-
   char base[200];
   strcpy(base,basepath);
   while((ptr=readdir(dir))!=NULL)
@@ -250,7 +249,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
     if(get_strace) break;
     if(strcmp(ptr->d_name,".")==0||strcmp(ptr->d_name,"..")==0)
     continue;
-    if(ptr->d_type!=4)
+    if(ptr->d_type!=DT_DIR)
     {
       if(strcmp(ptr->d_name,"strace")==0)//找到
       {
