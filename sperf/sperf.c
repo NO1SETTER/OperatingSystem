@@ -11,7 +11,6 @@
 #include <assert.h>
 #include <dirent.h>
 
-extern char **environ;
 char *path;//path环境变量
 char Path[200];
 char *exec_argv[200];//最多传一百个参数
@@ -202,16 +201,7 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
   exec_argv[argc+1]=NULL;
   arg_num=argc+1;
 
-  char **ptr=environ;
-    while(*ptr)
-    {
-      if(strlen(*ptr)>=5)
-      {  if((*ptr)[0]=='P'&&(*ptr)[1]=='A'&&(*ptr)[2]=='T'&&(*ptr)[3]=='H'&&(*ptr)[4]=='=')
-        {path=*ptr;
-        break;}
-      }
-      ptr++;
-    }
+  path=getenv("PATH");
   strcpy(Path,path);
   strtok(path,"=");
   char *s;
