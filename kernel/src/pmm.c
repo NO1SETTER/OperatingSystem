@@ -49,6 +49,7 @@ void sp_lock(lock_t* lk)
 void sp_unlock(lock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
+  printf("CPU#%d Releasing lock  %s\n",_cpu(),lk->name);
   lk->holder=10000;//表示无holder
 }
 /*
