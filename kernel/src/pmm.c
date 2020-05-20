@@ -444,9 +444,9 @@ static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
   bstart=(uintptr_t)_heap.end-0x2000000;
-  sp_lockinit(&alloc_lock,"balloc_lock",0);
-  sp_lockinit(&glb_lock,"glb_lock",1);
-  sp_lockinit(&print_lock,"print_lock",2);
+  sp_lockinit(&alloc_lock,"balloc_lock\0",0);
+  sp_lockinit(&glb_lock,"glb_lock\0",1);
+  sp_lockinit(&print_lock,"print_lock\0",2);
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
   free_head->start=free_head->end=free_head->size=0;
