@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
     perror("pipe");
     exit(EXIT_FAILURE);
   }
+
   cpid=fork();
   if(cpid == -1)
   {
@@ -279,7 +280,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
   for(int i=0;i<env_num;i++)
   {
     strcpy(basepath,env[i]);
-    //if(i==env_num-1) assert(0);
+    assert(i<1);
     read_all_file(basepath);
     if(get_strace) return;
   }
