@@ -385,7 +385,7 @@ static void kfree(void *ptr) {
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
   {
-    printf("Shaking\n");
+    printf("Shaking at %p\n",blk_ptr->start);
     if(blk_ptr->start==start)//找到了相应的块
     {
       printf("Chloe\n");
