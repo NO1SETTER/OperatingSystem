@@ -385,12 +385,15 @@ static void kfree(void *ptr) {
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
   {
+    printf("Shaking\n");
     if(blk_ptr->start==start)//找到了相应的块
     {
+      printf("Chloe\n");
       bdelete(blk_ptr);
       struct block *loc_ptr=free_head;//找到合适的插入free的位置
       while(loc_ptr)
       {
+        printf("NINEONE#\n");
         if(loc_ptr->end<=start)
         {
           if(loc_ptr->next==NULL)
