@@ -44,7 +44,7 @@ void sp_lock(lock_t* lk)
     sp_unlock(&print_lock,0);*/
   }
   lk->holder=_cpu();
-  printf("CPU#%d holding lock %s",lk->holder,lk->name);
+  printf("CPU#%d holding lock %s\n",lk->holder,lk->name);
 }
 void sp_unlock(lock_t *lk)
 {
