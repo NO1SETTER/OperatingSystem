@@ -240,29 +240,26 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
   if((dir=opendir(basepath))==NULL)//这里失败了
   {
     printf("Failed opening %s\n",basepath);//错误是ENOENT
-    return;
+    assert(0);
   }
-  char base[200];
-  strcpy(base,basepath);
+
+  char base[500];
   while((ptr=readdir(dir))!=NULL)
   {
     if(get_strace) break;
-    if(strcmp(ptr->d_name,".")==0||strcmp(ptr->d_name,"..")==0)
-    continue;
+    if(strcmp(ptr->d_name,".")==0||strcmp(ptr->d_name,"..")==0) continue;
     if(ptr->d_type!=DT_DIR)
     {
       if(strcmp(ptr->d_name,"strace")==0)//找到
       {
-      strcat(base,"/");
-      strcat(base,ptr->d_name);
+      sprintf(base,"%s/%s",basepath,ptr->d_name);
       strcpy(strace_path,base);
         get_strace=1;
       }
     }
     else
     {
-      strcat(base,"/");
-      strcat(base,ptr->d_name);
+      sprintf(base,"%s/%s",basepath,ptr->d_name);
       read_all_file(base);
     }
   }
