@@ -43,10 +43,13 @@ void sp_lock(lock_t* lk)
     printf("CPU#%d Acquiring lock  %s\n",_cpu(),lk->name);
     sp_unlock(&print_lock,0);*/
   }
+  lk->holder=_cpu();
+  printf("CPU#%d holding lock %s",lk->holder,lk->name);
 }
 void sp_unlock(lock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
+  lk->holder=10000;//表示无holder
 }
 /*
 void sp_lock(lock_t* lk,int log)
