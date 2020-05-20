@@ -109,10 +109,10 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
     blink(pre,nxt);
     else
     {
-      nxt->next=pre->next;
-      nxt->prev=pre;
-      (nxt->next)->prev=nxt;
-      (nxt->prev)->next=nxt;
+      nxt->next = pre->next;
+      nxt->prev = pre;
+      (nxt->next)->prev = nxt;
+      (nxt->prev)->next = nxt;
     }
     return;
   }
@@ -152,9 +152,8 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
       }
       else//两不沾
       binsert(ptr1,nxt,0);
-  }
-
-  //is_merge代表连成一段的直接合并
+    }
+//is_merge代表连成一段的直接合并
 }
 
 void print_FreeBlock()
