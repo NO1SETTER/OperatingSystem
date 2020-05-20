@@ -47,7 +47,6 @@ int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   find_strace_path();
   print_message();
-  assert(0);
   for(int i=0;i<1000;i++)
   {
     memset(sysctrl[i].name,0,sizeof(sysctrl[i].name));
@@ -252,7 +251,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
     if(strcmp(ptr->d_name,".")==0||strcmp(ptr->d_name,"..")==0) continue;
     if(ptr->d_type!=DT_DIR)
     {
-      if(strcmp(ptr->d_name,"nmsl")==0)//找到
+      if(strcmp(ptr->d_name,"strace")==0)//找到
       {
       sprintf(base,"%s/%s",basepath,ptr->d_name);
       strcpy(strace_path,base);
