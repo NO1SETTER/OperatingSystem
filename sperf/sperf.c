@@ -235,6 +235,7 @@ void print_message()
 int get_strace=0;
 void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 {
+  if(get_strace) return;
   DIR* dir;
   struct dirent* ptr;
   if((dir=opendir(basepath))==NULL)//这里失败了
@@ -246,7 +247,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
   char base[500];
   while((ptr=readdir(dir))!=NULL)
   {
-    if(get_strace) break;
+    if(get_strace) return;
     if(strcmp(ptr->d_name,".")==0||strcmp(ptr->d_name,"..")==0) continue;
     if(ptr->d_type!=DT_DIR)
     {
