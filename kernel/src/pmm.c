@@ -2,9 +2,10 @@
 //#define _DEBUG
 typedef struct 
 {
-  const char *name;
-  int lockid;
-  intptr_t locked;
+  const char *name;//锁名
+  int lockid;//锁的序号
+  intptr_t locked;//锁控制
+  int holder;//锁的持有者
 }lock_t;
 
 struct block//管理空闲块或非空闲块的数据结构
