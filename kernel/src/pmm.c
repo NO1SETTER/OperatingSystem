@@ -2,7 +2,7 @@
 //#define _DEBUG
 typedef struct 
 {
-  const char *name;//锁名
+  char *name;//锁名
   int lockid;//锁的序号
   intptr_t locked;//锁控制
   int holder;//锁的持有者
@@ -30,7 +30,7 @@ void sp_unlock(lock_t* lk);
 
 void sp_lockinit(lock_t* lk,const char *name,int id)
 {
-  lk->name=name;
+  strcpy(lk->name,name);
   lk->locked=0;
   lk->lockid=id;
 }
