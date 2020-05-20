@@ -147,7 +147,8 @@ void print_tree(int newindent,int indent,pid_t pid,int son_id,int son_num)
 /*if(version)
 {printf("pstree (PSmisc) 23.1\nCopyright (C) 1993-2017 Werner Almesberger and Craig Small\n\nPSmisc comes with ABSOLUTELY NO WARRANTY.\nThis is free software, and you are welcome to redistribute it under\nthe terms of the GNU General Public License.\nFor more information about these matters, see the files named COPYING.\n");
 }*/
-if(version) return;if(!showpids)//合并的前期准备
+if(version) return;
+if(!showpids)//合并的前期准备
 {
 if(printed[pnode[id[pid]].ft]&&!pnode[id[pid]].is_main)//这个子线程已经打印过了
 return;
