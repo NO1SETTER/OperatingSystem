@@ -2,9 +2,10 @@
 //#define _DEBUG
 typedef struct 
 {
-  const char *name;
-  int lockid;
-  intptr_t locked;
+  const char *name;//锁名
+  int lockid;//锁的序号
+  intptr_t locked;//锁控制
+  int holder;//锁的持有者
 }lock_t;
 
 struct block//管理空闲块或非空闲块的数据结构
@@ -24,8 +25,8 @@ static void *balloc();
 static void bfree(struct block* blk);
 struct block* free_head;
 struct block* alloc_head;//两个都是空的节点
-void sp_lock(lock_t* lk,int log);
-void sp_unlock(lock_t* lk,int log);
+void sp_lock(lock_t* lk);
+void sp_unlock(lock_t* lk);
 
 void sp_lockinit(lock_t* lk,const char *name,int id)
 {
@@ -34,6 +35,23 @@ void sp_lockinit(lock_t* lk,const char *name,int id)
   lk->lockid=id;
 }
 
+void sp_lock(lock_t* lk)
+{
+  while(_atomic_xchg(&lk->locked,1))
+  { 
+   // sp_lock(&print_lock,0);
+    printf("CPU#%d Acquiring lock  %s\n",_cpu(),lk->name);
+   // sp_unlock(&print_lock,0);
+  }
+  lk->holder=_cpu();
+  printf("CPU#%d holding lock %s\n",lk->holder,lk->name);
+}
+void sp_unlock(lock_t *lk)
+{
+  _atomic_xchg(&lk->locked,0);
+  lk->holder=10000;//表示无holder
+}
+/*
 void sp_lock(lock_t* lk,int log)
 {
   while(_atomic_xchg(&lk->locked,1))
@@ -57,7 +75,7 @@ void sp_unlock(lock_t *lk,int log)
   printf("CPU#%d Frees lock  %s\n",_cpu(),lk->name);
   sp_unlock(&print_lock,0);
   }
-}
+}*/
 
 //锁pre,nxt;
 void blink(struct block* pre,struct block*nxt)//直接连接
@@ -187,10 +205,10 @@ int maxpos=0;//当前已经分配到的最大位置，当mset为空时从这里�
 uintptr_t bstart;
 static void *balloc()//专门给block分配空间用,直接从某一位置开始往上垒不用对齐
 {
-  sp_lock(&print_lock,0);
+  sp_lock(&print_lock);
   printf("CPU#%d BALLOC\n",_cpu());
-  sp_unlock(&print_lock,0);
-  sp_lock(&alloc_lock,1);
+  sp_unlock(&print_lock);
+  sp_lock(&alloc_lock);
   
   uintptr_t ret;
   if(FreeAllocNoNum)
@@ -203,21 +221,21 @@ static void *balloc()//专门给block分配空间用,直接从某一位置开始
   ret=(uintptr_t)(bstart+maxpos*sizeof(struct block));
   maxpos=maxpos+1;
   }  
-  sp_unlock(&alloc_lock,1);
+  sp_unlock(&alloc_lock);
   return (void *)ret;
 }
 
 static void bfree(struct block* blk)
 {
-  sp_lock(&print_lock,0);
+  sp_lock(&print_lock);
   printf("CPU#%d BFREE\n",_cpu());
-  sp_unlock(&print_lock,0);
-  sp_lock(&alloc_lock,1);
+  sp_unlock(&print_lock);
+  sp_lock(&alloc_lock);
   int no =((uintptr_t)blk-bstart)/sizeof(struct block);
   blk->next=NULL;
   blk->prev=NULL;
   FreeAllocNo[FreeAllocNoNum++]=no;
-  sp_unlock(&alloc_lock,1);
+  sp_unlock(&alloc_lock);
 }
 
 void check_allocblock(uintptr_t start,uintptr_t end)
@@ -257,10 +275,10 @@ void check_freeblock()
 }
 
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
-  { sp_lock(&print_lock,0);
+  { sp_lock(&print_lock);
     printf("CPU#%d KALLOC\n",_cpu());
-    sp_unlock(&print_lock,0);
-    sp_lock(&glb_lock,1);
+    sp_unlock(&print_lock);
+    sp_lock(&glb_lock);
     struct block*ptr=free_head->next;
     while(ptr)
     {
@@ -269,9 +287,9 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       {
       //四种情况,靠头，靠尾，既靠头又靠尾，两不靠
       if(valid_addr==ptr->start&&valid_addr+size==ptr->end)
-      { sp_lock(&print_lock,0);
+      { sp_lock(&print_lock);
         printf("CPU#%d case 1\n",_cpu());
-        sp_unlock(&print_lock,0);
+        sp_unlock(&print_lock);
       bdelete(ptr);
       binsert(alloc_head,ptr,0);//整个节点直接挪过来
       #ifdef _DEBUG
@@ -280,13 +298,13 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       //check_freeblock();
       //check_allocblock(valid_addr,valid_addr+size);
       #endif
-      sp_unlock(&glb_lock,1);
+      sp_unlock(&glb_lock);
       return (void *)valid_addr;
       }
       else if(valid_addr==ptr->start)
-      { sp_lock(&print_lock,0);
+      { sp_lock(&print_lock);
         printf("CPU#%d case 2\n",_cpu());
-        sp_unlock(&print_lock,0);
+        sp_unlock(&print_lock);
         ptr->start=valid_addr+size;
         ptr->size=ptr->end-ptr->start;
         struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
@@ -300,13 +318,13 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         //check_freeblock();
         //check_allocblock(valid_addr,valid_addr+size);
         #endif
-        sp_unlock(&glb_lock,1);
+        sp_unlock(&glb_lock);
         return (void*)valid_addr;
       }
       else if(valid_addr+size==ptr->end)
-      { sp_lock(&print_lock,0);
+      { sp_lock(&print_lock);
         printf("CPU#%d case 3\n",_cpu());
-        sp_unlock(&print_lock,0);
+        sp_unlock(&print_lock);
         ptr->end=valid_addr;
         ptr->size=ptr->end-ptr->start;
         struct block *alloc_blk=(struct block*)balloc(sizeof(struct block));
@@ -320,13 +338,13 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         //check_freeblock();
         //check_allocblock(valid_addr,valid_addr+size);
         #endif
-        sp_unlock(&glb_lock,1);
+        sp_unlock(&glb_lock);
         return (void*)valid_addr;
       }
       else
-      { sp_lock(&print_lock,0);
+      { sp_lock(&print_lock);
         printf("CPU#%d case 4\n",_cpu());
-        sp_unlock(&print_lock,0);
+        sp_unlock(&print_lock);
         struct block*alloc_blk=(struct block*)balloc(sizeof(struct block));
         struct block*free_blk=(struct block*)balloc(sizeof(struct block));
         free_blk->end=ptr->end;
@@ -345,22 +363,22 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         //check_freeblock();
         //check_allocblock(valid_addr,valid_addr+size);
         #endif
-        sp_unlock(&glb_lock,1);
+        sp_unlock(&glb_lock);
         return (void*)valid_addr;
       }
       }
       ptr=ptr->next;
     }
-    sp_unlock(&glb_lock,1);
+    sp_unlock(&glb_lock);
     assert(0);
     return NULL;
 }
 
 static void kfree(void *ptr) {
-  sp_lock(&print_lock,0);
+  sp_lock(&print_lock);
   printf("CPU#%d KFREE\n",_cpu());
-  sp_unlock(&print_lock,0);
-  sp_lock(&glb_lock,1);
+  sp_unlock(&print_lock);
+  sp_lock(&glb_lock);
   printf("haha\n");
   uintptr_t start=(uintptr_t)ptr;
   struct block* blk_ptr=alloc_head->next;
@@ -377,31 +395,31 @@ static void kfree(void *ptr) {
           if(loc_ptr->next==NULL)
           { 
             printf("LOCATED\n");
-            sp_lock(&print_lock,0);
+            sp_lock(&print_lock);
             printf("CPU#%d case 5\n",_cpu());
-            sp_unlock(&print_lock,0);
+            sp_unlock(&print_lock);
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
             print_FreeBlock();
             print_AllocatedBlock();
             //check_freeblock();
             #endif
-            sp_unlock(&glb_lock,1);
+            sp_unlock(&glb_lock);
             return;
           }
           if((loc_ptr->next)->start>=blk_ptr->end)//这两种情况均可以插入
           {
             printf("LOCATED\n");
-            sp_lock(&print_lock,0);
+            sp_lock(&print_lock);
             printf("CPU#%d case 6\n",_cpu());
-            sp_unlock(&print_lock,0);
+            sp_unlock(&print_lock);
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
             //check_freeblock();
             #endif
             print_FreeBlock();
             print_AllocatedBlock();
-            sp_unlock(&glb_lock,1);
+            sp_unlock(&glb_lock);
             return;
           }
         }
@@ -412,12 +430,12 @@ static void kfree(void *ptr) {
   }
   printf("hrhr\n");
   #ifdef _DEBUG
-  sp_lock(&print_lock,0);
+  sp_lock(&print_lock);
   printf("Block at %p has not been allocated or already freed\n",ptr);
-  sp_unlock(&print_lock,0);
+  sp_unlock(&print_lock);
   check_freeblock();
   #endif
-  sp_unlock(&glb_lock,1);
+  sp_unlock(&glb_lock);
   return;
 }
 
