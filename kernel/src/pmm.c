@@ -1,6 +1,7 @@
 #include <common.h>
 //#define _DEBUG
 //#define _BASIC_DEBUG
+#define PAGE_SIZE 4096 
 typedef struct 
 {
   const char *name;//锁名
