@@ -22,7 +22,7 @@ MODULE(pmm) {
   void *(*alloc)(size_t size);
   void  (*free)(void *ptr);
 };
-/*
+
 <<<<<<< HEAD
 
 =======
@@ -41,4 +41,3 @@ MODULE(kmt) {
   void (*sem_signal)(sem_t *sem);
 };
 >>>>>>> 611514fb81de11020baa05c82e7443791bef60ab
-*/
