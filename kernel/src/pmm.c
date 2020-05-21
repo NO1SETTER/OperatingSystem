@@ -186,6 +186,8 @@ void print_AllocatedBlock()
   #endif
 }
 
+
+
 uintptr_t GetValidAddress(uintptr_t start,int align)//返回从start开始对齐align的最小地址
 {
   uint32_t temp=1;
@@ -384,7 +386,7 @@ static void kfree(void *ptr) {
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
   {
-    printf("Shaking at %p\n",blk_ptr->start);//错误：free成环了
+    printf("Shaking at [%p,%p)\n",blk_ptr->start,blk_ptr->end);//错误：free成环了
     if(blk_ptr->start==start)//找到了相应的块
     {
       printf("Chloe\n");
