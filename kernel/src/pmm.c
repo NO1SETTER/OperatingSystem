@@ -1,6 +1,8 @@
 #include <common.h>
 //#define _DEBUG
 //#define _BASIC_DEBUG
+//#define _SLAB_ASSIST
+
 #define PAGE_SIZE 4096 
 #define BLOCK_AREA_SIZE 0x2000000
 #define SLAB_SIZE 0x800000
@@ -277,6 +279,7 @@ void check_freeblock()
 
 static void *slab_kalloc(size_t size,int k)//对于CPU#k的slab_alloc，只用上输出锁
   { 
+    #ifdef _SLAB_ASSIST
     #ifdef _BASIC_DEBUG
     printf("CPU#%d SLAB_KALLOC\n",_cpu());
     #endif
@@ -357,9 +360,12 @@ static void *slab_kalloc(size_t size,int k)//对于CPU#k的slab_alloc，只用�
       ptr=ptr->next;
     }
     return NULL;
+    #endif
+    return NULL;
 }
 
 static bool slab_kfree(void *ptr,int k) {//从第k个CPU中找到是否有想要删除的对象
+  #ifdef _SLAB_ASSIST
   #ifdef _BASIC_DEBUG
   sp_lock(&print_lock);
   printf("CPU#%d KFREE\n",_cpu());
@@ -399,7 +405,8 @@ static bool slab_kfree(void *ptr,int k) {//从第k个CPU中找到是否有想要
   printf("Block at %p has not been allocated or already freed\n",ptr);
   sp_unlock(&print_lock);
   #endif
-
+  return 0;
+  #endif
   return 0;
 }
 
@@ -411,12 +418,14 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
     sp_unlock(&print_lock);
     #endif
 
+
     int k=_cpu();
     void * slab_ptr=slab_kalloc(size,k);
     if(slab_ptr)
     {
       return slab_ptr;
     }
+
 
     sp_lock(&glb_lock);
     struct block*ptr=free_head->next;
@@ -537,6 +546,7 @@ static void kfree(void *ptr) {
     {
       return ;
     }
+
   sp_lock(&glb_lock);
   uintptr_t start=(uintptr_t)ptr;
   struct block* blk_ptr=alloc_head->next;
@@ -600,6 +610,7 @@ static void pmm_init() {
   blk->prev=free_head;
   free_head->next=blk;
 
+  #ifdef _SLAB_ASSIST
   for(int i=0;i<_ncpu();i++)
   {
     slab_alloc_head[i]=(struct block *)balloc(sizeof(struct block));
@@ -611,6 +622,7 @@ static void pmm_init() {
      slab_blk->prev=slab_free_head[i];
      slab_free_head[i]->next=slab_blk;
   }
+  #endif
 }
 
 MODULE_DEF(pmm) = {
