@@ -572,6 +572,7 @@ static void kfree(void *ptr) {
             //print_FreeBlock();
             //print_AllocatedBlock();
             check_freeblock();
+            check_allocblock(blk_ptr->start,blk_ptr->end);
             #endif
             sp_unlock(&glb_lock);
             return;
