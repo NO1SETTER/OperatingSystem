@@ -227,6 +227,17 @@ void check_allocblock(uintptr_t start,uintptr_t end)
       //printf("Allocated block overlapped\n");
       assert(0);
     }
+
+    uint32_t size_align=aptr->size;
+    uintptr_t start_align=aptr->start;
+    int ct1=0;
+    while((size_align&1)==0)
+    {size_align>>=1;ct1++;}
+    int ct2=0;
+    while((start_align&1)==0)
+    {start_align>>=1;ct2++;}
+    assert(ct1==ct2);
+
     aptr=aptr->next;
   }
 }
