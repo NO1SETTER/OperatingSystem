@@ -16,17 +16,26 @@ struct block* prev;
 struct block* next;
 };
 
-int lock_num=0;
+//用三个全局锁
 lock_t glb_lock;//管理两个链表的锁
 lock_t alloc_lock;//管理balloc和bfree并发性的锁
 lock_t print_lock;//printf的锁,保证完整性
-
-static void *balloc();
-static void bfree(struct block* blk);
+//两个链表的起始点
 struct block* free_head;
 struct block* alloc_head;//两个都是空的节点
+//锁相关
+void sp_lockinit(lock_t* lk,const char *name,int id);
 void sp_lock(lock_t* lk);
 void sp_unlock(lock_t* lk);
+//管理block内存
+static void *balloc();
+static void bfree(struct block* blk);
+//调试用：打印，内部带print_lock锁,只在_DEBUG下被召唤出来
+void print_AllocatedBlock();
+void print_FreeBlock();
+//调试用：检查有无重复,内部带print_lock锁，只在_DEBUG下被召唤出来
+void check_allocblock(uintptr_t start,uintptr_t end);
+void check_freeblock();
 
 void sp_lockinit(lock_t* lk,const char *name,int id)
 {
@@ -38,17 +47,11 @@ void sp_lockinit(lock_t* lk,const char *name,int id)
 void sp_lock(lock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1))
-  { 
-    //printf("CPU#%d Acquiring lock  %s\n",_cpu(),lk->name);
-  }
-  //lk->holder=_cpu();
-  //printf("CPU#%d holding lock %s\n",lk->holder,lk->name);
+  { }
 }
 void sp_unlock(lock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
-  //printf("CPU#%d Releasing lock  %s\n",_cpu(),lk->name);
-  //lk->holder=10000;//表示无holder
 }
 
 //锁pre,nxt;
@@ -131,7 +134,7 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 
 void print_FreeBlock()
 {
-  /*#ifdef _DEBUG
+  #ifdef _DEBUG
   sp_lock(&print_lock);
   struct block* ptr=free_head->next;
   printf("Free blocks:\n");
@@ -141,12 +144,12 @@ void print_FreeBlock()
     ptr=ptr->next;
   }
   sp_unlock(&print_lock);
-  #endif*/
+  #endif
 }
 
 void print_AllocatedBlock()
 {
- /* #ifdef _DEBUG
+  #ifdef _DEBUG
   sp_lock(&print_lock);
   struct block* ptr=alloc_head->next;
   printf("Allocated blocks:\n");
@@ -156,7 +159,7 @@ void print_AllocatedBlock()
     ptr=ptr->next;
   }
   sp_unlock(&print_lock);
-  #endif*/
+  #endif
 }
 
 
@@ -213,6 +216,36 @@ static void bfree(struct block* blk)
   sp_unlock(&alloc_lock);
 }
 
+void check_allocblock(uintptr_t start,uintptr_t end)
+{
+  struct block* aptr=alloc_head->next;
+  while(aptr)
+  {
+    if(aptr->start==start&&aptr->end!=end)
+    { 
+      //printf("Allocated block overlapped\n");
+      assert(0);
+    }
+    aptr=aptr->next;
+  }
+}
+
+void check_freeblock()
+{
+    struct block* fptr=free_head->next;
+    uintptr_t end=0;
+    while(fptr)
+    {
+      if(fptr->start<end)
+      {
+        //printf("FreeBlock %p overlapped\n",fptr->start);
+        assert(0);
+      }
+      end=fptr->end;
+      fptr=fptr->next;
+    }
+
+}
 
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
   { sp_lock(&print_lock);
@@ -233,10 +266,10 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       bdelete(ptr);
       binsert(alloc_head,ptr,0);//整个节点直接挪过来
       #ifdef _DEBUG
-      print_FreeBlock();
-      print_AllocatedBlock();
-      //check_freeblock();
-      //check_allocblock(valid_addr,valid_addr+size);
+      //print_FreeBlock();
+      //print_AllocatedBlock();
+      check_freeblock();
+      check_allocblock(valid_addr,valid_addr+size);
       #endif
       sp_unlock(&glb_lock);
       return (void *)valid_addr;
@@ -253,8 +286,10 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        print_FreeBlock();
-        print_AllocatedBlock();
+        //print_FreeBlock();
+        //print_AllocatedBlock();
+        check_freeblock();
+        check_allocblock(valid_addr,valid_addr+size);
         #endif
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
@@ -271,10 +306,10 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        print_FreeBlock();
-        print_AllocatedBlock();
-        //check_freeblock();
-        //check_allocblock(valid_addr,valid_addr+size);
+        //print_FreeBlock();
+        //print_AllocatedBlock();
+        check_freeblock();
+        check_allocblock(valid_addr,valid_addr+size);
         #endif
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
@@ -296,10 +331,10 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        print_FreeBlock();
-        print_AllocatedBlock();
-        //check_freeblock();
-        //check_allocblock(valid_addr,valid_addr+size);
+        //print_FreeBlock();
+        //print_AllocatedBlock();
+        check_freeblock();
+        check_allocblock(valid_addr,valid_addr+size);
         #endif
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
@@ -322,15 +357,15 @@ static void kfree(void *ptr) {
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
   {
-    //printf("Shaking at [%p,%p)\n",blk_ptr->start,blk_ptr->end);//错误：链表成环了
+    printf("Shaking at [%p,%p)\n",blk_ptr->start,blk_ptr->end);//错误：链表成环了
     if(blk_ptr->start==start)//找到了相应的块
     {
-      //printf("Chloe\n");
+      printf("Chloe\n");
       bdelete(blk_ptr);
       struct block *loc_ptr=free_head;//找到合适的插入free的位置
       while(loc_ptr)
       {
-        //printf("NINEONE#\n");
+        printf("NINEONE#\n");
         if(loc_ptr->end<=start)
         {
           if((loc_ptr->next==NULL)||((loc_ptr->next)->start>=blk_ptr->end))
@@ -341,8 +376,9 @@ static void kfree(void *ptr) {
             sp_unlock(&print_lock);
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
-            print_FreeBlock();
-            print_AllocatedBlock();
+            //print_FreeBlock();
+            //print_AllocatedBlock();
+            check_freeblock();
             #endif
             sp_unlock(&glb_lock);
             return;
@@ -357,7 +393,6 @@ static void kfree(void *ptr) {
   sp_lock(&print_lock);
   printf("Block at %p has not been allocated or already freed\n",ptr);
   sp_unlock(&print_lock);
-  check_freeblock();
   #endif
   sp_unlock(&glb_lock);
   return;

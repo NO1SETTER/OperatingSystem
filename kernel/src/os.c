@@ -64,8 +64,6 @@ static void os_run() {
       #endif
     }
      printf("Finishing Round %d for CPU#%d\n",i,_cpu());
-     //print_FreeBlock();
-     //print_AllocatedBlock();
   }
   
   
