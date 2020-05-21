@@ -28,7 +28,7 @@ static void os_run() {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
   
-  int sel=1;
+  int sel=2;
   if(sel==1)
   test1();
   else if(sel==2)
