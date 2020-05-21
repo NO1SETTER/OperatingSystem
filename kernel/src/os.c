@@ -46,6 +46,7 @@ static void test1()
     if(rand_seed!=0)//kalloc
     {
       int size=rand()%2048;
+      if(size==0) continue;
       #ifdef _DEBUG
       sp_lock(&print_lock);
       printf("Allocating size %d\n",size);
@@ -84,9 +85,7 @@ static void test2()
   
   for(int i=0;i<1000;i++)//小内存大内存交替分配释放
   {
-    sp_lock(&print_lock);
     printf("Round %d for CPU#%d\n",i,_cpu());
-    sp_unlock(&print_lock);
     int rand_seed=rand()%5;
     if(rand_seed!=0)//kalloc
     {
@@ -125,11 +124,7 @@ static void test2()
       sp_unlock(&print_lock);
       #endif
     }
-    sp_lock(&print_lock);
     printf("Finishing Round %d for CPU#%d\n",i,_cpu());
-    sp_unlock(&print_lock);
-    //print_AllocatedBlock();
-    //print_FreeBlock();
   }
 }
 MODULE_DEF(os) = {
