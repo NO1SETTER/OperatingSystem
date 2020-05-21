@@ -2,6 +2,8 @@
 //#define _DEBUG
 //#define _BASIC_DEBUG
 #define PAGE_SIZE 4096 
+#define BLOCK_AREA_SIZE 0x2000000
+#define SLAB_SIZE 0x800000
 typedef struct 
 {
   const char *name;//锁名
@@ -25,7 +27,10 @@ lock_t alloc_lock;//管理balloc和bfree并发性的锁
 lock_t print_lock;//printf的锁,保证完整性
 //两个链表的起始点
 struct block* free_head;
-struct block* alloc_head;//两个都是空的节点
+struct block* alloc_head;//两个都是空的节点,管理全局
+struct block* slab_free_head[8];
+struct block* slab_alloc_head[8];//CPU#i的slab头和尾
+
 //锁相关
 void sp_lockinit(lock_t* lk,const char *name,int id);
 void sp_lock(lock_t* lk);
@@ -178,7 +183,7 @@ uintptr_t GetValidAddress(uintptr_t start,int align)//返回从start开始对齐
     return (uintptr_t)ret;
 }
 
-const int max_block_num=0x2000000/sizeof(struct block);
+const int max_block_num=BLOCK_AREA_SIZE/sizeof(struct block);
 //最多给管理的块分配0x2000000的空间
 int FreeAllocNo[20000];
 int FreeAllocNoNum=0;//记录被释放后的块的位置，方便直接使用
@@ -438,21 +443,33 @@ static void kfree(void *ptr) {
 static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
-  bstart=(uintptr_t)_heap.end-0x2000000;
+  bstart=(uintptr_t)_heap.end-BLOCK_AREA_SIZE;
   sp_lockinit(&alloc_lock,"balloc_lock",0);
   sp_lockinit(&glb_lock,"glb_lock",1);
   sp_lockinit(&print_lock,"print_lock",2);
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
+  
   free_head->start=free_head->end=free_head->size=0;
   alloc_head->start=alloc_head->end=alloc_head->size=0;
-
   struct block *blk=(struct block *)balloc(sizeof(struct block));
   blk->start=(uintptr_t)_heap.start;
-  blk->end=(uintptr_t)(_heap.end-0x2000000);
+  blk->end=(uintptr_t)(_heap.end-BLOCK_AREA_SIZE-_ncpu()*SLAB_SIZE);//每个CPU分配0x800000用作slab,并分配0x2000000用作block的管理区域
   blk->size=blk->end-blk->end;
   blk->prev=free_head;
   free_head->next=blk;
+
+  for(int i=0;i<_ncpu();i++)
+  {
+    slab_alloc_head[i]=(struct block *)balloc(sizeof(struct block));
+    slab_free_head[i]=(struct block *)balloc(sizeof(struct block));
+     struct block *slab_blk=(struct block *)balloc(sizeof(struct block));
+     slab_blk->start=(uintptr_t)(_heap.end-BLOCK_AREA_SIZE-(i+1)*SLAB_SIZE);
+     slab_blk->end=(uintptr_t)(_heap.end-BLOCK_AREA_SIZE-i*SLAB_SIZE);//每个CPU分配0x800000用作slab,并分配0x2000000用作block的管理区域
+     slab_blk->size=SLAB_SIZE;
+     slab_blk->prev=slab_free_head[i];
+     slab_free_head[i]->next=slab_blk;
+  }
 }
 
 MODULE_DEF(pmm) = {

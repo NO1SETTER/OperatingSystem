@@ -27,7 +27,7 @@ static void os_run() {
   for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
-  printf("%d",_ncpu());
+  
   int sel=1;
   if(sel==1)
   test1();
