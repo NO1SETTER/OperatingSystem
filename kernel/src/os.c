@@ -27,6 +27,18 @@ static void os_run() {
   for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }
+  
+  int sel=1;
+  if(sel==1)
+  test1();
+  else if(sel==2)
+  test2();
+
+  while (1) ;
+}
+
+static void test1()
+{ printf("Conducting test1\n"); 
     for(int i=0;i<1000;i++)
   { 
     printf("Round %d for CPU#%d\n",i,_cpu());
@@ -64,61 +76,6 @@ static void os_run() {
       #endif
     }
      printf("Finishing Round %d for CPU#%d\n",i,_cpu());
-  }
-  
-  
-  int sel=3;
-  if(sel==0)
-  test1();
-  else if(sel==1)
-  test2();
-
-  while (1) ;
-}
-
-static void test1()
-{ printf("Conducting test1\n"); 
-  for(int i=0;i<1000;i++)
-  { 
-    sp_lock(&print_lock);
-    printf("Round %d for CPU#%d\n",i,_cpu());
-    sp_unlock(&print_lock);
-    int rand_seed=rand()%5;
-    if(rand_seed!=0)//kalloc
-    {
-      int size=rand()%2048;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocating size %d\n",size);
-      sp_unlock(&print_lock);
-      #endif
-      void* ptr=pmm->alloc(size);
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      allocated[num++]=ptr;
-    }
-    else//kfree
-    {
-      if(num==0) continue;
-      int r=rand()%num;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      pmm->free(allocated[r]);      
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Successfully freed\n");
-      sp_unlock(&print_lock);
-      #endif
-    }
-     sp_lock(&print_lock);
-     printf("Finishing Round %d for CPU#%d\n",i,_cpu());
-     sp_unlock(&print_lock);
   }
 }
 
