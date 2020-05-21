@@ -39,44 +39,17 @@ void sp_lock(lock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1))
   { 
-   // sp_lock(&print_lock,0);
-    printf("CPU#%d Acquiring lock  %s\n",_cpu(),lk->name);
-   // sp_unlock(&print_lock,0);
+    //printf("CPU#%d Acquiring lock  %s\n",_cpu(),lk->name);
   }
-  lk->holder=_cpu();
-  printf("CPU#%d holding lock %s\n",lk->holder,lk->name);
+  //lk->holder=_cpu();
+  //printf("CPU#%d holding lock %s\n",lk->holder,lk->name);
 }
 void sp_unlock(lock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
-  printf("CPU#%d Releasing lock  %s\n",_cpu(),lk->name);
-  lk->holder=10000;//表示无holder
+  //printf("CPU#%d Releasing lock  %s\n",_cpu(),lk->name);
+  //lk->holder=10000;//表示无holder
 }
-/*
-void sp_lock(lock_t* lk,int log)
-{
-  while(_atomic_xchg(&lk->locked,1))
-  { 
-    sp_lock(&print_lock,0);
-    printf("CPU#%d Acquiring lock  %s\n",_cpu(),lk->name);
-    sp_unlock(&print_lock,0);
-  }
-  if(log)
-  {
-  sp_lock(&print_lock,0);
-  printf("CPU#%d Acquires lock  %s\n",_cpu(),lk->name);
-  sp_unlock(&print_lock,0);
-  }
-}
-void sp_unlock(lock_t *lk,int log)
-{
-  _atomic_xchg(&lk->locked,0);
-  if(log)
-  {sp_lock(&print_lock,0);
-  printf("CPU#%d Frees lock  %s\n",_cpu(),lk->name);
-  sp_unlock(&print_lock,0);
-  }
-}*/
 
 //锁pre,nxt;
 void blink(struct block* pre,struct block*nxt)//直接连接
@@ -158,7 +131,7 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 
 void print_FreeBlock()
 {
-  #ifdef _DEBUG
+  /*#ifdef _DEBUG
   sp_lock(&print_lock);
   struct block* ptr=free_head->next;
   printf("Free blocks:\n");
@@ -168,12 +141,12 @@ void print_FreeBlock()
     ptr=ptr->next;
   }
   sp_unlock(&print_lock);
-  #endif
+  #endif*/
 }
 
 void print_AllocatedBlock()
 {
-  #ifdef _DEBUG
+ /* #ifdef _DEBUG
   sp_lock(&print_lock);
   struct block* ptr=alloc_head->next;
   printf("Allocated blocks:\n");
@@ -183,7 +156,7 @@ void print_AllocatedBlock()
     ptr=ptr->next;
   }
   sp_unlock(&print_lock);
-  #endif
+  #endif*/
 }
 
 
@@ -240,41 +213,6 @@ static void bfree(struct block* blk)
   sp_unlock(&alloc_lock);
 }
 
-void check_allocblock(uintptr_t start,uintptr_t end)
-{
-  struct block* aptr=alloc_head->next;
-  while(aptr)
-  {
-    if(aptr->start==start&&aptr->end!=end)
-    { 
-      //printf("Allocated block overlapped\n");
-      assert(0);
-    }
-    aptr=aptr->next;
-  }
-}
-
-void check_freeblock()
-{
-    struct block* fptr=free_head->next;
-    uintptr_t end=0;
-    while(fptr)
-    {
-      if(!(fptr->start>=end))
-      {
-        //printf("FreeBlock %p overlapped\n",fptr->start);
-        assert(0);
-      }
-      if(!(fptr->end>fptr->start))
-      {
-        //printf("end > start\n");
-        assert(0);
-      }
-      end=fptr->end;
-      fptr=fptr->next;
-    }
-
-}
 
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
   { sp_lock(&print_lock);
@@ -317,8 +255,6 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         #ifdef _DEBUG
         print_FreeBlock();
         print_AllocatedBlock();
-        //check_freeblock();
-        //check_allocblock(valid_addr,valid_addr+size);
         #endif
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
@@ -407,7 +343,6 @@ static void kfree(void *ptr) {
             #ifdef _DEBUG
             print_FreeBlock();
             print_AllocatedBlock();
-            //check_freeblock();
             #endif
             sp_unlock(&glb_lock);
             return;
@@ -418,7 +353,6 @@ static void kfree(void *ptr) {
     }
     blk_ptr=blk_ptr->next;
   }
-  printf("hrhr\n");
   #ifdef _DEBUG
   sp_lock(&print_lock);
   printf("Block at %p has not been allocated or already freed\n",ptr);

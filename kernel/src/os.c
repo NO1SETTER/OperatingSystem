@@ -18,7 +18,7 @@ extern void check_freeblock();
 extern void print_FreeBlock();
 extern void print_AllocatedBlock();
 
-void* allocated[1005];
+void* allocated[100005];
 int num=0;
 
 static void test1();
