@@ -322,15 +322,15 @@ static void kfree(void *ptr) {
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
   {
-    printf("Shaking at [%p,%p)\n",blk_ptr->start,blk_ptr->end);//错误：链表成环了
+    //printf("Shaking at [%p,%p)\n",blk_ptr->start,blk_ptr->end);//错误：链表成环了
     if(blk_ptr->start==start)//找到了相应的块
     {
-      printf("Chloe\n");
+      //printf("Chloe\n");
       bdelete(blk_ptr);
       struct block *loc_ptr=free_head;//找到合适的插入free的位置
       while(loc_ptr)
       {
-        printf("NINEONE#\n");
+        //printf("NINEONE#\n");
         if(loc_ptr->end<=start)
         {
           if((loc_ptr->next==NULL)||((loc_ptr->next)->start>=blk_ptr->end))
