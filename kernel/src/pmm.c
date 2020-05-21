@@ -14,6 +14,7 @@ uintptr_t start,end;//管理[start,end)
 uint32_t size;
 struct block* prev;
 struct block* next;
+char none[8];
 };
 
 //用三个全局锁
