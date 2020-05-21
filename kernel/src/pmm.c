@@ -236,8 +236,13 @@ void check_allocblock(uintptr_t start,uintptr_t end)
     int ct2=0;
     while((start_align&1)==0)
     {start_align>>=1;ct2++;}
-    assert(ct1==ct2);
-
+    if(ct1!=ct2)
+    {
+      sp_lock(&print_lock);
+      printf("Not aligned:size %d at [%p,%p)\n",aptr->size,aptr->start,aptr->end);
+      assert(0);
+      sp_unlock(&print_lock);
+    }
     aptr=aptr->next;
   }
 }
