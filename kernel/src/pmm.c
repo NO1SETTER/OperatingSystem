@@ -164,14 +164,14 @@ void print_AllocatedBlock()
 }
 
 
-
 uintptr_t GetValidAddress(uintptr_t start,int align)//返回从start开始对齐align的最小地址
 {
   uint32_t temp=1;
-    while(align%2==0)
-    {temp=temp*2;
-    align=align/2;
+    while(temp<align)
+    {
+      temp=temp*2;
     }
+    
     uint32_t ret=(((uint32_t)(start-1)/temp)+1)*temp;
     return (uintptr_t)ret;
 }
