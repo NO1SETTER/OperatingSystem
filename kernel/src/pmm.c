@@ -386,7 +386,7 @@ static void kfree(void *ptr) {
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
   {
-    printf("Shaking at [%p,%p)\n",blk_ptr->start,blk_ptr->end);//错误：free成环了
+    printf("Shaking at [%p,%p)\n",blk_ptr->start,blk_ptr->end);//错误：链表成环了
     if(blk_ptr->start==start)//找到了相应的块
     {
       printf("Chloe\n");
@@ -397,7 +397,7 @@ static void kfree(void *ptr) {
         printf("NINEONE#\n");
         if(loc_ptr->end<=start)
         {
-          if(loc_ptr->next==NULL)
+          if((loc_ptr->next==NULL)||((loc_ptr->next)->start>=blk_ptr->end))
           { 
             printf("LOCATED\n");
             sp_lock(&print_lock);
@@ -409,21 +409,6 @@ static void kfree(void *ptr) {
             print_AllocatedBlock();
             //check_freeblock();
             #endif
-            sp_unlock(&glb_lock);
-            return;
-          }
-          if((loc_ptr->next)->start>=blk_ptr->end)//这两种情况均可以插入
-          {
-            printf("LOCATED\n");
-            sp_lock(&print_lock);
-            printf("CPU#%d case 6\n",_cpu());
-            sp_unlock(&print_lock);
-            binsert(loc_ptr,blk_ptr,1);
-            #ifdef _DEBUG
-            //check_freeblock();
-            #endif
-            print_FreeBlock();
-            print_AllocatedBlock();
             sp_unlock(&glb_lock);
             return;
           }
