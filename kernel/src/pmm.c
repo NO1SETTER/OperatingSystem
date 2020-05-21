@@ -1,5 +1,5 @@
 #include <common.h>
-//#define _DEBUG
+#define _DEBUG
 //#define _BASIC_DEBUG
 //#define _SLAB_ASSIST
 
