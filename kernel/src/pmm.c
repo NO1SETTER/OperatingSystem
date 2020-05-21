@@ -353,7 +353,6 @@ static void kfree(void *ptr) {
   printf("CPU#%d KFREE\n",_cpu());
   sp_unlock(&print_lock);
   sp_lock(&glb_lock);
-  printf("haha\n");
   uintptr_t start=(uintptr_t)ptr;
   struct block* blk_ptr=alloc_head->next;
   while(blk_ptr)
