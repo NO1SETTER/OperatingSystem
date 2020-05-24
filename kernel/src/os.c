@@ -26,11 +26,11 @@ static void test2();
 static void test3();
 static void test4();
 static void os_run() {
-  for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
+  /*for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
-  }
+  }*/
   
-  int sel=4;
+  int sel=0;
   if(sel==1)
   test1();
   else if(sel==2)
@@ -39,6 +39,7 @@ static void os_run() {
   test3();
   else if(sel==4)
   test4();
+  _intr_write(1);
 
   while (1) ;
 }
