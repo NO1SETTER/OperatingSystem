@@ -235,30 +235,21 @@ struct EV_CTRL* EV_HEAD=&ev_ctrl;
 
 static _Context *os_trap(_Event ev,_Context *context)
 {
-  /*switch (ev.event)
+  _Context *next = NULL;
+  struct EV_CTRL*ptr=EV_HEAD->next;
+  while(ptr)
   {
-        case _EVENT_ERROR:
-            panic("ERROR");break;
-        case _EVENT_YIELD:
-            return schedule(c);
-        case _EVENT_SYSCALL:
-            do_syscall(c);break;
-        case _EVENT_IRQ_TIMER:
-            _yield();break;
-        default: panic("Unhandled event ID = %d", e.event);break;
-  }
-  return NULL;*/
-/*  _Context *next = NULL;
-  for () {
-    if (h.event == _EVENT_NULL || h.event == ev.event) {
-      _Context *r = h.handler(ev, ctx);
-      panic_on(r && next, "returning multiple contexts");
+    if (ptr->event == _EVENT_NULL || ptr->event == ev.event) {
+      _Context *r = ptr->handler(ev, context);
+      //panic_on(r && next, "returning multiple contexts");
       if (r) next = r;
     }
+  ptr=ptr->next;
   }
-  panic_on(!next, "returning NULL context");
-  panic_on(sane_context(next), "returning to invalid context");
-  return next;*/
+
+  //panic_on(!next, "returning NULL context");
+  //panic_on(sane_context(next), "returning to invalid context");
+  return next;
   return NULL;
 }
 
@@ -269,18 +260,25 @@ static void on_irq (int seq,int event,handler_t handler)
   NEW_EV->event=event;
   NEW_EV->handler=handler;
   struct EV_CTRL* ptr=EV_HEAD;
-  if(ptr->seq<seq)
+  while(ptr)
   {
-    if(ptr->next==NULL)
+    if(ptr->seq<seq)
     {
-      ptr->next=NEW_EV;
+      if(ptr->next==NULL)
+      {
+        ptr->next=NEW_EV;
+        break;
+      }
+      if((ptr->next)->seq>seq)
+      {
+        NEW_EV->next=ptr->next;
+        ptr->next=NEW_EV;
+        break;
+      }
     }
-    if((ptr->next)->seq>seq)
-    {
-      NEW_EV->next=ptr->next;
-      ptr->next=NEW_EV;
-    }
+    ptr=ptr->next;
   }
+  return;
 }
 
 MODULE_DEF(os) = {
