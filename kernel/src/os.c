@@ -227,7 +227,11 @@ struct EV_CTRL{
 int seq;
 int event;
 handler_t handler;
-}ALL_EV[1000];
+struct EV_CTRL* next;
+};
+
+struct EV_CTRL ev_ctrl;//用链表记录所有_Event
+struct EV_CTRL* EV_HEAD=&ev_ctrl;
 
 static _Context *os_trap(_Event ev,_Context *context)
 {
@@ -244,8 +248,8 @@ static _Context *os_trap(_Event ev,_Context *context)
         default: panic("Unhandled event ID = %d", e.event);break;
   }
   return NULL;*/
-  /*_Context *next = NULL;
-  for (auto &h: handlers_sorted_by_seq) {
+/*  _Context *next = NULL;
+  for () {
     if (h.event == _EVENT_NULL || h.event == ev.event) {
       _Context *r = h.handler(ev, ctx);
       panic_on(r && next, "returning multiple contexts");
@@ -258,16 +262,32 @@ static _Context *os_trap(_Event ev,_Context *context)
   return NULL;
 }
 
-static void on_irq(int seq,int event,handler_t handler)
+static void on_irq (int seq,int event,handler_t handler)
 {
-  ALL_EV[NR_IRQ++]=(struct EV_CTRL){seq,event,handler};
+  struct EV_CTRL* NEW_EV=(struct EV_CTRL*)pmm->alloc(sizeof(struct EV_CTRL));
+  NEW_EV->seq=seq;
+  NEW_EV->event=event;
+  NEW_EV->handler=handler;
+  struct EV_CTRL* ptr=EV_HEAD->next;
+  if(ptr->seq<seq)
+  {
+    if(ptr->next==NULL)
+    {
+      ptr->next=NEW_EV;
+    }
+    if((ptr->next)->seq>seq)
+    {
+      NEW_EV->next=ptr->next;
+      ptr->next=NEW_EV;
+    }
+  }
 }
 
 MODULE_DEF(os) = {
   .init = os_init,
   .run  = os_run,
   .trap = os_trap,
-  .on_irq=on_irq,
+  .on_irq = on_irq,
 };
 
 
