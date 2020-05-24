@@ -221,9 +221,53 @@ static void test4()//频繁分配页
     printf("Finishing Round %d for CPU#%d\n",i,_cpu());
   }
 }
+
+int NR_IRQ=0;
+struct EV_CTRL{
+int seq;
+int event;
+handler_t handler;
+}ALL_EV[1000];
+
+static _Context *os_trap(_Event ev,_Context *context)
+{
+  /*switch (ev.event)
+  {
+        case _EVENT_ERROR:
+            panic("ERROR");break;
+        case _EVENT_YIELD:
+            return schedule(c);
+        case _EVENT_SYSCALL:
+            do_syscall(c);break;
+        case _EVENT_IRQ_TIMER:
+            _yield();break;
+        default: panic("Unhandled event ID = %d", e.event);break;
+  }
+  return NULL;*/
+  /*_Context *next = NULL;
+  for (auto &h: handlers_sorted_by_seq) {
+    if (h.event == _EVENT_NULL || h.event == ev.event) {
+      _Context *r = h.handler(ev, ctx);
+      panic_on(r && next, "returning multiple contexts");
+      if (r) next = r;
+    }
+  }
+  panic_on(!next, "returning NULL context");
+  panic_on(sane_context(next), "returning to invalid context");
+  return next;*/
+  return NULL;
+}
+
+static void on_irq(int seq,int event,handler_t handler)
+{
+  ALL_EV[NR_IRQ++]=(struct EV_CTRL){seq,event,handler};
+}
+
 MODULE_DEF(os) = {
   .init = os_init,
   .run  = os_run,
+  .trap = os_trap,
+  .on_irq=on_irq,
 };
 
 
