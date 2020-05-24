@@ -230,7 +230,7 @@ handler_t handler;
 struct EV_CTRL* next;
 };
 
-struct EV_CTRL ev_ctrl;//用链表记录所有_Event
+struct EV_CTRL ev_ctrl={-1,0,NULL,NULL};//用链表记录所有_Event
 struct EV_CTRL* EV_HEAD=&ev_ctrl;
 
 static _Context *os_trap(_Event ev,_Context *context)
@@ -268,7 +268,7 @@ static void on_irq (int seq,int event,handler_t handler)
   NEW_EV->seq=seq;
   NEW_EV->event=event;
   NEW_EV->handler=handler;
-  struct EV_CTRL* ptr=EV_HEAD->next;
+  struct EV_CTRL* ptr=EV_HEAD;
   if(ptr->seq<seq)
   {
     if(ptr->next==NULL)
