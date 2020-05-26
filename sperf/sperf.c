@@ -42,6 +42,10 @@ static int syscmp(const void* ptr1,const void* ptr2)
   return a->t < b->t;
 }
 
+void error_dfs(int k)
+{
+  error_dfs(k+1);
+}
 int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
@@ -185,6 +189,7 @@ int main(int argc, char *argv[]) {
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
+    error_dfs();
     for(int i=0;i<env_num;i++)
     {sprintf(strace_path,"%s/strace",env[i]);
     execve(strace_path,exec_argv,exec_env);
