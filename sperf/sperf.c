@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
           }
           if(!rec)
           {
-            strcpy(sysctrl[sys_num].name,name);zyx
+            strcpy(sysctrl[sys_num].name,name);
             sysctrl[sys_num].t=t;
             sys_num=sys_num+1;
           }
