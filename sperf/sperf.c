@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
-    for(int i=0;i<env_num;i++)
+    for(int i=env_num-1;i>=0;i--)
     {sprintf(strace_path,"%s/strace",env[i]);
     execve(strace_path,exec_argv,exec_env);
     }
