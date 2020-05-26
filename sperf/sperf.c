@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
   find_strace_path();
+  assert(0);
   print_message();
   for(int i=0;i<1000;i++)
   {
@@ -242,7 +243,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
   if((dir=opendir(basepath))==NULL)//这里失败了
   {
     printf("Failed opening %s\n",basepath);//错误是ENOENT
-    assert(0);
+    //assert(0);
   }
 
   char base[500];
