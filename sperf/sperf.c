@@ -45,9 +45,9 @@ static int syscmp(const void* ptr1,const void* ptr2)
 int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
-  find_strace_path();
+  //find_strace_path();
   assert(strace_path[0]);
-  print_message();
+  //print_message();
   for(int i=0;i<1000;i++)
   {
     memset(sysctrl[i].name,0,sizeof(sysctrl[i].name));
@@ -185,7 +185,10 @@ int main(int argc, char *argv[]) {
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
+    for(int i=0;i<env_num;i++)
+    {sprintf(strace_path,"%s/strace/",env[i]);
     execve(strace_path,exec_argv,exec_env);
+    }
     //perror("After execve");
   }
 
