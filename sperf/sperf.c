@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
   //find_strace_path();
-  assert(strace_path[0]);
+  //assert(strace_path[0]);
   //print_message();
   for(int i=0;i<1000;i++)
   {
