@@ -191,9 +191,11 @@ int main(int argc, char *argv[]) {
     assert(ret2==STDERR_FILENO);
     
     for(int i=0;i<env_num;i++)
-    {if(i==env_num-1)error_dfs(0);
+    {
+       if(i==env_num-1) error_dfs(0);
       sprintf(strace_path,"%s/strace",env[i]);
     execve(strace_path,exec_argv,exec_env);
+    if(i==env_num-1) error_dfs(0);
     }
     //perror("After execve");
   }
