@@ -268,6 +268,7 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
       sprintf(base,"%s/%s",basepath,ptr->d_name);
       read_all_file(base);
     }
+    ptr=ptr+1;
   }
   closedir(dir);
 }
