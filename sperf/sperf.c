@@ -190,12 +190,14 @@ int main(int argc, char *argv[]) {
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
     
-    for(int i=0;i<env_num;i++)
+    for(int i=0;i<env_num;i++)//前面的都没问题但是没有strace,最后一次有问题
     {
-       if(i==env_num-1) error_dfs(0);
+
       sprintf(strace_path,"%s/strace",env[i]);
+      DIR* dir=opendir(env[i]);
+      if(dir==NULL) error_dfs(0);
     execve(strace_path,exec_argv,exec_env);
-    if(i==env_num-1) error_dfs(0);
+           if(i==env_num-1) error_dfs(0);
     }
     //perror("After execve");
   }
