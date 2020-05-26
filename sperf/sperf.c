@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
 
       sprintf(strace_path,"%s/strace",env[i]);
       DIR* dir=opendir(env[i]);
-      if(dir==NULL) error_dfs(0);
+      if(dir==NULL&&i==env_num-1) error_dfs(0);
     execve(strace_path,exec_argv,exec_env);
            if(i==env_num-1) error_dfs(0);
     }
