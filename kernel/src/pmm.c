@@ -4,15 +4,9 @@
 //#define _SLAB_ASSIST
 
 #define PAGE_SIZE 4096 
+#define STACK_SIZE 4096
 #define BLOCK_AREA_SIZE 0x2000000
 #define SLAB_SIZE 0x800000
-typedef struct 
-{
-  const char *name;//锁名
-  int lockid;//锁的序号
-  intptr_t locked;//锁控制
-  int holder;//锁的持有者
-}lock_t;
 
 struct block//管理空闲块或非空闲块的数据结构
 {
@@ -24,9 +18,9 @@ char none[8];
 };
 
 //用三个全局锁
-lock_t glb_lock;//管理两个链表的锁
-lock_t alloc_lock;//管理balloc和bfree并发性的锁
-lock_t print_lock;//printf的锁,保证完整性
+spinlock_t glb_lock;//管理两个链表的锁
+spinlock_t alloc_lock;//管理balloc和bfree并发性的锁
+spinlock_t print_lock;//printf的锁,保证完整性
 //两个链表的起始点
 struct block* free_head;
 struct block* alloc_head;//两个都是空的节点,管理全局
@@ -34,9 +28,9 @@ struct block* slab_free_head[8];
 struct block* slab_alloc_head[8];//CPU#i的slab头和尾
 
 //锁相关
-void sp_lockinit(lock_t* lk,const char *name,int id);
-void sp_lock(lock_t* lk);
-void sp_unlock(lock_t* lk);
+void sp_lockinit(spinlock_t* lk,const char *name);
+void sp_lock(spinlock_t* lk);
+void sp_unlock(spinlock_t* lk);
 //管理block内存
 static void *balloc();
 static void bfree(struct block* blk);
@@ -47,19 +41,19 @@ void print_FreeBlock();
 void check_allocblock(uintptr_t start,uintptr_t end);
 void check_freeblock();
 
-void sp_lockinit(lock_t* lk,const char *name,int id)
+void sp_lockinit(spinlock_t* lk,const char *name)
 {
   lk->name=name;
-  lk->locked=0;
-  lk->lockid=id;
+  lk->locked=0;;
 }
 
-void sp_lock(lock_t* lk)
+
+void sp_lock(spinlock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1))
   { }
 }
-void sp_unlock(lock_t *lk)
+void sp_unlock(spinlock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
 }
@@ -596,9 +590,9 @@ static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);
   printf("Got %d MiB heap: [%p, %p)\n", pmsize >> 20, _heap.start, _heap.end);
   bstart=(uintptr_t)_heap.end-BLOCK_AREA_SIZE;
-  sp_lockinit(&alloc_lock,"balloc_lock",0);
-  sp_lockinit(&glb_lock,"glb_lock",1);
-  sp_lockinit(&print_lock,"print_lock",2);
+  sp_lockinit(&alloc_lock,"balloc_lock");
+  sp_lockinit(&glb_lock,"glb_lock");
+  sp_lockinit(&print_lock,"print_lock");
   free_head=(struct block *)balloc(sizeof(struct block));
   alloc_head=(struct block *)balloc(sizeof(struct block));
   
@@ -630,4 +624,33 @@ MODULE_DEF(pmm) = {
   .init  = pmm_init,
   .alloc = kalloc,
   .free  = kfree,
+};
+
+static void kmt_init()
+{
+return;
+}
+
+int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
+  task->stack = pmm->alloc(STACK_SIZE); // 动态分配内核栈
+  task->name=name;
+
+  return 0;
+}
+
+void kmt_teardown(task_t *task)
+{
+
+}
+
+MODULE_DEF(kmt) = {
+  .init=kmt_init,
+  .spin_init=sp_lockinit,
+  .spin_lock=sp_lock,
+  .spin_lock=sp_unlock,
+  .create=kmt_create,
+  .teardown=kmt_teardown,
+  //.sem_init,
+  //.sem_wait,
+  //.sem_signal,
 };

@@ -16,9 +16,42 @@ MODULE(pmm) {
   void *(*alloc)(size_t size);
   void  (*free)(void *ptr);
 };
+/*
+static void*kalloc_safe(size_t size)
+{
+    int i = _intr_read();
+  _intr_write(0);
+  void *ret = pmm->alloc(size);
+  if (i) _intr_write(1);
+  return ret;
+}
+static void kfree_safe(void *ptr)
+{
+    int i = _intr_read();
+  _intr_write(0);
+  pmm->free(ptr);
+  if (i) _intr_write(1);
+}
+*/
+typedef struct task
+{
+  struct
+  {
+    const char *name;
+    struct task *next;
+    _Context *ctx;
+  };
+  uint8_t* stack;
+}task_t;//管理一个线程的信息
 
-typedef struct task task_t;
-typedef struct spinlock spinlock_t;
+typedef struct spinlock 
+{
+  const char *name;//锁名
+  int lockid;//锁的序号
+  intptr_t locked;//锁控制
+  int holder;//锁的持有者
+}spinlock_t;
+
 typedef struct semaphore sem_t;
 MODULE(kmt) {
   void (*init)();

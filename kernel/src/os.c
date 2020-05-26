@@ -1,16 +1,24 @@
 #include <common.h>
 //#define _DEBUG
+//#define DEBUG_LOCAL
 static void os_init() {
   pmm->init();
+  kmt->init(); // 模块先初始化
+
+#ifdef DEBUG_LOCAL
+  kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
+  kmt->sem_init(&fill,  "fill",  0);
+  for (int i = 0; i < 4; i++) // 4 个生产者
+    kmt->create(task_alloc(), "producer", producer, NULL);
+  for (int i = 0; i < 5; i++) // 5 个消费者
+    kmt->create(task_alloc(), "consumer", consumer, NULL);
+#endif
 }
 
-typedef struct 
-{
-  intptr_t locked;
-}lock_t;
-extern lock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
-extern void sp_lock(lock_t* lk);
-extern void sp_unlock(lock_t *lk);
+
+extern spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
+extern void sp_lock(spinlock_t* lk);
+extern void sp_unlock(spinlock_t *lk);
 
 
 extern void check_allocblock(void *ptr);
@@ -21,14 +29,17 @@ extern void print_AllocatedBlock();
 void* allocated[100005];
 int num=0;
 
+/*
 static void test1();
 static void test2();
 static void test3();
 static void test4();
+*/
+
 static void os_run() {
   /*for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
-  }*/
+  }
   
   int sel=0;
   if(sel==1)
@@ -38,12 +49,12 @@ static void os_run() {
   else if(sel==3)
   test3();
   else if(sel==4)
-  test4();
+  test4();*/
   _intr_write(1);
 
   while (1) ;
 }
-
+/*
 static void test1()//在[0,2048)完全随机
 { printf("Conducting test1\n"); 
     for(int i=0;i<1000;i++)
@@ -221,7 +232,7 @@ static void test4()//频繁分配页
     }
     printf("Finishing Round %d for CPU#%d\n",i,_cpu());
   }
-}
+}*/
 
 int NR_IRQ=0;
 struct EV_CTRL{
@@ -234,8 +245,9 @@ struct EV_CTRL* next;
 struct EV_CTRL ev_ctrl={-1,0,NULL,NULL};//用链表记录所有_Event
 struct EV_CTRL* EV_HEAD=&ev_ctrl;
 
-static _Context *os_trap(_Event ev,_Context *context)
+static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do_event
 {
+  _Context *pre=context; 
   _Context *next = NULL;
   struct EV_CTRL*ptr=EV_HEAD->next;
   while(ptr)
@@ -247,14 +259,14 @@ static _Context *os_trap(_Event ev,_Context *context)
     }
   ptr=ptr->next;
   }
-
+  if(next==NULL)
+    next=pre;
   //panic_on(!next, "returning NULL context");
   //panic_on(sane_context(next), "returning to invalid context");
   return next;
-  return NULL;
 }
 
-static void on_irq (int seq,int event,handler_t handler)
+static void on_irq (int seq,int event,handler_t handler)//原本是_cte_init中的一部分
 {
   struct EV_CTRL* NEW_EV=(struct EV_CTRL*)pmm->alloc(sizeof(struct EV_CTRL));
   NEW_EV->seq=seq;
@@ -288,5 +300,4 @@ MODULE_DEF(os) = {
   .trap = os_trap,
   .on_irq = on_irq,
 };
-
 
