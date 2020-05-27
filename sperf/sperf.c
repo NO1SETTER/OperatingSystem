@@ -218,7 +218,7 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
     for(;(s=strtok(NULL,":"))!=NULL;pos++)
     {
       sprintf(env[pos],"%s",s);
-      printf("length of env[%d]:%s is %ld\n",pos,env[pos],strlen(env[pos]));
+      printf("length of env[%d]:%s is %ull\n",pos,env[pos],strlen(env[pos]));
     }
   env_num=pos;
   
@@ -290,7 +290,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
       if(strcmp(ptr->d_name,"strace")==0)
       {
         sprintf(strace_path,"%s/strace",basepath);
-        printf("length of strace_path:%s is %ld\n",strace_path,strlen(strace_path));
+        printf("length of strace_path:%s is %ull\n",strace_path,strlen(strace_path));
         return;
       }
     }
