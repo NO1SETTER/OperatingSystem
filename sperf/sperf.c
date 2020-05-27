@@ -49,6 +49,7 @@ void error_dfs(int k)
 int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
+  error_dfs(0);
   find_strace_path();
   if(strace_path[0]==0) error_dfs(0);
   for(int i=0;i<1000;i++)
