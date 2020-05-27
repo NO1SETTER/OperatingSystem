@@ -105,7 +105,6 @@ int main(int argc, char *argv[]) {
           double t;
           for(int i=0;i<len;i++)//定位名字
           {
-            if(!((buffer[i]>='a'&&buffer[i]<='z')||(buffer[i]>='0'&&buffer[i]<='9'))) continue;
             if(buffer[i]!='(')
             name[i]=buffer[i];
             else
@@ -168,7 +167,6 @@ int main(int argc, char *argv[]) {
       }*/
       printf("Time #%d\n",ct++);
       fflush(stdout);
-      //assert(sys_num>=5);
       for(int i=0;i<5;i++)
       { 
         sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
