@@ -192,11 +192,8 @@ int main(int argc, char *argv[]) {
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
-    if(exec_argv[2][0]=='/')
-    execve(strace_path,exec_argv,NULL);
-    else
     execve(strace_path,exec_argv,environ);
-
+    //error_dfs(0);
     perror("After execve");
   }
 
@@ -206,7 +203,6 @@ int main(int argc, char *argv[]) {
 
 void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解析了
 {
-  
   exec_argv[0]="strace";
   exec_argv[1]="-T";
   for(int i=1;i<argc;i++)
