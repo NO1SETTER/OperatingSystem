@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
     if(exec_argv[2][0]=='/')
-    exec_argv(strace_path,exec_argv,NULL);
+    execve(strace_path,exec_argv,NULL);
     else
     execve(strace_path,exec_argv,environ);
 
