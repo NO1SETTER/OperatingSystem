@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
       }*/
       printf("Time #%d\n",ct++);
       fflush(stdout);
-      assert(sys_num>=5);
+      //assert(sys_num>=5);
       for(int i=0;i<5;i++)
       { 
         sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
