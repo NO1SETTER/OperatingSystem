@@ -157,16 +157,17 @@ int main(int argc, char *argv[]) {
       }
       
       qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
-      if(ct!=1)
+      /*if(ct!=1)
       {for(int i=0;i<6;i++)
       { printf("\033[1A");
         fflush(stdout);
         printf("\r\033[K");
         fflush(stdout);
       }
-      }
+      }*/
       printf("Time #%d\n",ct++);
       fflush(stdout);
+      assert(sys_num>=5);
       for(int i=0;i<5;i++)
       { 
         sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
