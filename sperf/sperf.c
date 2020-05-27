@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
     int ret1=dup2(devno,STDOUT_FILENO);
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
-    assert(ret2==STDERR_FILENO)
+    assert(ret2==STDERR_FILENO);
     for(int i=env_num-1;i>=0;i--)//前面的都没问题但是没有strace,最后一次有问题
     {
       printf("i=%d\n",i);
