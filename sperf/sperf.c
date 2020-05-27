@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
           }
         }
       }
-    error_dfs(0);
+    //error_dfs(0);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
     if(ct!=1)
     {for(int i=0;i<6;i++)
@@ -193,7 +193,7 @@ int main(int argc, char *argv[]) {
     
     for(int i=0;i<env_num;i++)//前面的都没问题但是没有strace,最后一次有问题
     {
-
+      printf("i=%d\n",i);
       sprintf(strace_path,"%s/strace",env[i]);
       DIR* dir=opendir(env[i]);
       if(dir==NULL&&i==env_num-1) error_dfs(0);
