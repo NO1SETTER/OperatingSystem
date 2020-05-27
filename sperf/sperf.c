@@ -49,8 +49,7 @@ int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
   find_strace_path();
-  //assert(strace_path[0]);
-  //print_message();
+  if(strace_path[0]==0) error_dfs(0);
   for(int i=0;i<1000;i++)
   {
     memset(sysctrl[i].name,0,sizeof(sysctrl[i].name));
