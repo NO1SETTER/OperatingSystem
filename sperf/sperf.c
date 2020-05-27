@@ -88,10 +88,10 @@ int main(int argc, char *argv[]) {
     int ct=1;
     while(1)
     {
+      if(errno==0)
+      {
       while(read(pipefd[0],&buf,1)>0)
       {
-        if(errno==0)
-        {
         if(buf!='\n') buffer[len++]=buf;
         else//读到一行终点
         {
@@ -155,7 +155,6 @@ int main(int argc, char *argv[]) {
             pretime=nowtime;
             break;
           }
-         }
         }
       }
     
@@ -181,6 +180,7 @@ int main(int argc, char *argv[]) {
   char ch='\0';
   for(int i=0;i<80;i++)
   printf("%c",ch);
+    }
   }
   else//child writes to pipefd[1]
   {
