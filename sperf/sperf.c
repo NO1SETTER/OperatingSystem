@@ -103,9 +103,13 @@ int main(int argc, char *argv[]) {
           memset(name,0,sizeof(name));
           memset(tstr,0,sizeof(tstr));
           double t;
+          int valid_syscall=1;
           for(int i=0;i<len;i++)//定位名字
           {
-            //if(!((buffer[i]>='0'&&buffer[i]<='9')||(buffer[i]>='a'&&buffer[i]<='z'))) continue;
+            if(!((buffer[i]>='0'&&buffer[i]<='9')||(buffer[i]>='a'&&buffer[i]<='z'))) 
+            { valid_syscall=0;
+              break;
+            }
             if(buffer[i]!='(')
             name[i]=buffer[i];
             else
@@ -114,6 +118,7 @@ int main(int argc, char *argv[]) {
               break;
             }
           }
+          if(valid_syscall==0) continue;
           int pos=1000;
           for(int i=0;i<len;i++)//定位时间
           {
