@@ -191,7 +191,8 @@ int main(int argc, char *argv[]) {
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
-    for(int i=env_num-1;i>=0;i--)//前面的都没问题但是没有strace,最后一次有问题
+    for(int i=0;i<env_num;i++)//前面的都没问题但是没有strace,最后一次有问题
+    for(int i=env_num-1;i>=0;i--)
     {
       sprintf(strace_path,"%s/strace",env[i]);
       DIR* dir=opendir(env[i]);
