@@ -206,22 +206,14 @@ int main(int argc, char *argv[]) {
 
 void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解析了
 {
-  if(argv[1][0]=='/')
-  {
-  exec_argv[0]="-T";
-  for(int i=1;i<argc;i++)
-  exec_argv[i]=argv[i];
-  exec_argv[argc]=NULL;
-  arg_num=argc;
-  }
-  else
-  {exec_argv[0]="strace";
+  
+  exec_argv[0]="strace";
   exec_argv[1]="-T";
   for(int i=1;i<argc;i++)
   exec_argv[i+1]=argv[i];
   exec_argv[argc+1]=NULL;
   arg_num=argc+1;
-  }
+
   char *path=getenv("PATH");
   sprintf(PATH1,"PATH=%s",path);
   strcpy(PATH2,PATH1);
