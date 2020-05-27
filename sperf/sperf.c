@@ -281,10 +281,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
     sprintf(basepath,"%s",env[i]);
     DIR* dir=opendir(basepath);
     struct dirent* ptr;
-    if(dir==NULL)
-    {
-      assert(0);
-    }
+    if(dir==NULL) continue;
     while((ptr=readdir(dir))!=NULL)
     {
       if(strcmp(ptr->d_name,"strace")==0)
