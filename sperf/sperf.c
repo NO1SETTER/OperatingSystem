@@ -49,7 +49,7 @@ void error_dfs(int k)
 int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
-  //find_strace_path();
+  find_strace_path();
   //assert(strace_path[0]);
   //print_message();
   for(int i=0;i<1000;i++)
@@ -94,7 +94,6 @@ int main(int argc, char *argv[]) {
         else//读到一行终点
         {
           buffer[len]='\0';//读取了一行的数据,进行分析
-          printf("%s\n",buffer);
           if(buffer[0]=='+') 
           {reachend=1;
           break;}
@@ -155,9 +154,7 @@ int main(int argc, char *argv[]) {
           }
         }
       }
-      //printf("errno=%d\n",errno);
-      if(sys_num!=0)
-      {qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
+      qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
       if(ct!=1)
       {for(int i=0;i<6;i++)
       { printf("\033[1A");
@@ -174,7 +171,7 @@ int main(int argc, char *argv[]) {
       total=0;
       for(int i=0;i<sys_num;i++)//统计后清零
         sysctrl[i].t=0;
-      if(reachend) break;}
+      if(reachend) break;
   }
   char ch='\0';
   for(int i=0;i<80;i++)
@@ -183,24 +180,13 @@ int main(int argc, char *argv[]) {
   else//child writes to pipefd[1]
   {
     close(pipefd[0]);
-    //close(STDOUT_FILENO);
-    //int rec=pipefd[1];
     int devno=open("/dev/null",O_WRONLY);
     int ret1=dup2(devno,STDOUT_FILENO);
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
-    
-    //  for(int i=0;i<env_num;i++)
-    for(int i=env_num-1;i>=0;i--)//前面的都没问题但是没有strace,最后一次有问题
-    {
-      printf("%d\n",i);
-      sprintf(strace_path,"%s/strace",env[i]);
-      DIR* dir=opendir(env[i]);
-      if(dir==NULL&&i==env_num-1) error_dfs(0);
+
     execve(strace_path,exec_argv,exec_env);
-           if(i==env_num-1) error_dfs(0);
-    }
     //perror("After execve");
   }
 
@@ -291,17 +277,23 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
 {
   char basepath[200];
-  memset(basepath,0,sizeof(basepath));
-  getcwd(basepath,sizeof(basepath));
-  read_all_file(basepath);
-  if(get_strace) return;
-  
   for(int i=0;i<env_num;i++)
   {
-    strcpy(basepath,env[i]);
-    assert(i!=env_num-1);
-    read_all_file(basepath);
-    if(get_strace) return;
+    sprintf(basepath,"%s",env[i]);
+    DIR* dir=opendir(basepath);
+    struct dirent* ptr;
+    if(dir==NULL)
+    {
+      assert(0);
+    }
+    while((ptr=readdir(dir))!=NULL)
+    {
+      if(strcmp(ptr->d_name,"strace")==0)
+      {
+        sprintf(strace_path,"%s/strace",basepath);
+        break;
+      }
+    }
   }
 }
 
