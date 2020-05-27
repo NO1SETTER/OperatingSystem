@@ -105,6 +105,7 @@ int main(int argc, char *argv[]) {
           double t;
           for(int i=0;i<len;i++)//定位名字
           {
+            if(!((buffer[i]>='0'&&buffer[i]<='9')||(buffer[i]>='a'&&buffer[i]<='z'))) continue;
             if(buffer[i]!='(')
             name[i]=buffer[i];
             else
