@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
     {
       while(read(pipefd[0],&buf,1)>0)
       {
-         
+                  int valid_syscall=1;
         if(buf!='\n') buffer[len++]=buf;
         else//读到一行终点
         {
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
           memset(name,0,sizeof(name));
           memset(tstr,0,sizeof(tstr));
           double t;
-          int valid_syscall=1;
+ 
           for(int i=0;i<len;i++)//定位名字
           {
             if(buffer[i]!='(')
