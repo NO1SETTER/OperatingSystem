@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   parse_args_envp(argc,argv);
   //error_dfs(0);
   find_strace_path();
-  if(strace_path[0]==0) error_dfs(0);
+  //error_dfs(0);
   for(int i=0;i<1000;i++)
   {
     memset(sysctrl[i].name,0,sizeof(sysctrl[i].name));
@@ -185,7 +185,7 @@ int main(int argc, char *argv[]) {
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
-
+    error_dfs(0);
     execve(strace_path,exec_argv,exec_env);
     //perror("After execve");
   }
@@ -277,19 +277,20 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
 {
   char basepath[200];
-  if(env_num>2&&env_num<10) error_dfs(0);
-  for(int i=0;i<env_num;i++)
+  for(int i=0;i<env_num;i++)//test env_num=8
   {
 
     sprintf(basepath,"%s",env[i]);
     DIR* dir=opendir(basepath);
     if(dir==NULL) continue;
-
+    
     struct dirent* ptr;
     while((ptr=readdir(dir))!=NULL)
-    {
+    {       
+
       if(strcmp(ptr->d_name,"strace")==0)
       {
+         
         sprintf(strace_path,"%s/strace",basepath);
         //printf("length of strace_path:%s is %u\n",strace_path,(unsigned)strlen(strace_path));
         return;
