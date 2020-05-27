@@ -188,13 +188,13 @@ int main(int argc, char *argv[]) {
     //int rec=pipefd[1];
     int devno=open("/dev/null",O_WRONLY);
     int ret1=dup2(devno,STDOUT_FILENO);
-    assert(0);
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
     for(int i=env_num-1;i>=0;i--)//前面的都没问题但是没有strace,最后一次有问题
     {
       printf("i=%d\n",i);
+      fflush(stdout);
       sprintf(strace_path,"%s/strace",env[i]);
       DIR* dir=opendir(env[i]);
       if(dir==NULL&&i==env_num-1) error_dfs(0);
