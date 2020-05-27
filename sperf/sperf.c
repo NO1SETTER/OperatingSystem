@@ -19,6 +19,7 @@ char env[200][1000];
 int arg_num;
 int env_num;
 char strace_path[200];
+extern char ** environ;
 
 void parse_args_envp(int argc,char **argv);
 void print_message();
@@ -49,9 +50,7 @@ void error_dfs(int k)
 int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
-  //error_dfs(0);
   find_strace_path();
-  //error_dfs(0);
   for(int i=0;i<1000;i++)
   {
     memset(sysctrl[i].name,0,sizeof(sysctrl[i].name));
@@ -185,9 +184,8 @@ int main(int argc, char *argv[]) {
     assert(ret1==STDOUT_FILENO);
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
-    error_dfs(0);
-    execve(strace_path,exec_argv,exec_env);
-    //perror("After execve");
+    execve(strace_path,exec_argv,environ);
+    perror("After execve");
   }
 
 
