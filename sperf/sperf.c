@@ -157,14 +157,14 @@ int main(int argc, char *argv[]) {
       }
       
       qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
-      if(ct!=1)
+      /*if(ct!=1)
       {for(int i=0;i<6;i++)
       { printf("\033[1A");
         fflush(stdout);
         printf("\r\033[K");
         fflush(stdout);
       }
-      }
+      }*/
       printf("Time #%d\n",ct++);
       fflush(stdout);
       for(int i=0;i<5;i++)
@@ -196,9 +196,7 @@ int main(int argc, char *argv[]) {
     //error_dfs(0);
     perror("After execve");
   }
-
   return 0;
-
 }
 
 void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解析了
