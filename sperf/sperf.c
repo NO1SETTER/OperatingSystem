@@ -46,6 +46,7 @@ void error_dfs(int k)
 {
   error_dfs(k+1);
 }
+
 int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
@@ -155,7 +156,7 @@ int main(int argc, char *argv[]) {
           }
         }
       }
-    
+    error_dfs(0);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
     if(ct!=1)
     {for(int i=0;i<6;i++)
