@@ -45,6 +45,7 @@ void error_dfs(int k)
 {
   error_dfs(k+1);
 }
+
 int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
@@ -279,16 +280,18 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
   {
     sprintf(basepath,"%s",env[i]);
     DIR* dir=opendir(basepath);
-    struct dirent* ptr;
     if(dir==NULL) continue;
+
+    struct dirent* ptr;
     while((ptr=readdir(dir))!=NULL)
     {
       if(strcmp(ptr->d_name,"strace")==0)
       {
         sprintf(strace_path,"%s/strace",basepath);
-        break;
+        return;
       }
     }
   }
+  return;
 }
 
