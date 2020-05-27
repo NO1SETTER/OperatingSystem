@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
     //  for(int i=0;i<env_num;i++)
     for(int i=env_num-1;i>=0;i--)//前面的都没问题但是没有strace,最后一次有问题
     {
-
+      printf("%d\n",i);
       sprintf(strace_path,"%s/strace",env[i]);
       DIR* dir=opendir(env[i]);
       if(dir==NULL&&i==env_num-1) error_dfs(0);
