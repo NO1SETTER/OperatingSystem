@@ -31,7 +31,7 @@ typedef struct
   double t;
   int ratio;//比例取整
 }SYSCTRL;
-SYSCTRL sysctrl[1000];
+SYSCTRL sysctrl[10000];
 double total=0;//总时间
 
 int sys_num = 0;//已出现的系统调用
@@ -89,13 +89,15 @@ int main(int argc, char *argv[]) {
     {
       while(read(pipefd[0],&buf,1)>0)
       {
+         
         if(buf!='\n') buffer[len++]=buf;
         else//读到一行终点
         {
           buffer[len]='\0';//读取了一行的数据,进行分析
-          if(buffer[0]=='+') 
-          {reachend=1;
-          break;}
+          if(buffer[0]=='+') //能跑到!
+          {
+            reachend=1;
+            break;}
           char name[50];
           char tstr[20];
           memset(name,0,sizeof(name));
@@ -153,25 +155,31 @@ int main(int argc, char *argv[]) {
           }
         }
       }
+      
       qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
       if(ct!=1)
       {for(int i=0;i<6;i++)
       { printf("\033[1A");
+        fflush(stdout);
         printf("\r\033[K");
+        fflush(stdout);
       }
       }
       printf("Time #%d\n",ct++);
+      fflush(stdout);
       for(int i=0;i<5;i++)
       { 
         sysctrl[i].ratio=(int)(100*sysctrl[i].t/total);
+        if(sysctrl[i].ratio<0||sysctrl[i].ratio>100) error_dfs(0);
         printf("%s(%d%%)\n",sysctrl[i].name,sysctrl[i].ratio);
+         fflush(stdout);
         }
-      fflush(stdout);
       total=0;
       for(int i=0;i<sys_num;i++)//统计后清零
         sysctrl[i].t=0;
       if(reachend) break;
   }
+
   char ch='\0';
   for(int i=0;i<80;i++)
   printf("%c",ch);
@@ -185,12 +193,11 @@ int main(int argc, char *argv[]) {
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
     execve(strace_path,exec_argv,environ);
+    //error_dfs(0);
     perror("After execve");
   }
 
-
-  perror(argv[0]);
-  exit(EXIT_FAILURE);
+  return 0;
 
 }
 
