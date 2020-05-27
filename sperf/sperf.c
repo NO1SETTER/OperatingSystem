@@ -205,7 +205,6 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
   exec_argv[argc+1]=NULL;
   arg_num=argc+1;
 
-  //path,exec_env都是空指针,Path,env是分配了空间的
   char *path=getenv("PATH");
   sprintf(PATH1,"PATH=%s",path);
   strcpy(PATH2,PATH1);
@@ -218,7 +217,7 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
     for(;(s=strtok(NULL,":"))!=NULL;pos++)
     {
       sprintf(env[pos],"%s",s);
-      printf("length of env[%d]:%s is %u\n",pos,env[pos],(unsigned)strlen(env[pos]));
+      //printf("length of env[%d]:%s is %u\n",pos,env[pos],(unsigned)strlen(env[pos]));
     }
   env_num=pos;
   
@@ -278,8 +277,10 @@ void read_all_file(char *basepath)//寻找strace,找到返回1，否则返回0
 void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
 {
   char basepath[200];
+  if(env_num>2&&env_num<10) error_dfs(0);
   for(int i=0;i<env_num;i++)
   {
+
     sprintf(basepath,"%s",env[i]);
     DIR* dir=opendir(basepath);
     if(dir==NULL) continue;
@@ -290,7 +291,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
       if(strcmp(ptr->d_name,"strace")==0)
       {
         sprintf(strace_path,"%s/strace",basepath);
-        printf("length of strace_path:%s is %u\n",strace_path,(unsigned)strlen(strace_path));
+        //printf("length of strace_path:%s is %u\n",strace_path,(unsigned)strlen(strace_path));
         return;
       }
     }
