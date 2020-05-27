@@ -49,7 +49,7 @@ void error_dfs(int k)
 int main(int argc, char *argv[]) {
 
   parse_args_envp(argc,argv);
-  error_dfs(0);
+  //error_dfs(0);
   find_strace_path();
   if(strace_path[0]==0) error_dfs(0);
   for(int i=0;i<1000;i++)
@@ -218,6 +218,7 @@ void parse_args_envp(int argc,char **argv)//把参数环境变量什么的都解
     for(;(s=strtok(NULL,":"))!=NULL;pos++)
     {
       sprintf(env[pos],"%s",s);
+      printf("length of env[%d]:%s is %d\n",pos,env[pos],strlen(env[pos]));
     }
   env_num=pos;
   
@@ -289,6 +290,7 @@ void find_strace_path()//找到执行程序的路径,把它写到exec_path里去
       if(strcmp(ptr->d_name,"strace")==0)
       {
         sprintf(strace_path,"%s/strace",basepath);
+        printf("length of strace_path:%s is %d\n",strace_path,strlen(strace_path));
         return;
       }
     }
