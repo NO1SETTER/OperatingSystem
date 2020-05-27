@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     {
       while(read(pipefd[0],&buf,1)>0)
       {
-        printf("errno=%d\n",errno);
+        assert(0);
         if(buf!='\n') buffer[len++]=buf;
         else//读到一行终点
         {
