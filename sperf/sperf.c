@@ -162,7 +162,7 @@ int main(int argc, char *argv[]) {
       { printf("\033[1A");
         fflush(stdout);
         printf("\r\033[K");
-        fflush(stdoudst);
+        fflush(stdout);
       }
       }
       printf("Time #%d\n",ct++);
