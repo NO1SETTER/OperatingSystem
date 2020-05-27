@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
           }
         }
       }
-    error_dfs(0);
+    //error_dfs(0);
     qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
     if(ct!=1)
     {for(int i=0;i<6;i++)
