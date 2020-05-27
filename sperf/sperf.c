@@ -155,6 +155,7 @@ int main(int argc, char *argv[]) {
           }
         }
       }
+      printf("errno=%d\n",errno);
     if(errno==0)
       {qsort(sysctrl,sys_num,sizeof(SYSCTRL),syscmp);
       if(ct!=1)
