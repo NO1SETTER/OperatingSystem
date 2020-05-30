@@ -19,7 +19,7 @@ char gcc_path[200];
 
 char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
 ,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable","./share.c",
-"-o","share.so",NULL};
+"-o","share.so","-ldl",NULL};
 //用一个share.so保存所有共享库函数,用dlsym查找
 void recursive_handle()
 {
