@@ -17,7 +17,7 @@ struct FUNC
 }func[1005];
 int func_num=0;
 
-cahr env_path[1000];
+char env_path[1000];
 char env[200][1000];
 int env_num;
 char gcc_path[200];
