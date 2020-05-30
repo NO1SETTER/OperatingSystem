@@ -245,6 +245,10 @@ struct EV_CTRL* next;
 struct EV_CTRL ev_ctrl={-1,0,NULL,NULL};//用链表记录所有_Event
 struct EV_CTRL* EV_HEAD=&ev_ctrl;
 
+void _yield(){
+asm volatile("int $0x81");
+}
+
 static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do_event
 {
   _Context *pre=context; 

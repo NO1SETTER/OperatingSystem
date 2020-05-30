@@ -628,18 +628,48 @@ MODULE_DEF(pmm) = {
 
 static void kmt_init()
 {
+  on_irq()
 return;
 }
 
-int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
+static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
   task->stack = pmm->alloc(STACK_SIZE); // 动态分配内核栈
   task->name=name;
-
+  tasｋ->entry=entry;
+  task->arg=arg;
   return 0;
 }
 
-void kmt_teardown(task_t *task)
+static void kmt_teardown(task_t *task)
 {
+
+}
+
+static void sem_init(sem_t *sem, const char *name, int value)
+{
+sem->name=name;
+sem->val=value;
+}
+
+static void sem_wait(sem_t *sem)
+{
+kmt->spin_lock(&sem->lock);
+sem->val=sem->val-1;
+int fail=0;
+if(sem->val<0) fail=1;
+kmt->spin_unlock(&sem->lock);
+if(fail)
+{
+  _yield();
+}
+}
+
+static void sem_signal(sem_t *sem)
+{
+kmt->spin_lock(&sem->lock);
+sem->val=sem->val+1;
+kmt->spin_unlock(&sem->lock);
+
 
 }
 
@@ -650,7 +680,7 @@ MODULE_DEF(kmt) = {
   .spin_lock=sp_unlock,
   .create=kmt_create,
   .teardown=kmt_teardown,
-  //.sem_init,
-  //.sem_wait,
-  //.sem_signal,
+  .sem_init=sem_init,
+  .sem_wait=sem_wait,
+  .sem_signal=sem_signal,
 };

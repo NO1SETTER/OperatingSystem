@@ -33,17 +33,6 @@ static void kfree_safe(void *ptr)
   if (i) _intr_write(1);
 }
 */
-typedef struct task
-{
-  struct
-  {
-    const char *name;
-    struct task *next;
-    _Context *ctx;
-  };
-  uint8_t* stack;
-}task_t;//管理一个线程的信息
-
 typedef struct spinlock 
 {
   const char *name;//锁名
@@ -52,7 +41,38 @@ typedef struct spinlock
   int holder;//锁的持有者
 }spinlock_t;
 
-typedef struct semaphore sem_t;
+typedef struct task
+{
+  struct
+  {
+    const char *name;
+    struct task *next;` 
+    _Context *ctx;
+  };
+  uint8_t* stack;
+  void (*entry)(void *arg);
+  void *arg;
+  int active;
+}task_t;//管理一个线程的信息
+struct task_t *current;//当前task
+
+void set_unworkable(task_t* t)
+{
+  t->active=0;
+}
+
+void set_workable(task_t* t)
+{
+  t->active=1;
+}
+
+typedef struct semaphore
+{
+spinlock_t lock;
+const char *name;
+int val;
+} sem_t;
+
 MODULE(kmt) {
   void (*init)();
   int  (*create)(task_t *task, const char *name, void (*entry)(void *arg), void *arg);

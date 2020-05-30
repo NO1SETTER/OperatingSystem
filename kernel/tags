@@ -1,0 +1,82 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AM_HOME	Makefile	/^export AM_HOME := $(PWD)\/..\/abstract-machine$/;"	m
+ARCH	Makefile	/^export ARCH := x86_64-qemu$/;"	m
+BLOCK_AREA_SIZE	src/pmm.c	7;"	d	file:
+FreeAllocNo	src/pmm.c	/^int FreeAllocNo[20000];$/;"	v
+FreeAllocNoNum	src/pmm.c	/^int FreeAllocNoNum=0;\/\/记录被释放后的块的位置，方便直接使用$/;"	v
+GetValidAddress	src/pmm.c	/^uintptr_t GetValidAddress(uintptr_t start,int align)\/\/返回从start开始对齐align的最小地址$/;"	f
+INC_DIR	Makefile	/^INC_DIR        := include\/ framework\/$/;"	m
+MODULE	Makefile	/^export MODULE  := L2$/;"	m
+MODULE	framework/kernel.h	2;"	d
+MODULE	include/common.h	/^MODULE(kmt) {$/;"	f
+MODULE	include/common.h	/^MODULE(os) {$/;"	f
+MODULE	include/common.h	/^MODULE(pmm) {$/;"	f
+MODULE_DEF	framework/kernel.h	7;"	d
+NAME	Makefile	/^NAME           := kernel$/;"	m
+PAGE_SIZE	src/pmm.c	6;"	d	file:
+SLAB_SIZE	src/pmm.c	8;"	d	file:
+SRCS	Makefile	/^SRCS           := framework\/main.c $(shell find -L .\/src\/ -name "*.c" -o -name "*.S")$/;"	m
+_DEBUG	src/pmm.c	2;"	d	file:
+alloc_head	src/pmm.c	/^struct block* alloc_head;\/\/两个都是空的节点,管理全局$/;"	v	typeref:struct:block
+alloc_lock	src/pmm.c	/^lock_t alloc_lock;\/\/管理balloc和bfree并发性的锁$/;"	v
+allocated	src/os.c	/^void* allocated[100005];$/;"	v
+balloc	src/pmm.c	/^static void *balloc()\/\/专门给block分配空间用,直接从某一位置开始往上垒不用对齐$/;"	f	file:
+bdelete	src/pmm.c	/^void bdelete(struct block* blk)\/\/删除$/;"	f
+bfree	src/pmm.c	/^static void bfree(struct block* blk)$/;"	f	file:
+binsert	src/pmm.c	/^void binsert(struct block* pre,struct block* nxt,bool is_merge)\/\/插入$/;"	f
+blink	src/pmm.c	/^void blink(struct block* pre,struct block*nxt)\/\/直接连接$/;"	f
+block	src/pmm.c	/^struct block\/\/管理空闲块或非空闲块的数据结构$/;"	s	file:
+bstart	src/pmm.c	/^uintptr_t bstart;$/;"	v
+check_allocblock	src/pmm.c	/^void check_allocblock(uintptr_t start,uintptr_t end)$/;"	f
+check_freeblock	src/pmm.c	/^void check_freeblock()$/;"	f
+end	src/pmm.c	/^uintptr_t start,end;\/\/管理[start,end)$/;"	m	struct:block	file:
+free_head	src/pmm.c	/^struct block* free_head;$/;"	v	typeref:struct:block
+glb_lock	src/pmm.c	/^lock_t glb_lock;\/\/管理两个链表的锁$/;"	v
+handler_t	include/common.h	/^typedef _Context *(*handler_t)(_Event, _Context *);$/;"	t
+holder	src/pmm.c	/^  int holder;\/\/锁的持有者$/;"	m	struct:__anon2	file:
+kalloc	src/pmm.c	/^static void *kalloc(size_t size)\/\/对于两个链表的修改，分别用链表大锁锁好$/;"	f	file:
+kfree	src/pmm.c	/^static void kfree(void *ptr) {$/;"	f	file:
+lock_t	src/os.c	/^}lock_t;$/;"	t	typeref:struct:__anon1	file:
+lock_t	src/pmm.c	/^}lock_t;$/;"	t	typeref:struct:__anon2	file:
+locked	src/os.c	/^  intptr_t locked;$/;"	m	struct:__anon1	file:
+locked	src/pmm.c	/^  intptr_t locked;\/\/锁控制$/;"	m	struct:__anon2	file:
+lockid	src/pmm.c	/^  int lockid;\/\/锁的序号$/;"	m	struct:__anon2	file:
+main	framework/main.c	/^int main() {$/;"	f
+max_block_num	src/pmm.c	/^const int max_block_num=BLOCK_AREA_SIZE\/sizeof(struct block);$/;"	v
+maxpos	src/pmm.c	/^int maxpos=0;\/\/当前已经分配到的最大位置，当mset为空时从这里开始分配$/;"	v
+name	src/pmm.c	/^  const char *name;\/\/锁名$/;"	m	struct:__anon2	file:
+next	src/pmm.c	/^struct block* next;$/;"	m	struct:block	typeref:struct:block::block	file:
+none	src/pmm.c	/^char none[8];$/;"	m	struct:block	file:
+num	src/os.c	/^int num=0;$/;"	v
+on_irq	src/os.c	/^static void (*on_irq)(int seq,int event,handler_t handler)$/;"	f	file:
+os	src/os.c	/^MODULE_DEF(os) = {$/;"	v
+os_init	src/os.c	/^static void os_init() {$/;"	f	file:
+os_run	src/os.c	/^static void os_run() {$/;"	f	file:
+os_trap	src/os.c	/^static _Context *os_trap(_Event ev,_Context *context)$/;"	f	file:
+pmm	src/pmm.c	/^MODULE_DEF(pmm) = {$/;"	v
+pmm_init	src/pmm.c	/^static void pmm_init() {$/;"	f	file:
+prev	src/pmm.c	/^struct block* prev;$/;"	m	struct:block	typeref:struct:block::block	file:
+print_AllocatedBlock	src/pmm.c	/^void print_AllocatedBlock()$/;"	f
+print_FreeBlock	src/pmm.c	/^void print_FreeBlock()$/;"	f
+print_lock	src/pmm.c	/^lock_t print_lock;\/\/printf的锁,保证完整性$/;"	v
+sem_t	include/common.h	/^typedef struct semaphore sem_t;$/;"	t	typeref:struct:semaphore
+size	src/pmm.c	/^uint32_t size;$/;"	m	struct:block	file:
+slab_alloc_head	src/pmm.c	/^struct block* slab_alloc_head[8];\/\/CPU#i的slab头和尾$/;"	v	typeref:struct:block
+slab_free_head	src/pmm.c	/^struct block* slab_free_head[8];$/;"	v	typeref:struct:block
+slab_kalloc	src/pmm.c	/^static void *slab_kalloc(size_t size,int k)\/\/对于CPU#k的slab_alloc，只用上输出锁$/;"	f	file:
+slab_kfree	src/pmm.c	/^static bool slab_kfree(void *ptr,int k) {\/\/从第k个CPU中找到是否有想要删除的对象$/;"	f	file:
+sp_lock	src/pmm.c	/^void sp_lock(lock_t* lk)$/;"	f
+sp_lockinit	src/pmm.c	/^void sp_lockinit(lock_t* lk,const char *name,int id)$/;"	f
+sp_unlock	src/pmm.c	/^void sp_unlock(lock_t *lk)$/;"	f
+spinlock_t	include/common.h	/^typedef struct spinlock spinlock_t;$/;"	t	typeref:struct:spinlock
+start	src/pmm.c	/^uintptr_t start,end;\/\/管理[start,end)$/;"	m	struct:block	file:
+task_t	include/common.h	/^typedef struct task task_t;$/;"	t	typeref:struct:task
+test1	src/os.c	/^static void test1()\/\/在[0,2048)完全随机$/;"	f	file:
+test2	src/os.c	/^static void test2()\/\/交替测试大内存和小内存$/;"	f	file:
+test3	src/os.c	/^static void test3()\/\/频繁分配小内存$/;"	f	file:
+test4	src/os.c	/^static void test4()\/\/频繁分配页$/;"	f	file:
