@@ -6,6 +6,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <assert.h>
+#include <errno.h>
+#include <dlfcn.h>
 extern char ** environ;
 struct FUNC
 {
@@ -14,21 +16,20 @@ struct FUNC
 }func[1005];
 int func_num=0;
 
-
-void *map_file(const char *fname);
 char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
 ,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable","./share.c",
 "-o","share.so",NULL};
-int main(int argc, char *argv[]) {
+
+void recursive_handle()
+{
   static char line[4096];
-  while (1) {
     printf("crepl> ");
     fflush(stdout);
     if (!fgets(line, sizeof(line), stdin)) {
       break;
     }
     printf("Got %zu chars.\n", strlen(line)); // WTF?
-    if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//定义函数
+    if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
     {
       char name[128];
       for(int i=3,pos=0;i<strlen(line);i++)
@@ -36,10 +37,10 @@ int main(int argc, char *argv[]) {
         if(line[i]=='(') 
         { name[pos]='\0';
           break;}
-        if((line[i]>='a'&&line[i]<='z')||(line[i]>='A'&&line[i]<='Z'))
+        if(line[i]!=' ')
         name[pos++]=line[i];
       }//确定名字
-      
+        
         char name_c[128];
         char name_c_arg[128];
         char name_so[128];
@@ -47,35 +48,37 @@ int main(int argc, char *argv[]) {
         sprintf(name_c,"%s.c",name);
         sprintf(name_c_arg,"./%s.c",name);
         sprintf(name_so,"%s.so",name);
-        //printf("name_c=%s\n",name_c);
-        //printf("name_c_arg=%s\n",name_c_arg);
-        //printf("name_so=%s\n",name_so);
-    
+        
         exec_argv[12]=name_c_arg; 
         exec_argv[14]=name_so;
+        int cpid=fork();
+      if(cpid!=0)//这一部分完成加载，保存
+      {
+        FILE* fptr;
+        while((fptr=fopen(name_so,"rw")==NULL);
+        strcpy(func[func_num].name,name);
+        void *func_addr=dlopen(fptr,RTLD_GLOBAL);
+        func[func_num].addr=func_addr;
+        func_num=func_num+1;
+        fclose(fptr);
+        recursive_handle();
+      }
+      else
+      {
         //assert(0);
         FILE *fptr=fopen(name_c,"a+");
-        execve("gcc",exec_argv,environ);
-        void *func_addr=map_file(name_so);
-        strcpy(func[func_num].name,name);
-        func[func_num].addr=func_addr;
+        fprintf(fptr,line);
+        fclose(fptr);
+        execve("gcc",exec_argv,environ);//这里只能做到编译成共享库,记录，加载都要在父进程中进行
+        perror("After execve:gcc");
+      }
     }
-    else
+    else//calculate
     {
 
     } 
-  }
 }
 
-void *map_file(const char *fname)
-{
-  int fd =open(fname,O_RDONLY);
-  if(fd<0) return NULL;
-  void *ret=mmap(NULL,
-  4096,
-  PROT_READ | PROT_WRITE | PROT_EXEC,
-  MAP_PRIVATE, 
-  fd, 0);
-  if((intptr_t)ret==-1) return NULL;
-  return ret;
+int main(int argc, char *argv[]) {
+recursive_handle();
 }
