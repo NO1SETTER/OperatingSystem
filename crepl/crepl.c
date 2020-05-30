@@ -51,7 +51,7 @@ void recursive_handle()
         char name_c[128];
         char name_c_arg[128];
         char name_so[128];
-        char name_so_arg[so];
+        char name_so_arg[128];
         
         sprintf(name_c,"%s.c",name);
         sprintf(name_c_arg,"./%s.c",name);
