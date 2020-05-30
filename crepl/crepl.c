@@ -63,7 +63,9 @@ void recursive_handle()
       {
         strcpy(func[func_num].name,name);
         void *func_addr;
+        printf("halo");
         while((func_addr=dlopen(name_so,RTLD_GLOBAL))==NULL);
+        printf("hola");
         func[func_num].addr=func_addr;
         func_num=func_num+1;
         recursive_handle();
