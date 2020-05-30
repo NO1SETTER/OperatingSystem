@@ -54,13 +54,10 @@ void recursive_handle()
         int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
       {
-        FILE* fptr;
-        while((fptr=fopen(name_so,"rw"))==NULL);
         strcpy(func[func_num].name,name);
-        void *func_addr=dlopen(fptr,RTLD_GLOBAL);
+        while((func_addr=dlopen(fptr,RTLD_GLOBAL))==NULL);
         func[func_num].addr=func_addr;
         func_num=func_num+1;
-        fclose(fptr);
         recursive_handle();
       }
       else
