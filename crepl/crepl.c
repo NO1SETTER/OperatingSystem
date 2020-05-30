@@ -47,13 +47,13 @@ int main(int argc, char *argv[]) {
         sprintf(name_c,"%s.c",name);
         sprintf(name_c_arg,"./%s.c",name);
         sprintf(name_so,"%s.so",name);
-        printf("name_c=%s\n",name_c);
-        printf("name_c_arg=%s\n",name_c_arg);
-        printf("name_so=%s\n",name_so);
+        //printf("name_c=%s\n",name_c);
+        //printf("name_c_arg=%s\n",name_c_arg);
+        //printf("name_so=%s\n",name_so);
     
         exec_argv[12]=name_c_arg; 
         exec_argv[14]=name_so;
-        assert(0);
+        //assert(0);
         FILE *fptr=fopen(name_c,"a+");
         execve("gcc",exec_argv,environ);
         void *func_addr=map_file(name_so);
