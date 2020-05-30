@@ -31,7 +31,7 @@ void recursive_handle()
     }
     printf("Got %zu chars.\n", strlen(line)); // WTF?
 
-          char name[128];
+      char name[128];
       for(int i=3,pos=0;i<strlen(line);i++)
       {   
         if(line[i]=='(') 
@@ -53,12 +53,11 @@ void recursive_handle()
         printf("func_handler at %p\n",func_handler);
         void *func_addr;
         printf("Locating func: %s\n",name);
-        dlclose(func_handler);
         while((func_addr=dlsym(func_handler,name))==NULL)//确保函数加载完成
         {//fprintf(stderr,"%s\n",dlerror());
         }
         printf("Located!\n");
-        
+        dlclose(func_handler);
         recursive_handle();
       }
       else
