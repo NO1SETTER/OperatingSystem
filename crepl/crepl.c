@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
   }
 }
 
-void *map_file(const char *name)
+void *map_file(const char *fname)
 {
   int fd =open(fname,O_RDONLY);
   if(fd<0) return NULL;
