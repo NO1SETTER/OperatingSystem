@@ -5,7 +5,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-extern char*environ;
+
+extern char ** environ;
 typedef struct FUNC
 {
   char name[128];
