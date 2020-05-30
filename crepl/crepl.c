@@ -29,7 +29,7 @@ void recursive_handle()
       return;
     }
     printf("Got %zu chars.\n", strlen(line)); // WTF?
-    if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
+   /* if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
     {
       char name[128];
       for(int i=3,pos=0;i<strlen(line);i++)
@@ -74,7 +74,7 @@ void recursive_handle()
     else//calculate
     {
 
-    } 
+    } */
 }
 
 int main(int argc, char *argv[]) {
