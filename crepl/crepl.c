@@ -47,7 +47,7 @@ void recursive_handle()
       if(cpid!=0)//这一部分完成加载，保存
       {
         void *func_handler;
-        while((func_handler=dlopen("./share.so",RTLD_GLOBAL))==NULL)//保证编译完才加载
+        while((func_handler=dlopen("./share.so",RTLD_NOW))==NULL)//保证编译完才加载
         {//printf("hola");
         }
         void *func_addr;
