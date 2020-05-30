@@ -71,9 +71,9 @@ void recursive_handle()
     }
     else//calculate
     {
-      void *func_handler=dlopen("./share.so",RTLD_NOW);
+      /*void *func_handler=dlopen("./share.so",RTLD_NOW);
       int (*func_addr)(void)=dlsym(func_handler,name);
-      printf("%d\n",(*func_addr)());
+      printf("%d\n",(*func_addr)());*/
     } 
 }
 
