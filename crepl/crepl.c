@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 extern char ** environ;
-typedef struct FUNC
+struct FUNC
 {
   char name[128];
   void* addr;
