@@ -39,14 +39,16 @@ int main(int argc, char *argv[]) {
         if((line[i]>='a'&&line[i]<='z')||(line[i]>='A'&&line[i]<='Z'))
         name[pos++]=line[i];
       }//确定名字
-      assert(0);
+      
         char name_c[128];
+        char name_c_arg[128];
         char name_so[128];
-        sprintf(exec_argv[11],"./%s.c",name);
-        sprintf(exec_argv[13],"./%s.so",name);
-
+        
         sprintf(name_c,"%s.c",name);
+        sprintf(name_c_arg,"./%s.c",name);
         sprintf(name_so,"%s.so",name);
+        exec_argv[11]=name_c_arg; 
+        exec_argv[13]=name_so;
         FILE *fptr=fopen(name_c,"a+");
         execve("gcc",exec_argv,environ);
         void *func_addr=map_file(name_so);
