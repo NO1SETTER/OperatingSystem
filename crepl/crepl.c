@@ -29,9 +29,8 @@ void recursive_handle()
       return;
     }
     printf("Got %zu chars.\n", strlen(line)); // WTF?
-    if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
-    {
-      char name[128];
+
+          char name[128];
       for(int i=3,pos=0;i<strlen(line);i++)
       {   
         if(line[i]=='(') 
@@ -40,6 +39,9 @@ void recursive_handle()
         if(line[i]!=' ')
         name[pos++]=line[i];
       }//确定名字
+    if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
+    {
+
         
         int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
