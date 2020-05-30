@@ -41,17 +41,16 @@ void recursive_handle()
         name[pos++]=line[i];
       }//确定名字
     if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
-    {
-
-        
-        int cpid=fork();
+    {  
+      int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
       {
         void *func_handler;
         while((func_handler=dlopen("./share.so",RTLD_NOW|
         RTLD_GLOBAL|RTLD_DEEPBIND))==NULL)//保证编译完才加载
-        {//printf("hola");
+        {
         }
+        printf("func_handler at % p\n",func_handler);
         void *func_addr;
         printf("Locating func: %s\n",name);
         while((func_addr=dlsym(func_handler,name))==NULL)//确保函数加载完成
@@ -63,7 +62,6 @@ void recursive_handle()
       }
       else
       {
-        //assert(0);
         FILE *fptr=fopen("share.c","a+");
         fprintf(fptr,"%s",line);
         fclose(fptr);
@@ -73,6 +71,7 @@ void recursive_handle()
     }
     else//calculate
     {
+      assert(0);
       /*void *func_handler=dlopen("./share.so",RTLD_NOW);
       int (*func_addr)(void)=dlsym(func_handler,name);
       printf("%d\n",(*func_addr)());*/
