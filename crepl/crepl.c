@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <assert.h>
 #include <errno.h>
+#include <dirent.h>
 #include <dlfcn.h>
 extern char ** environ;
 struct FUNC
