@@ -50,7 +50,7 @@ void recursive_handle()
         RTLD_GLOBAL|RTLD_DEEPBIND))==NULL)//保证编译完才加载
         {
         }
-        printf("func_handler at %p\n",func_handler);
+        printf("func_handler at %pi\n",func_handler);
         void *func_addr;
         printf("Locating func: %s\n",name);
         while((func_addr=dlsym(func_handler,name))==NULL)//确保函数加载完成
@@ -65,6 +65,7 @@ void recursive_handle()
         FILE *fptr=fopen("share.c","a+");
         fprintf(fptr,"%s",line);
         fclose(fptr);
+        remove("share.so");
         execve(gcc_path,exec_argv,environ);//这里只能做到编译成共享库,记录，加载都要在父进程中进行
         perror("After execve:gcc");
       }
