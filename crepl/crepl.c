@@ -65,7 +65,7 @@ void recursive_handle()
       {
         //assert(0);
         FILE *fptr=fopen("share.c","a+");
-        fprintf(fptr,"%s\n",line);
+        fprintf(fptr,"%s",line);
         fclose(fptr);
         execve(gcc_path,exec_argv,environ);//这里只能做到编译成共享库,记录，加载都要在父进程中进行
         perror("After execve:gcc");
