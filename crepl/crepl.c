@@ -50,9 +50,10 @@ int main(int argc, char *argv[]) {
         printf("name_c=%s\n",name_c);
         printf("name_c_arg=%s\n",name_c_arg);
         printf("name_so=%s\n",name_so);
-        assert(0);
+    
         exec_argv[12]=name_c_arg; 
         exec_argv[14]=name_so;
+        assert(0);
         FILE *fptr=fopen(name_c,"a+");
         execve("gcc",exec_argv,environ);
         void *func_addr=map_file(name_so);
