@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
         char name_c[128];
         char name_so[128];
         sprintf(exec_argv[11],"./%s.c",name);
-        sprintf(exec_argv[13]."./%s.so",name);
+        sprintf(exec_argv[13],"./%s.so",name);
         sprintf(name_c,"%s.c",name);
         sprintf(name_so,"%s.so",name);
         FILE *fptr=fopen(name_c,"a+");
