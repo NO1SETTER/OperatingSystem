@@ -53,7 +53,7 @@ void recursive_handle()
         printf("func_handler at %p\n",func_handler);
         void *func_addr;
         printf("Locating func: %s\n",name);
-        while((func_addr=dlsym(func_handler,"one"))==NULL)//确保函数加载完成
+        while((func_addr=dlsym(func_handler,name))==NULL)//确保函数加载完成
         {//fprintf(stderr,"%s\n",dlerror());
         }
         printf("Located!\n");
