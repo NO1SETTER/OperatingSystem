@@ -29,7 +29,7 @@ void recursive_handle()
       return;
     }
     printf("Got %zu chars.\n", strlen(line)); // WTF?
-   /* if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
+    if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
     {
       char name[128];
       for(int i=3,pos=0;i<strlen(line);i++)
@@ -65,7 +65,7 @@ void recursive_handle()
       {
         //assert(0);
         FILE *fptr=fopen(name_c,"a+");
-        fprintf(fptr,line);
+        fprintf(fptr,"%s",line);
         fclose(fptr);
         execve("gcc",exec_argv,environ);//这里只能做到编译成共享库,记录，加载都要在父进程中进行
         perror("After execve:gcc");
@@ -74,7 +74,7 @@ void recursive_handle()
     else//calculate
     {
 
-    } */
+    } 
 }
 
 int main(int argc, char *argv[]) {
