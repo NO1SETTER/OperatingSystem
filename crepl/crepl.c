@@ -61,12 +61,11 @@ void recursive_handle()
         int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
       {
-        assert(0);
         strcpy(func[func_num].name,name);
         void *func_addr;
-        printf("halo");
+        printf("halo\n");
         while((func_addr=dlopen(name_so,RTLD_GLOBAL))==NULL);
-        printf("hola");
+        printf("hola\n");
         func[func_num].addr=func_addr;
         func_num=func_num+1;
         recursive_handle();
