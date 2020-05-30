@@ -19,7 +19,7 @@ char gcc_path[200];
 
 char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
 ,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable","./share.c",
-"-o","share.so","-ldl",NULL};
+"-o","share.a","-ldl",NULL};
 //用一个share.so保存所有共享库函数,用dlsym查找
 void recursive_handle()
 {
@@ -46,7 +46,7 @@ void recursive_handle()
       if(cpid!=0)//这一部分完成加载，保存
       {
         void *func_handler;
-        while((func_handler=dlopen("./share.so",RTLD_NOW|
+        while((func_handler=dlopen("./share.a",RTLD_NOW|
         RTLD_GLOBAL|RTLD_DEEPBIND))==NULL)//保证编译完才加载
         {
         }
@@ -65,7 +65,7 @@ void recursive_handle()
         FILE *fptr=fopen("share.c","a+");
         fprintf(fptr,"%s",line);
         fclose(fptr);
-        remove("share.so");
+        remove("share.a");
         execve(gcc_path,exec_argv,environ);//这里只能做到编译成共享库,记录，加载都要在父进程中进行
         perror("After execve:gcc");
       }
@@ -73,7 +73,7 @@ void recursive_handle()
     else//calculate
     {
       assert(0);
-      /*void *func_handler=dlopen("./share.so",RTLD_NOW);
+      /*void *func_handler=dlopen("./share.a",RTLD_NOW);
       int (*func_addr)(void)=dlsym(func_handler,name);
       printf("%d\n",(*func_addr)());*/
     } 
@@ -92,7 +92,7 @@ recursive_handle();
 void clean()
 {
   remove("share.c");
-  remove("share.so");
+  remove("share.a");
 }
 void parse_args_envp(int argc,char **argv)//把环境变量解析
 {
