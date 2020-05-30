@@ -12,7 +12,7 @@ int func_num=0;
 
 
 void *map_file(const char *fname);
-char *[] exec_argv={"-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
+char * exec_argv[100]={"-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
 ,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable","./share.c",
 "-o","share.so",NULL};
 int main(int argc, char *argv[]) {
