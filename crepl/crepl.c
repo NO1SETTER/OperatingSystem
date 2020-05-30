@@ -34,7 +34,6 @@ int main(int argc, char *argv[]) {
       {   
         if(line[i]=='(') 
         { name[pos]='\0';
-          strcpy(func[func_num++].name,name);
           break;}
         if((line[i]>='a'&&line[i]<='z')||(line[i]>='A'&&line[i]<='Z'))
         name[pos++]=line[i];
