@@ -11,13 +11,6 @@
 #include <dirent.h>
 #include <dlfcn.h>
 extern char ** environ;
-struct FUNC
-{
-  char name[128];
-  void* addr;
-}func[1005];
-int func_num=0;
-
 char env_path[1000];
 char env[200][1000];
 int env_num;
@@ -26,7 +19,7 @@ char gcc_path[200];
 char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
 ,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable","./share.c",
 "-o","share.so",NULL};
-
+//用一个share.so保存所有共享库函数,用dlsym查找
 void recursive_handle()
 {
   static char line[4096];
@@ -52,31 +45,22 @@ void recursive_handle()
         char name_c_arg[128];
         char name_so[128];
         char name_so_arg[128];
-        
-        sprintf(name_c,"%s.c",name);
-        sprintf(name_c_arg,"./%s.c",name);
-        sprintf(name_so,"%s.so",name);
-        sprintf(name_c_arg,"./%s.so",name);
-
-        exec_argv[12]=name_c_arg; 
-        exec_argv[14]=name_so;
         int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
       {
         strcpy(func[func_num].name,name);
+        void *func_handler;
+        while((func_handler=dlopen("share.so",RTLD_NOW))==NULL);//保证编译完才加载
+        assert(0);
         void *func_addr;
-        printf("halo\n");
-        while((func_addr=dlopen(name_so_arg,RTLD_NOW))==NULL);
-        printf("hola\n");
-        func[func_num].addr=func_addr;
-        func_num=func_num+1;
+        while((func_addr=dlsym(func_handler))==NULL);//确保函数加载完成
         recursive_handle();
       }
       else
       {
         //assert(0);
-        FILE *fptr=fopen(name_c,"rw+");
-        fprintf(fptr,"%s",line);
+        FILE *fptr=fopen(name_c,"a+");
+        fprintf(fptr,"%s\n",line);
         fclose(fptr);
         execve(gcc_path,exec_argv,environ);//这里只能做到编译成共享库,记录，加载都要在父进程中进行
         perror("After execve:gcc");
@@ -84,7 +68,6 @@ void recursive_handle()
     }
     else//calculate
     {
-
     } 
 }
 
