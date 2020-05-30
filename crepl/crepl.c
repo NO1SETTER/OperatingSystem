@@ -41,14 +41,9 @@ void recursive_handle()
         name[pos++]=line[i];
       }//确定名字
         
-        char name_c[128];
-        char name_c_arg[128];
-        char name_so[128];
-        char name_so_arg[128];
         int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
       {
-        strcpy(func[func_num].name,name);
         void *func_handler;
         while((func_handler=dlopen("share.so",RTLD_NOW))==NULL);//保证编译完才加载
         assert(0);
@@ -59,7 +54,7 @@ void recursive_handle()
       else
       {
         //assert(0);
-        FILE *fptr=fopen(name_c,"a+");
+        FILE *fptr=fopen("share.c","a+");
         fprintf(fptr,"%s\n",line);
         fclose(fptr);
         execve(gcc_path,exec_argv,environ);//这里只能做到编译成共享库,记录，加载都要在父进程中进行
