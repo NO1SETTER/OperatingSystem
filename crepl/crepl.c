@@ -49,11 +49,11 @@ void recursive_handle()
         {//printf("hola");
         }
         void *func_addr;
-        printf("locating func%s\n",name);
+        printf("Locating func: %s\n()",name);
         while((func_addr=dlsym(func_handler,name))==NULL)//确保函数加载完成
         {//printf("halo");
         }
-        printf("located!\n");
+        printf("Located!\n");
         dlclose(func_handler);
         recursive_handle();
       }
@@ -69,6 +69,9 @@ void recursive_handle()
     }
     else//calculate
     {
+      void *func_handler=dlopen("./share.so",RTLD_NOW);
+      void *func_addr()=dlsym(func_handler,name);
+      printf("%d\n",func_addr());
     } 
 }
 
