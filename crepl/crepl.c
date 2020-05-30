@@ -61,6 +61,7 @@ void recursive_handle()
         int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
       {
+        assert(0);
         strcpy(func[func_num].name,name);
         void *func_addr;
         printf("halo");
