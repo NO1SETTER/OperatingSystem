@@ -16,7 +16,7 @@ int func_num=0;
 
 
 void *map_file(const char *fname);
-char * exec_argv[100]={"-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
+char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
 ,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable","./share.c",
 "-o","share.so",NULL};
 int main(int argc, char *argv[]) {
@@ -47,8 +47,12 @@ int main(int argc, char *argv[]) {
         sprintf(name_c,"%s.c",name);
         sprintf(name_c_arg,"./%s.c",name);
         sprintf(name_so,"%s.so",name);
-        exec_argv[11]=name_c_arg; 
-        exec_argv[13]=name_so;
+        printf("name_c=%s\n",name_c);
+        printf("name_c_arg=%s\n",name_c_arg);
+        printf("name_so=%s\n",name_so);
+        assert(0);
+        exec_argv[12]=name_c_arg; 
+        exec_argv[14]=name_so;
         FILE *fptr=fopen(name_c,"a+");
         execve("gcc",exec_argv,environ);
         void *func_addr=map_file(name_so);
