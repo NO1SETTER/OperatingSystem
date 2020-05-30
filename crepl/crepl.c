@@ -74,9 +74,11 @@ void recursive_handle()
     {
 
       void *func_handler=dlopen("./share.so",RTLD_NOW);
-      assert(func_handler);
-      int (*func_addr)(void)=dlsym(func_handler,name);
-      assert(func_addr);
+      printf("func_handler at%p\n",func_handler);
+      int (*func_addr)(void);
+      void *temp=dlsym(func_handler,name);
+      assert(temp);
+      func_addr=temp;
       printf("%d\n",(*func_addr)());
     } 
 }
