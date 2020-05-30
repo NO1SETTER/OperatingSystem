@@ -51,11 +51,13 @@ void recursive_handle()
         char name_c[128];
         char name_c_arg[128];
         char name_so[128];
+        char name_so_arg[so];
         
         sprintf(name_c,"%s.c",name);
         sprintf(name_c_arg,"./%s.c",name);
         sprintf(name_so,"%s.so",name);
-        
+        sprintf(name_c_arg,"./%s.so",name);
+
         exec_argv[12]=name_c_arg; 
         exec_argv[14]=name_so;
         int cpid=fork();
@@ -64,7 +66,7 @@ void recursive_handle()
         strcpy(func[func_num].name,name);
         void *func_addr;
         printf("halo\n");
-        while((func_addr=dlopen(name_so,RTLD_GLOBAL))==NULL);
+        while((func_addr=dlopen(name_so_arg,RTLD_NOW))==NULL);
         printf("hola\n");
         func[func_num].addr=func_addr;
         func_num=func_num+1;
