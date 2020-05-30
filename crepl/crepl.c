@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-
+#include <assert.h>
 extern char ** environ;
 struct FUNC
 {
@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
         char name_so[128];
         sprintf(exec_argv[11],"./%s.c",name);
         sprintf(exec_argv[13],"./%s.so",name);
+        assert(0);
         sprintf(name_c,"%s.c",name);
         sprintf(name_so,"%s.so",name);
         FILE *fptr=fopen(name_c,"a+");
