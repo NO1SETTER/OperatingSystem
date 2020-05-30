@@ -50,7 +50,7 @@ void recursive_handle()
         RTLD_GLOBAL|RTLD_DEEPBIND))==NULL)//保证编译完才加载
         {
         }
-        printf("func_handler at % p\n",func_handler);
+        printf("func_handler at %p\n",func_handler);
         void *func_addr;
         printf("Locating func: %s\n",name);
         while((func_addr=dlsym(func_handler,name))==NULL)//确保函数加载完成
