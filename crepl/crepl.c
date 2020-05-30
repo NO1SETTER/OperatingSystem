@@ -49,6 +49,7 @@ void recursive_handle()
         //assert(0);
         void *func_addr;
         while((func_addr=dlsym(func_handler,name))==NULL);//确保函数加载完成
+        assert(0);
         recursive_handle();
       }
       else
