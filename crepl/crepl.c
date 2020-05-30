@@ -68,12 +68,19 @@ void recursive_handle()
 
 void parse_args_envp(int argc,char **argv);
 void find_gcc_path();
+void clean();
 int main(int argc, char *argv[]) {
 parse_args_envp(argc,argv);
 find_gcc_path();
+clean();
 recursive_handle();
 }
 
+void clean()
+{
+  remove("share.c");
+  remove("share.so");
+}
 void parse_args_envp(int argc,char **argv)//把环境变量解析
 {
   char *path=getenv("PATH");
