@@ -55,7 +55,7 @@ void recursive_handle()
       if(cpid!=0)//这一部分完成加载，保存
       {
         strcpy(func[func_num].name,name);
-        void *func_num;
+        void *func_addr;
         while((func_addr=dlopen(name_so,RTLD_GLOBAL))==NULL);
         func[func_num].addr=func_addr;
         func_num=func_num+1;
