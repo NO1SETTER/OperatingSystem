@@ -226,7 +226,7 @@ int getfuncret(char *s)//s[l,e)
     char name_so[256];
     char name_func[256];
     
-   /* char name[256];
+    char name[256];
     for(int i=0,pos=0;i<strlen(s);i++)
     {
       if(s[i]==' ') continue;
@@ -241,13 +241,20 @@ int getfuncret(char *s)//s[l,e)
     int cpid=fork()
     if(cpid!=0)
     {
-
+        void *func_handler;
+        while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
+        int (*func_addr)();
+        while((func_addr=(int(*)())dlsym(func_handler,name_func))==NULL);//确保函数加载完成
+        return (int)(*func_addr)();
     }
     else
     {
-
-    }*/
-
+      exec_argv[12]=name_c;
+      exec_argv[14]=name_so;
+      execve(gcc_path,exec_argv,environ);
+      perror("after gcc");
+    }
+/*
     sprintf(name_c,"/tmp/expr_wrapper%d.c",wrapper_num);
     sprintf(name_so,"/tmp/expr_wrapper%d.so",wrapper_num);
     sprintf(name_func,"expr_wrapper%d",wrapper_num);
@@ -272,7 +279,7 @@ int getfuncret(char *s)//s[l,e)
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
     }
-    return 0;
+    return 0;*/
 }
 
 void clean()
