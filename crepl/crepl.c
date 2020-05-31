@@ -172,12 +172,12 @@ for(int i=s;i<e;i++)//找到主操作数
     {
       case TK_LB:bra=bra+6;continue;
       case TK_RB:bra=bra-6;continue;
-      case TK_OR:nowval=bra;continue;
-      case TK_AND:nowval=bra+1;continue;
-      case TK_BITOR:nowval=bra+2;continue;
-      case TK_BITAND:nowval=bra+3;continue;
-      case TK_ADD:case TK_MI:nowval=bra+4;continue;
-      case TK_MUL:case TK_DI:nowval=bra+5;continue;
+      case TK_OR:nowval=bra;break;
+      case TK_AND:nowval=bra+1;break;
+      case TK_BITOR:nowval=bra+2;break;
+      case TK_BITAND:nowval=bra+3;break;
+      case TK_ADD:case TK_MI:nowval=bra+4;break;
+      case TK_MUL:case TK_DI:nowval=bra+5;break;
       default:continue;
     }
 
@@ -189,7 +189,6 @@ for(int i=s;i<e;i++)//找到主操作数
 }
 
 int temp;
-printf("pivot=%d\n",pivot);
 switch (tokens[pivot].type)
 {case TK_ADD:return calculate(s,pivot,valid)+calculate(pivot+1,e,valid);
  case TK_MI: return calculate(s,pivot,valid)-calculate(pivot+1,e,valid);
