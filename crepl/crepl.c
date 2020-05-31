@@ -238,7 +238,7 @@ int getfuncret(char *s)//s[l,e)
     sprintf(name_so,"/tmp/%s.so",name);
     FILE *fptr=fopen(name_c,"a+");
     fprintf(fptr,"int expr_wrapper%d(){ return %s;}\n",wrapper_num,s);
-    int cpid=fork()
+    int cpid=fork();
     if(cpid!=0)
     {
         void *func_handler;
@@ -278,8 +278,8 @@ int getfuncret(char *s)//s[l,e)
       exec_argv[14]=name_so;
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
-    }
-    return 0;*/
+    }*/
+    return 0;
 }
 
 void clean()
