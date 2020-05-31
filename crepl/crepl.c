@@ -27,12 +27,13 @@ int func_num=0;
 int wrapper_num=0;
 
 #if __x86_64__
-char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
+char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-rdynamic","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
 ,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable",NULL,
 "-o",NULL,"-ldl",NULL};
 #else
-char * exec_argv[100]={"gcc","-fPIC","-shared","-m32","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
-,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable",NULL};
+char * exec_argv[100]={"gcc","-fPIC","-shared","-m32","-rdynamic","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
+,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable",NULL,
+"-o",NULL,"-ldl",NULL};
 #endif
 
 void recursive_handle();
@@ -251,8 +252,8 @@ int getfuncret(char *s)//s[l,e)
     }
     else
     {
-      exec_argv[12]=name_c;
-      exec_argv[14]=name_so;
+      exec_argv[13]=name_c;
+      exec_argv[15]=name_so;
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
     }
@@ -364,8 +365,8 @@ void recursive_handle()
 
     if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
     {  
-       exec_argv[12]=name_c;
-       exec_argv[14]=name_so;
+       exec_argv[13]=name_c;
+       exec_argv[15]=name_so;
       int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
       {
