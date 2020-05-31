@@ -108,7 +108,6 @@ static int make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
         position += substr_len;
-        printf("substr_len=%d\n",substr_len);
         switch (rules[i].token_type) {
          case TK_ADD:case TK_MI:case TK_MUL:case TK_DI:case TK_LB:case TK_RB:
          case TK_AND:case TK_OR:case TK_BITAND:case TK_BITOR:
@@ -364,16 +363,15 @@ void recursive_handle()
     else//calculate
     {
       int valid=1;
-      printf("calculating %s\n",line);
       if(!make_token(line))
       valid=0;
       int ans;
-      printf("nr_token=%d\n",nr_token);
       if(valid)
       ans=calculate(0,nr_token,&valid);
       if(valid)
       printf("%d\n",ans);
       else
       printf("Invalid expression\n");
+      recursive_handle();
     } 
 }
