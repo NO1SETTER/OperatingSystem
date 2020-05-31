@@ -365,9 +365,9 @@ void recursive_handle()
       int valid=1;
       if(!make_token(line))
       valid=0;
-      printf("NR_TOKEN=%d\n",nr_token);
+      /*printf("NR_TOKEN=%d\n",nr_token);
       for(int i=0;i<nr_token;i++)
-      printf("%d\n",(int)tokens[i].type);
+      printf("%d\n",(int)tokens[i].type);*/
       int ans;
       if(valid)
         ans=calculate(0,nr_token,&valid);
