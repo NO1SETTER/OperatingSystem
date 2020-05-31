@@ -238,7 +238,8 @@ int getfuncret(char *s)//s[l,e)
     sprintf(name_so,"/tmp/%s.so",name);
     sprintf(name_func,"expr_wrapper%d",wrapper_num);
     FILE *fptr=fopen(name_c,"a+");
-    fprintf(fptr,"int expr_wrapper%d(){ return %s;}\n",wrapper_num,s);
+    fprintf(fptr,"int expr_wrapper%d(){ return %s;}\n",wrapper_num,s);  
+    fclose(fptr);
     int cpid=fork();
     if(cpid!=0)
     {
@@ -246,7 +247,6 @@ int getfuncret(char *s)//s[l,e)
         while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
         int (*func_addr)();
         while((func_addr=(int(*)())dlsym(func_handler,name_func))==NULL);//确保函数加载完成
-        assert(0);
         return (int)(*func_addr)();
     }
     else
