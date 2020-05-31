@@ -225,6 +225,29 @@ int getfuncret(char *s)//s[l,e)
     char name_c[256];
     char name_so[256];
     char name_func[256];
+    
+   /* char name[256];
+    for(int i=0,pos=0;i<strlen(s);i++)
+    {
+      if(s[i]==' ') continue;
+      if(s[i]=='(') break;
+      name[pos++]=s[i];
+    }
+
+    sprintf(name_c,"/tmp/%s.c",name);
+    sprintf(name_so,"/tmp/%s.so",name);
+    FILE *fptr=fopen(name_c,"a+");
+    fprintf(fptr,"int expr_wrapper%d(){ return %s;}\n",wrapper_num,s);
+    int cpid=fork()
+    if(cpid!=0)
+    {
+
+    }
+    else
+    {
+
+    }*/
+
     sprintf(name_c,"/tmp/expr_wrapper%d.c",wrapper_num);
     sprintf(name_so,"/tmp/expr_wrapper%d.so",wrapper_num);
     sprintf(name_func,"expr_wrapper%d",wrapper_num);
@@ -237,7 +260,7 @@ int getfuncret(char *s)//s[l,e)
     if(cpid!=0)
     {
         void *func_handler;
-        while((func_handler=dlopen(name_so,RTLD_LAZY))==NULL);//保证编译完才加载
+        while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
         int (*func_addr)();
         while((func_addr=(int(*)())dlsym(func_handler,name_func))==NULL);//确保函数加载完成
         return (int)(*func_addr)();
@@ -338,12 +361,13 @@ void recursive_handle()
       if(cpid!=0)//这一部分完成加载，保存
       {
         void *func_handler;
-        while((func_handler=dlopen(name_so,RTLD_LAZY))==NULL);//保证编译完才加载
+        while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
         void *func_addr;
         while((func_addr=dlsym(func_handler,name))==NULL);//确保函数加载完成
         dlclose(func_handler);
         strcpy(func[func_num].name,name);
         func[func_num].addr=func_addr;
+        func_num=func_num+1;
         printf("New function definition\n");
         recursive_handle();
       }
