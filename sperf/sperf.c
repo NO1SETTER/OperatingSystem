@@ -195,8 +195,6 @@ int main(int argc, char *argv[]) {
     int ret2=dup2(pipefd[1],STDERR_FILENO);
     assert(ret2==STDERR_FILENO);
     execve(strace_path,exec_argv,environ);
-    while(1);
-    //error_dfs(0);
     perror("After execve");
   }
   return 0;
