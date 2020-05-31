@@ -236,6 +236,7 @@ int getfuncret(char *s)//s[l,e)
 
     sprintf(name_c,"/tmp/%s.c",name);
     sprintf(name_so,"/tmp/%s.so",name);
+    sprintf(name_func,"expr_wrapper%d",wrapper_num);
     FILE *fptr=fopen(name_c,"a+");
     fprintf(fptr,"int expr_wrapper%d(){ return %s;}\n",wrapper_num,s);
     int cpid=fork();
