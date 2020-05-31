@@ -365,13 +365,15 @@ void recursive_handle()
       int valid=1;
       if(!make_token(line))
       valid=0;
+      printf("NR_TOKEN=%d\n",nr_token);
       int ans;
       if(valid)
-      ans=calculate(0,nr_token,&valid);
+        ans=calculate(0,nr_token,&valid);
       if(valid)
-      printf("%d\n",ans);
+        printf("%d\n",ans);
       else
-      printf("Invalid expression\n");
+        printf("Invalid expression\n");
+      
       recursive_handle();
     } 
 }
