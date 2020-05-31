@@ -278,8 +278,8 @@ int getfuncret(char *s)//s[l,e)
     }
     if(cpid==0)
     {
-      exec_argv[12]=name_c;
-      exec_argv[14]=name_so;
+      exec_argv[13]=name_c;
+      exec_argv[15]=name_so;
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
     }
