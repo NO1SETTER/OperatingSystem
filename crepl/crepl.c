@@ -244,6 +244,7 @@ int getfuncret(char *s)//s[l,e)
     {
         void *func_handler;
         while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
+        assert(0);
         int (*func_addr)();
         while((func_addr=(int(*)())dlsym(func_handler,name_func))==NULL);//确保函数加载完成
         return (int)(*func_addr)();
