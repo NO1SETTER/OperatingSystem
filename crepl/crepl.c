@@ -26,9 +26,14 @@ void *addr;
 int func_num=0;
 int wrapper_num=0;
 
+#if __x86_64__
 char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
 ,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable",NULL,
 "-o",NULL,"-ldl",NULL};
+#else
+char * exec_argv[100]={"gcc","-fPIC","-shared","-m32","-U_FORTIFY_SOURCE","-O1","-std=gnu11"
+,"-ggdb","-Wall","-Werror","-Wno-unused-result","-Wno-unused-variable",NULL,
+#endif
 //用一个share.so保存所有共享库函数,用dlsym查找
 void recursive_handle();
 void parse_args_envp(int argc,char **argv);
