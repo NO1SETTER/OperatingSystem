@@ -308,7 +308,7 @@ void recursive_handle()
     }
     int tplen=strlen(line);
     line[tplen-1]='\0';//把回车键替掉
-    printf("Got %zu chars.\n", strlen(line)); // WTF?
+    //printf("Got %zu chars.\n", strlen(line)); // WTF?
 
       char name[128];
       for(int i=3,pos=0;i<strlen(line);i++)
