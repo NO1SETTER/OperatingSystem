@@ -340,16 +340,9 @@ void recursive_handle()
       {
         void *func_handler;
         while((func_handler=dlopen(name_so,RTLD_NOW|
-        RTLD_GLOBAL|RTLD_DEEPBIND))==NULL)//保证编译完才加载
-        {
-        }
-        printf("func_handler at %p\n",func_handler);
+        RTLD_GLOBAL|RTLD_DEEPBIND))==NULL);//保证编译完才加载
         void *func_addr;
-        printf("Locating func: %s\n",name);
-        while((func_addr=dlsym(func_handler,name))==NULL)//确保函数加载完成
-        {//fprintf(stderr,"%s\n",dlerror());
-        }
-        printf("Located!\n");
+        while((func_addr=dlsym(func_handler,name))==NULL);//确保函数加载完成
         dlclose(func_handler);
         strcpy(func[func_num].name,name);
         func[func_num].addr=func_addr;
