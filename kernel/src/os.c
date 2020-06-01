@@ -34,7 +34,6 @@ static void os_init() {
   for (int i = 0; i < 5; i++) // 5 个消费者
     kmt->create(task_alloc(), "consumer", consumer, NULL);
 #endif
-assert(0);
 }
 
 void sp_lockinit(struct spinlock_t* lk,const char *name)
