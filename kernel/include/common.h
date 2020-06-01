@@ -79,13 +79,15 @@ void kill(struct task_t *t);
 
 
 
-typedef struct semaphore
+struct sem_t
 {
 struct spinlock_t lock;
 const char *name;
 int val;
-}sem_t;
+};
 
+extern struct sem_t empty;
+extern struct sem_t fill;
 
 MODULE(kmt) {
   void (*init)();
@@ -94,7 +96,7 @@ MODULE(kmt) {
   void (*spin_init)(struct spinlock_t *lk, const char *name);
   void (*spin_lock)(struct spinlock_t *lk);
   void (*spin_unlock)(struct spinlock_t *lk);
-  void (*sem_init)(sem_t *sem, const char *name, int value);
-  void (*sem_wait)(sem_t *sem);
-  void (*sem_signal)(sem_t *sem);
+  void (*sem_init)(struct sem_t *sem, const char *name, int value);
+  void (*sem_wait)(struct sem_t *sem);
+  void (*sem_signal)(struct sem_t *sem);
 };

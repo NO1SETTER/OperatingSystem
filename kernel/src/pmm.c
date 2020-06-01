@@ -38,8 +38,6 @@ void print_FreeBlock();
 void check_allocblock(uintptr_t start,uintptr_t end);
 void check_freeblock();
 
-
-
 //锁pre,nxt;
 void blink(struct block* pre,struct block*nxt)//直接连接
 {

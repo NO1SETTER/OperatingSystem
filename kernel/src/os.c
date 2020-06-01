@@ -1,7 +1,25 @@
 #include <common.h>
 //#define _DEBUG
-//#define DEBUG_LOCAL
+#define DEBUG_LOCAL
 #define STACK_SIZE 4096
+
+void producer()
+{
+printf("(\n");
+}
+
+void consumer()
+{
+printf(")\n");
+}
+
+struct task_t* task_alloc()
+{
+  return (struct task_t*)pmm->alloc(sizeof(struct task_t));
+}
+
+struct sem_t empty;
+struct sem_t fill;
 static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
@@ -275,7 +293,6 @@ _Context* schedule(_Context* c)
 
 static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do_event
 {
-  _yield();
   _Context *pre=context; 
   _Context *next = NULL;
   struct EVENT *ptr=evhead->next;
@@ -413,13 +430,13 @@ static void kmt_teardown(struct task_t *task)
   pmm->free(task->stack);
 }
 
-static void sem_init(sem_t *sem, const char *name, int value)
+static void sem_init(struct sem_t *sem, const char *name, int value)
 {
 sem->name=name;
 sem->val=value;
 }
 
-static void sem_wait(sem_t *sem)
+static void sem_wait(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
 sem->val=sem->val-1;
@@ -430,11 +447,11 @@ kmt->spin_unlock(&sem->lock);
 if(fail)
 {
   await(current);
-  _yield();
+  _yield();//int $81
 }
 }
 
-static void sem_signal(sem_t *sem)
+static void sem_signal(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
 sem->val=sem->val+1;
