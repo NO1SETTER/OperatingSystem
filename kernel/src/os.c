@@ -6,11 +6,13 @@
 void producer()
 {
 printf("(\n");
+_yield();
 }
 
 void consumer()
 {
 printf(")\n");
+_yield();
 }
 
 struct task_t* task_alloc()
@@ -81,7 +83,7 @@ static void os_run() {
   else if(sel==4)
   test4();*/
   _intr_write(1);
-
+  _yield();
   while (1) ;
 }
 /*
@@ -278,7 +280,7 @@ struct EVENT* next;
 struct EVENT EV_HEAD={-1,0,NULL,NULL};//用链表记录所有_Event
 struct EVENT * evhead=&EV_HEAD;
 
-_Context* schedule(_Context* c)
+_Context* schedule(_Event rv,_Context* c)
 {
   if(current==NULL)
   {
@@ -410,7 +412,7 @@ void kill(struct task_t* t)//running->dead
 }
 
 static void kmt_init()
-{
+{on_irq(0,_EVENT_YIELD,schedule);
 }
 
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
