@@ -325,7 +325,66 @@ MODULE_DEF(os) = {
   .on_irq = on_irq,
 };
 
+void activate(struct task_t* t)//wait->running
+{
+  int pos=-1;
+  for(int i=0;i<wait_num;i++)
+  {
+    if (wait_thread[i]==t) {
+      pos = i;
+      break;}
+  }
+  assert(pos!=-1);
+  for(int i=pos;i<wait_num-1;i++)
+  wait_thread[i]=wait_thread[i+1];
 
+  wait_num=wait_num-1;
+  active_thread[active_num++]=t;
+  t->status=T_RUNNING;
+}
+
+void random_activate()
+{
+  int pos=rand()%wait_num;
+  struct task_t *t=wait_thread[pos];
+  for(int i=pos;i<wait_num-1;i++)
+  wait_thread[i]=wait_thread[i+1];
+
+  wait_num=wait_num-1;
+  active_thread[active_num++]=t;
+  t->status=T_RUNNING;
+}
+
+void await(struct task_t* t)//running->wait
+{
+  int pos=-1;
+  for(int i=0;i<active_num;i++)
+  {
+    if (active_thread[i]==t) {
+      pos = i;
+      break;}
+  }
+  assert(pos!=-1);
+  for(int i=pos;i<active_num-1;i++)
+  active_thread[i]=active_thread[i+1];
+
+  active_num=active_num-1;
+  wait_thread[wait_num++]=t;
+  t->status=T_WAITING;
+}
+
+void kill(struct task_t* t)//running->dead
+{
+  int pos=-1;
+  for(int i=0;i<active_num;i++)
+  {
+    if (active_thread[i]==t) {
+      pos = i;
+      break;}
+  }
+  assert(pos!=-1);
+  t->status=T_DEAD;
+}
 
 static void kmt_init()
 {
