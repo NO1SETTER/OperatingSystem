@@ -18,19 +18,16 @@ char none[8];
 };
 
 //用三个全局锁
-spinlock_t glb_lock;//管理两个链表的锁
-spinlock_t alloc_lock;//管理balloc和bfree并发性的锁
-spinlock_t print_lock;//printf的锁,保证完整性
+struct spinlock_t glb_lock;//管理两个链表的锁
+struct spinlock_t alloc_lock;//管理balloc和bfree并发性的锁
+struct spinlock_t print_lock;//printf的锁,保证完整性
 //两个链表的起始点
 struct block* free_head;
 struct block* alloc_head;//两个都是空的节点,管理全局
 struct block* slab_free_head[8];
 struct block* slab_alloc_head[8];//CPU#i的slab头和尾
 
-//锁相关
-void sp_lockinit(spinlock_t* lk,const char *name);
-void sp_lock(spinlock_t* lk);
-void sp_unlock(spinlock_t* lk);
+
 //管理block内存
 static void *balloc();
 static void bfree(struct block* blk);
@@ -41,22 +38,7 @@ void print_FreeBlock();
 void check_allocblock(uintptr_t start,uintptr_t end);
 void check_freeblock();
 
-void sp_lockinit(spinlock_t* lk,const char *name)
-{
-  lk->name=name;
-  lk->locked=0;;
-}
 
-
-void sp_lock(spinlock_t* lk)
-{
-  while(_atomic_xchg(&lk->locked,1))
-  { }
-}
-void sp_unlock(spinlock_t *lk)
-{
-  _atomic_xchg(&lk->locked,0);
-}
 
 //锁pre,nxt;
 void blink(struct block* pre,struct block*nxt)//直接连接
@@ -626,61 +608,3 @@ MODULE_DEF(pmm) = {
   .free  = kfree,
 };
 
-static void kmt_init()
-{
-  on_irq()
-return;
-}
-
-static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-  task->stack = pmm->alloc(STACK_SIZE); // 动态分配内核栈
-  task->name=name;
-  tasｋ->entry=entry;
-  task->arg=arg;
-  return 0;
-}
-
-static void kmt_teardown(task_t *task)
-{
-
-}
-
-static void sem_init(sem_t *sem, const char *name, int value)
-{
-sem->name=name;
-sem->val=value;
-}
-
-static void sem_wait(sem_t *sem)
-{
-kmt->spin_lock(&sem->lock);
-sem->val=sem->val-1;
-int fail=0;
-if(sem->val<0) fail=1;
-kmt->spin_unlock(&sem->lock);
-if(fail)
-{
-  _yield();
-}
-}
-
-static void sem_signal(sem_t *sem)
-{
-kmt->spin_lock(&sem->lock);
-sem->val=sem->val+1;
-kmt->spin_unlock(&sem->lock);
-
-
-}
-
-MODULE_DEF(kmt) = {
-  .init=kmt_init,
-  .spin_init=sp_lockinit,
-  .spin_lock=sp_lock,
-  .spin_lock=sp_unlock,
-  .create=kmt_create,
-  .teardown=kmt_teardown,
-  .sem_init=sem_init,
-  .sem_wait=sem_wait,
-  .sem_signal=sem_signal,
-};

@@ -1,6 +1,7 @@
 #include <common.h>
 //#define _DEBUG
 //#define DEBUG_LOCAL
+#define STACK_SIZE 4096
 static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
@@ -15,12 +16,22 @@ static void os_init() {
 #endif
 }
 
+void sp_lockinit(struct spinlock_t* lk,const char *name)
+{
+  lk->name=name;
+  lk->locked=0;;
+}
 
-extern spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
-extern void sp_lock(spinlock_t* lk);
-extern void sp_unlock(spinlock_t *lk);
+void sp_lock(struct spinlock_t* lk)
+{
+  while(_atomic_xchg(&lk->locked,1));
+}
+void sp_unlock(struct spinlock_t *lk)
+{
+  _atomic_xchg(&lk->locked,0);
+}
 
-
+extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
 extern void check_allocblock(void *ptr);
 extern void check_freeblock();
 extern void print_FreeBlock();
@@ -235,25 +246,35 @@ static void test4()//频繁分配页
 }*/
 
 int NR_IRQ=0;
-struct EV_CTRL{
+struct EVENT{
 int seq;
 int event;
 handler_t handler;
-struct EV_CTRL* next;
+struct EVENT* next;
 };
+struct EVENT EV_HEAD={-1,0,NULL,NULL};//用链表记录所有_Event
+struct EVENT * evhead=&EV_HEAD;
 
-struct EV_CTRL ev_ctrl={-1,0,NULL,NULL};//用链表记录所有_Event
-struct EV_CTRL* EV_HEAD=&ev_ctrl;
-
-void _yield(){
-asm volatile("int $0x81");
+_Context* schedule(_Context* c)
+{
+  if(current==NULL)
+  {
+    current=active_thread[0];
+  }
+  else
+  {
+    current->ctx = c;
+    current = active_thread[rand()%active_num]; 
+  }
+  return current->ctx;
 }
 
 static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do_event
 {
+  _yield();
   _Context *pre=context; 
   _Context *next = NULL;
-  struct EV_CTRL*ptr=EV_HEAD->next;
+  struct EVENT *ptr=evhead->next;
   while(ptr)
   {
     if (ptr->event == _EVENT_NULL || ptr->event == ev.event) {
@@ -261,7 +282,7 @@ static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do
       //panic_on(r && next, "returning multiple contexts");
       if (r) next = r;
     }
-  ptr=ptr->next;
+    ptr=ptr->next;
   }
   if(next==NULL)
     next=pre;
@@ -272,11 +293,11 @@ static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do
 
 static void on_irq (int seq,int event,handler_t handler)//原本是_cte_init中的一部分
 {
-  struct EV_CTRL* NEW_EV=(struct EV_CTRL*)pmm->alloc(sizeof(struct EV_CTRL));
+  struct EVENT * NEW_EV=(struct EVENT*)pmm->alloc(sizeof(struct EVENT));
   NEW_EV->seq=seq;
   NEW_EV->event=event;
   NEW_EV->handler=handler;
-  struct EV_CTRL* ptr=EV_HEAD;
+  struct EVENT * ptr=evhead;
   while(ptr)
   {
     if(ptr->seq<seq)
@@ -305,3 +326,127 @@ MODULE_DEF(os) = {
   .on_irq = on_irq,
 };
 
+void activate(struct task_t* t)//wait->running
+{
+  int pos=-1;
+  for(int i=0;i<wait_num;i++)
+  {
+    if (wait_thread[i]==t) {
+      pos = i;
+      break;}
+  }
+  assert(pos!=-1);
+  for(int i=pos;i<wait_num-1;i++)
+  wait_thread[i]=wait_thread[i+1];
+
+  wait_num=wait_num-1;
+  active_thread[active_num++]=t;
+  t->status=T_RUNNING;
+}
+
+void random_activate()
+{
+  int pos=rand()%wait_num;
+  struct task_t *t=wait_thread[pos];
+  for(int i=pos;i<wait_num-1;i++)
+  wait_thread[i]=wait_thread[i+1];
+
+  wait_num=wait_num-1;
+  active_thread[active_num++]=t;
+  t->status=T_RUNNING;
+}
+
+void await(struct task_t* t)//running->wait
+{
+  int pos=-1;
+  for(int i=0;i<active_num;i++)
+  {
+    if (active_thread[i]==t) {
+      pos = i;
+      break;}
+  }
+  assert(pos!=-1);
+  for(int i=pos;i<active_num-1;i++)
+  active_thread[i]=active_thread[i+1];
+
+  active_num=active_num-1;
+  wait_thread[wait_num++]=t;
+  t->status=T_WAITING;
+}
+
+void kill(struct task_t* t)//running->dead
+{
+  int pos=-1;
+  for(int i=0;i<active_num;i++)
+  {
+    if (active_thread[i]==t) {
+      pos = i;
+      break;}
+  }
+  assert(pos!=-1);
+  t->status=T_DEAD;
+}
+
+static void kmt_init()
+{
+}
+
+//task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
+//_Area{*start,*end;},start低地址,end高地址,也即栈顶
+static int kmt_create(struct task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
+  all_thread[thread_num++]=task;
+  task->name=name;
+  task->status=T_RUNNING;
+  task->stack=pmm->alloc(STACK_SIZE);
+  _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
+  task->ctx=_kcontext(stack,entry,arg);
+  return 0;
+}
+
+static void kmt_teardown(struct task_t *task)
+{
+  kill(task);//不会从all_thread中删去
+  pmm->free(task->stack);
+}
+
+static void sem_init(sem_t *sem, const char *name, int value)
+{
+sem->name=name;
+sem->val=value;
+}
+
+static void sem_wait(sem_t *sem)
+{
+kmt->spin_lock(&sem->lock);
+sem->val=sem->val-1;
+int fail=0;
+if(sem->val<0) fail=1;
+kmt->spin_unlock(&sem->lock);
+
+if(fail)
+{
+  await(current);
+  _yield();
+}
+}
+
+static void sem_signal(sem_t *sem)
+{
+kmt->spin_lock(&sem->lock);
+sem->val=sem->val+1;
+if(sem->val>=0)
+random_activate();
+kmt->spin_unlock(&sem->lock);
+}
+
+MODULE_DEF(kmt) = {
+  .init=kmt_init,
+  .spin_init=sp_lockinit,
+  .spin_lock=sp_lock,
+  .spin_lock=sp_unlock,
+  .create=kmt_create,
+  .teardown=kmt_teardown,
+  .sem_init=sem_init,
+  .sem_wait=sem_wait,
+  .sem_signal=sem_signal,
+};
