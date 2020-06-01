@@ -245,6 +245,11 @@ static void test4()//频繁分配页
   }
 }*/
 
+int thread_num=0;
+int active_num=0;
+int wait_num=0;
+struct task_t *current=NULL;//当前task
+
 struct EVENT{
 int seq;
 int event;

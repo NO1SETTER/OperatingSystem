@@ -64,18 +64,20 @@ struct task_t
 };//管理一个线程的信息
 
 struct task_t* all_thread[10005];
-int thread_num = 0;
 struct task_t* active_thread[10005];
-int active_num = 0;
 struct task_t* wait_thread[10005];
-int wait_num = 0;
+
+extern int thread_num;
+extern int active_num;
+extern int wait_num;
+extern struct task_t *current;//当前task
 
 void activate(struct task_t* t);
 void random_activate();
 void await(struct task_t *t);
 void kill(struct task_t *t);
 
-struct task_t *current=NULL;//当前task
+
 
 typedef struct semaphore
 {
