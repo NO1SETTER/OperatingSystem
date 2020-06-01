@@ -23,7 +23,7 @@ struct sem_t fill;
 static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
-
+assert(0);
 #ifdef DEBUG_LOCAL
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
