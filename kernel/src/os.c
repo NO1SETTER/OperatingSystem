@@ -291,6 +291,7 @@ _Context* schedule(_Event ev,_Context* c)
     current->ctx = c;
     current = active_thread[rand()%active_num]; 
   }
+  assert(current);
   return current->ctx;
 }
 
