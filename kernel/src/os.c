@@ -8,6 +8,7 @@ struct sem_t fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
 
+
 void producer(void *arg)
 {
   while(1)
