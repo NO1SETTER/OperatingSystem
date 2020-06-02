@@ -12,10 +12,10 @@ void producer(void *arg)
 {
   while(1)
   {
-    //P(&empty);
+    P(&empty);
     printf("(");
     //printf("(_%s",arg);
-    //V(&fill);
+    V(&fill);
   }
 }
 
@@ -23,10 +23,10 @@ void consumer(void *arg)
 {
   while(1)
   {
-    //P(&fill);
+    P(&fill);
     printf(")");
     //printf(")_%s",arg);
-    //V(&empty);
+    V(&empty);
   }
 }
 
