@@ -56,7 +56,7 @@ static void os_init() {
 void sp_lockinit(struct spinlock_t* lk,const char *name)
 {
   lk->name=name;
-  lk->locked=0;;
+  lk->locked=0;
 }
 
 void sp_lock(struct spinlock_t* lk)
@@ -65,8 +65,8 @@ void sp_lock(struct spinlock_t* lk)
 }
 void sp_unlock(struct spinlock_t *lk)
 {
-  assert(0);
   _atomic_xchg(&lk->locked,0);
+  assert(0);
 }
 
 extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
