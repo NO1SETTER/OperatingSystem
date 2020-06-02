@@ -481,12 +481,12 @@ printf("sem_wait val=%d\n",sem->val);
 int fail=0;
 if(sem->val<0) fail=1;
 kmt->spin_unlock(&sem->lock);
-
 if(fail)
 {
   await(current);
   _yield();//int $81
 }
+assert(0);
 }
 
 static void sem_signal(struct sem_t *sem)
