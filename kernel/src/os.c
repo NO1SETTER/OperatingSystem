@@ -13,7 +13,7 @@ void producer(void *arg)
   while(1)
   {
     P(&empty);
-    _putc('(');
+    printf("(_%s",arg);
     V(&fill);
   }
 }
@@ -23,7 +23,7 @@ void consumer(void *arg)
   while(1)
   {
     P(&fill);
-    _putc(')');
+    printf(")_%s",arg);
     V(&empty);
   }
 }
@@ -468,7 +468,7 @@ static void sem_wait(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
 sem->val--;
-//printf("sem_wait val=%d\n",sem->val);
+printf("sem_wait val=%d\n",sem->val);
 int fail=0;
 if(sem->val<0) fail=1;
 kmt->spin_unlock(&sem->lock);
@@ -484,7 +484,7 @@ static void sem_signal(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
 sem->val++;
-//printf("sem_signal val=%d\n",sem->val);
+printf("sem_signal val=%d\n",sem->val);
 if(sem->val>=0)
 random_activate();
 kmt->spin_unlock(&sem->lock);
