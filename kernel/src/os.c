@@ -88,18 +88,9 @@ static void test4();
 static void os_run() {
   /*for (const char *s = "Hello World from CPU #*\n"; *s; s++) {
     _putc(*s == '*' ? '0' + _cpu() : *s);
-  }
-  
-  int sel=0;
-  if(sel==1)
-  test1();
-  else if(sel==2)
-  test2();
-  else if(sel==3)
-  test3();
-  else if(sel==4)
-  test4();*/
+  }*/
   _intr_write(1);
+  assert(0);
   _yield();
   while (1) ;
 }
@@ -482,7 +473,6 @@ printf("sem_wait val=%d\n",sem->val);
 int fail=0;
 if(sem->val<0) fail=1;
 kmt->spin_unlock(&sem->lock);
-assert(0);
 if(fail)
 {
   await(current);
