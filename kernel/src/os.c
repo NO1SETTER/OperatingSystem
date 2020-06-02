@@ -7,7 +7,7 @@ void producer()
 {
 while(1)
 {
-printf("(\n");
+printf("(");
 _yield();
 }
 }
@@ -16,7 +16,7 @@ void consumer()
 {
 while(1)
 {
-printf(")\n");
+printf(")");
 _yield();
 }
 }
