@@ -295,6 +295,7 @@ _Context* schedule(_Event rv,_Context* c)
 
 static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do_event
 {
+  printf("trapping\n");
   _Context *pre=context; 
   _Context *next = NULL;
   struct EVENT *ptr=evhead->next;
