@@ -431,8 +431,8 @@ static void kmt_init()
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
 //_Area{*start,*end;},start低地址,end高地址,也即栈顶
 static int kmt_create(struct task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-  assert(task);
   all_thread[thread_num++]=task;
+  active_thread[active_num++]=task;
   task->name=name;
   task->status=T_RUNNING;
   task->stack=pmm->alloc(STACK_SIZE);
