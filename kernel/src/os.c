@@ -56,7 +56,7 @@ static void os_init() {
 void sp_lockinit(struct spinlock_t* lk,const char *name)
 {
   lk->name=name;
-  lk->locked=0;;
+  lk->locked=0;
 }
 
 void sp_lock(struct spinlock_t* lk)
