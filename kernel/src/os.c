@@ -5,14 +5,20 @@
 
 void producer()
 {
+while(1)
+{
 printf("(\n");
 _yield();
+}
 }
 
 void consumer()
 {
+while(1)
+{
 printf(")\n");
 _yield();
+}
 }
 
 struct task_t* task_alloc()
