@@ -295,7 +295,6 @@ _Context* schedule(_Event ev,_Context* c)
 
 _Context* cyield(_Event ev,_Context* c)
 {
-  assert(0);
 _yield();
 return NULL;
 }
