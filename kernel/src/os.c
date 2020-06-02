@@ -279,7 +279,7 @@ struct EVENT* next;
 struct EVENT EV_HEAD={-1,0,NULL,NULL};//用链表记录所有_Event
 struct EVENT * evhead=&EV_HEAD;
 
-_Context* schedule(_Event rv,_Context* c)
+_Context* schedule(_Event ev,_Context* c)
 {
   if(current==NULL)
   {
@@ -292,6 +292,13 @@ _Context* schedule(_Event rv,_Context* c)
   }
   return current->ctx;
 }
+
+_Context* cyield(_Event ev,_Context* c)
+{
+_yield();
+return NULL;
+}
+
 
 static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do_event
 {
@@ -413,7 +420,9 @@ void kill(struct task_t* t)//running->dead
 }
 
 static void kmt_init()
-{on_irq(0,_EVENT_YIELD,schedule);
+{
+  on_irq(0,_EVENT_YIELD,schedule);
+  on_irq(1,_EVENT_IRQ_TIMER,cyield);
 }
 
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
