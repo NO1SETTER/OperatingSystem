@@ -69,6 +69,7 @@ void sp_lock(struct spinlock_t* lk)
 void sp_unlock(struct spinlock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
+  assert(0);
 }
 
 extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
@@ -477,7 +478,7 @@ if(sem->val<0)
   _yield();//int $81
   return;
 }
-kmt->spin_unlock(&sem->lock);
+sp_unlock(&sem->lock);
 assert(0);
 return;
 }
