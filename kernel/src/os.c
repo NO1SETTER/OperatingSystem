@@ -62,6 +62,7 @@ void sp_lockinit(struct spinlock_t* lk,const char *name)
 void sp_lock(struct spinlock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1));
+  _intr_write(0);
 }
 void sp_unlock(struct spinlock_t *lk)
 {
@@ -90,8 +91,6 @@ static void os_run() {
     _putc(*s == '*' ? '0' + _cpu() : *s);
   }*/
   _intr_write(1);
-  assert(0);
-  _yield();
   while (1) ;
 }
 /*
@@ -468,7 +467,7 @@ sem->val=value;
 static void sem_wait(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
-sem->val=sem->val-1;
+sem->val--;
 printf("sem_wait val=%d\n",sem->val);
 int fail=0;
 if(sem->val<0) fail=1;
@@ -484,7 +483,7 @@ return;
 static void sem_signal(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
-sem->val=sem->val+1;
+sem->val++;
 printf("sem_signal val=%d\n",sem->val);
 if(sem->val>=0)
 random_activate();
