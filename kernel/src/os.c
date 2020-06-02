@@ -5,20 +5,22 @@
 
 void producer()
 {
-while(1)
-{
-printf("(");
-_yield();
-}
+  while(1)
+  {
+    kmt->sem_wait(&empty);
+    printf("(");
+    kmt->sem_signal(&fill);
+  }
 }
 
 void consumer()
 {
-while(1)
-{
-printf(")");
-_yield();
-}
+  while(1)
+  {
+    kmt->sem_wait(&fill);
+    printf(")");
+    kmt->sem_signal(&empty);
+  }
 }
 
 struct task_t* task_alloc()
@@ -455,6 +457,9 @@ static void kmt_teardown(struct task_t *task)
 
 static void sem_init(struct sem_t *sem, const char *name, int value)
 {
+char lock_name[128];
+sprintf(lock_name,"%s_lock",name);
+kmt->spin_init(&sem->lock,lock_name);
 sem->name=name;
 sem->val=value;
 }
