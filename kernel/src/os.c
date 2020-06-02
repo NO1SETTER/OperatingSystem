@@ -287,7 +287,7 @@ struct EVENT * evhead=&EV_HEAD;
 
 _Context* schedule(_Event ev,_Context* c)
 {
-  printf("SCHEDULING\n");
+  //printf("SCHEDULING\n");
   if(current==NULL)
   {
     current=active_thread[0];
@@ -303,7 +303,7 @@ _Context* schedule(_Event ev,_Context* c)
 
 _Context* cyield(_Event ev,_Context* c)
 {
-  printf("YIELD\n");
+  //printf("YIELD\n");
 _yield();
 return NULL;
 }
@@ -311,8 +311,8 @@ return NULL;
 
 static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do_event
 {
-  if(ev.event!=_EVENT_ERROR)
-    printf("%s\n",ev.msg);
+  //if(ev.event!=_EVENT_ERROR)
+    //printf("%s\n",ev.msg);
   _Context *pre=context; 
   _Context *next = NULL;
   struct EVENT *ptr=evhead->next;
