@@ -478,6 +478,7 @@ if(sem->val<0)
   _yield();//int $81
   return;
 }
+assert(0);
 kmt->spin_unlock(&sem->lock);
 return;
 }
