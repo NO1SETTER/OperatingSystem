@@ -13,7 +13,8 @@ void producer(void *arg)
   while(1)
   {
     //P(&empty);
-    printf("(_%s",arg);
+    printf("(");
+    //printf("(_%s",arg);
     //V(&fill);
   }
 }
@@ -23,7 +24,8 @@ void consumer(void *arg)
   while(1)
   {
     //P(&fill);
-    printf(")_%s",arg);
+    printf(")");
+    //printf(")_%s",arg);
     //V(&empty);
   }
 }
