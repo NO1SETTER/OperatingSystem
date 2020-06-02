@@ -477,6 +477,7 @@ static void sem_wait(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
 sem->val=sem->val-1;
+printf("sem_wait val=%d\n",sem->val);
 int fail=0;
 if(sem->val<0) fail=1;
 kmt->spin_unlock(&sem->lock);
@@ -492,6 +493,7 @@ static void sem_signal(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
 sem->val=sem->val+1;
+printf("sem_signal val=%d\n",sem->val);
 if(sem->val>=0)
 random_activate();
 kmt->spin_unlock(&sem->lock);
