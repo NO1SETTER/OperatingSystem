@@ -3,23 +3,28 @@
 #define DEBUG_LOCAL
 #define STACK_SIZE 4096
 
-void producer()
+struct sem_t empty;
+struct sem_t fill;
+#define P kmt->sem_wait
+#define V kmt->sem_signal
+
+void producer(void *arg)
 {
   while(1)
   {
-    kmt->sem_wait(&empty);
-    printf("(");
-    kmt->sem_signal(&fill);
+    P(&empty);
+    printf("(_%s",arg);
+    V(&fill);
   }
 }
 
-void consumer()
+void consumer(void *arg)
 {
   while(1)
   {
-    kmt->sem_wait(&fill);
-    printf(")");
-    kmt->sem_signal(&empty);
+    P(&fill);
+    printf(")_%s",arg);
+    V(&empty);
   }
 }
 
@@ -28,8 +33,8 @@ struct task_t* task_alloc()
   return (struct task_t*)pmm->alloc(sizeof(struct task_t));
 }
 
-struct sem_t empty;
-struct sem_t fill;
+
+
 static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
@@ -38,9 +43,13 @@ static void os_init() {
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
   for (int i = 0; i < 4; i++) // 4 个生产者
-    kmt->create(task_alloc(), "producer", producer, NULL);
+    { char name[10];
+    sprintf(name,"%d",i);
+      kmt->create(task_alloc(), "producer", producer, name);}
   for (int i = 0; i < 5; i++) // 5 个消费者
-    kmt->create(task_alloc(), "consumer", consumer, NULL);
+      { char name[10];
+    sprintf(name,"%d",i);
+    kmt->create(task_alloc(), "consumer", consumer, name);}
 #endif
 }
 
