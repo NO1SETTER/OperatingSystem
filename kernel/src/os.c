@@ -41,6 +41,8 @@ static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
 
+printf(" sp_lock at %p\n",(intptr_t)sp_lock);
+printf(" kmt->lock at %p",(intptr_t)kmt->spin_lock);
 #ifdef DEBUG_LOCAL
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
@@ -478,8 +480,6 @@ if(sem->val<0)
   return;
 }
 kmt->spin_unlock(&sem->lock);
-//sp_unlock(&sem->lock);
-assert(0);
 return;
 }
 
