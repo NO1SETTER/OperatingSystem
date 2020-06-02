@@ -482,7 +482,7 @@ printf("sem_wait val=%d\n",sem->val);
 int fail=0;
 if(sem->val<0) fail=1;
 kmt->spin_unlock(&sem->lock);
-
+assert(0);
 if(fail)
 {
   await(current);
