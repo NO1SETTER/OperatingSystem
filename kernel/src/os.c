@@ -480,8 +480,9 @@ sem->val=sem->val-1;
 printf("sem_wait val=%d\n",sem->val);
 int fail=0;
 if(sem->val<0) fail=1;
+assert(0);
 kmt->spin_unlock(&sem->lock);
-printf("haha\n");
+
 if(fail)
 {
   await(current);
