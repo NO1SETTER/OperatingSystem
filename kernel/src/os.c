@@ -281,6 +281,7 @@ struct EVENT * evhead=&EV_HEAD;
 
 _Context* schedule(_Event ev,_Context* c)
 {
+  printf("SCHEDULING\n");
   if(current==NULL)
   {
     current=active_thread[0];
@@ -295,6 +296,7 @@ _Context* schedule(_Event ev,_Context* c)
 
 _Context* cyield(_Event ev,_Context* c)
 {
+  printf("YIELD\n");
 _yield();
 return NULL;
 }
