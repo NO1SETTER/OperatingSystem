@@ -65,6 +65,7 @@ void sp_lock(struct spinlock_t* lk)
 }
 void sp_unlock(struct spinlock_t *lk)
 {
+  assert(0);
   _atomic_xchg(&lk->locked,0);
 }
 
