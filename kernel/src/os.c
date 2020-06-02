@@ -12,9 +12,9 @@ void producer(void *arg)
 {
   while(1)
   {
-    P(&empty);
+    //P(&empty);
     printf("(_%s",arg);
-    V(&fill);
+    //V(&fill);
   }
 }
 
@@ -22,9 +22,9 @@ void consumer(void *arg)
 {
   while(1)
   {
-    P(&fill);
+    //P(&fill);
     printf(")_%s",arg);
-    V(&empty);
+    //V(&empty);
   }
 }
 
@@ -67,7 +67,7 @@ void sp_lock(struct spinlock_t* lk)
 void sp_unlock(struct spinlock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
-  //assert(0);
+  assert(0);
 }
 
 extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
