@@ -82,8 +82,8 @@ static void os_run() {
   else if(sel==4)
   test4();*/
   _intr_write(1);
-  assert(0);
   _yield();
+  assert(0);
   while (1) ;
 }
 /*
