@@ -471,14 +471,14 @@ static void sem_wait(struct sem_t *sem)
 kmt->spin_lock(&sem->lock);
 sem->val--;
 printf("sem_wait:%s val=%d\n",sem->name,sem->val);
-int fail=0;
-if(sem->val<0) fail=1;
-kmt->spin_unlock(&sem->lock);
-if(fail)
+if(sem->val<0) 
 {
+  kmt->spin_unlock(&sem->lock);
   await(current);
   _yield();//int $81
+  return;
 }
+kmt->spin_unlock(&sem->lock);
 return;
 }
 
