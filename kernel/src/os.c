@@ -69,7 +69,6 @@ void sp_lock(struct spinlock_t* lk)
 void sp_unlock(struct spinlock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
-  assert(0);
 }
 
 extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
