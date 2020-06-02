@@ -45,11 +45,11 @@ static void os_init() {
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
   for (int i = 0; i < 4; i++) // 4 个生产者
-    { char name[10];
+    { char name[20];
     sprintf(name,"%d",i);
       kmt->create(task_alloc(), "producer", producer, name);}
   for (int i = 0; i < 5; i++) // 5 个消费者
-      { char name[10];
+      { char name[20];
     sprintf(name,"%d",i);
     kmt->create(task_alloc(), "consumer", consumer, name);}
 #endif
@@ -470,7 +470,7 @@ static void sem_wait(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
 sem->val--;
-printf("sem_wait val=%d\n",sem->val);
+printf("sem_wait:%s val=%d\n",sem->name,sem->val);
 //int fail=0;
 //if(sem->val<0) fail=1;
 kmt->spin_unlock(&sem->lock);
@@ -486,7 +486,7 @@ static void sem_signal(struct sem_t *sem)
 {
 kmt->spin_lock(&sem->lock);
 sem->val++;
-printf("sem_signal val=%d\n",sem->val);
+printf("sem_signal:%s val=%d\n",sem->name,sem->val);
 if(sem->val>=0)
 random_activate();
 kmt->spin_unlock(&sem->lock);
