@@ -49,7 +49,7 @@ void producer(void *arg)
   {
     P(&empty);
     //printf("(");
-    printf("(_%s\n",(char *)arg);
+    printf("(_sd%s\n",(char *)arg);
     V(&fill);
   }
 }
@@ -60,7 +60,7 @@ void consumer(void *arg)
   {
     P(&fill);
     //printf(")");
-    printf(")_%s\n",(char *)arg);
+    printf(")_sd%s\n",(char *)arg);
     V(&empty);
   }
 }
