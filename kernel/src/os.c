@@ -48,7 +48,7 @@ void producer1(void *arg)
   while(1)
   {
     P(&empty);
-    printf("(_%s1\n",(char *)arg);
+    printf("(_1");
     V(&fill);
   }
 }
@@ -58,7 +58,7 @@ void consumer1(void *arg)
   while(1)
   {
     P(&fill);
-    printf(")_%s1\n",(char *)arg);
+    printf(")_1");
     V(&empty);
   }
 }
@@ -68,7 +68,7 @@ void producer2(void *arg)
   while(1)
   {
     P(&empty);
-    printf("(_%s2\n",(char *)arg);
+    printf("(_2");
     V(&fill);
   }
 }
@@ -78,7 +78,7 @@ void consumer2(void *arg)
   while(1)
   {
     P(&fill);
-    printf(")_2%s\n",(char *)arg);
+    printf(")_2");
     V(&empty);
   }
 }
@@ -87,7 +87,7 @@ void producer3(void *arg)
   while(1)
   {
     P(&empty);
-    printf("(_3%s\n",(char *)arg);
+    printf("(_3");
     V(&fill);
   }
 }
