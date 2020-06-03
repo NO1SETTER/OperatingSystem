@@ -615,7 +615,7 @@ static void sem_signal(struct sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);
   sem->val++;
-  printf(" sem_signal:%s val=%d\n",sem->name,sem->val);
+  //printf(" sem_signal:%s val=%d\n",sem->name,sem->val);
     if(sem->waiter)
     {
       struct task_t *ptr = sem->waiter;
