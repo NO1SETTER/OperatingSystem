@@ -53,7 +53,6 @@ static void on_irq (int seq,int event,handler_t handler);
       printf("(");
       //printf("(_1");
       V(&fill);
-      _yield();
     }
   }
 
@@ -65,7 +64,6 @@ static void on_irq (int seq,int event,handler_t handler);
       printf(")");
       //printf(")_1");
       V(&empty);
-      _yield();
     }
   }
 #endif
@@ -533,6 +531,7 @@ static void sem_wait(sem_t *sem)
     return;
     }
 kmt->spin_unlock(&sem->lock);
+_yield();
 }
 
 static void sem_signal(sem_t *sem)
@@ -557,6 +556,7 @@ static void sem_signal(sem_t *sem)
     }*/
     }
   kmt->spin_unlock(&sem->lock);
+  _yield();
 }
 
 MODULE_DEF(kmt) = {
