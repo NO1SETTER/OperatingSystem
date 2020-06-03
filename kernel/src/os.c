@@ -334,7 +334,8 @@ void sp_lockinit(struct spinlock_t* lk,const char *name)
 
 _Context* schedule(_Event ev,_Context* c)
 {
-  //printf("SCHEDULING\n");
+
+  printf("SCHEDULING\n");
   if(current==NULL)
   {
     current=active_thread[0];
