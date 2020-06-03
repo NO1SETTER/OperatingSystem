@@ -45,7 +45,8 @@ static void os_init() {
   kmt->init(); // 模块先初始化
 
 kmt->spin_lock=sp_lock;
-kmt->spin_unlock=sp_unlock;
+kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
+/*
 printf(" sp_lockinit at %p\n",(intptr_t)sp_lockinit);
 printf(" kmt->lockinit at %p\n",(intptr_t)kmt->spin_init);
 printf(" sp_unlock at %p\n",(intptr_t)sp_unlock);
@@ -58,7 +59,7 @@ printf(" kmt->create at %p\n",(intptr_t)kmt->create);
 printf(" teardown at %p\n",(intptr_t)kmt_teardown);
 printf(" kmt->teardown at %p\n",(intptr_t)kmt->teardown);
 printf(" sem_init at %p\n",(intptr_t)sem_init);
-printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);
+printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
 #ifdef DEBUG_LOCAL
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
