@@ -50,6 +50,7 @@ void producer1(void *arg)
     P(&empty);
     printf("(");
     V(&fill);
+    _yield();
   }
 }
 
@@ -60,6 +61,7 @@ void consumer1(void *arg)
     P(&fill);
     printf(")");
     V(&empty);
+    _yield();
   }
 }
 
@@ -70,6 +72,8 @@ void producer2(void *arg)
     P(&empty);
     printf("(_2");
     V(&fill);
+     _yield();
+  
   }
 }
 
@@ -80,6 +84,7 @@ void consumer2(void *arg)
     P(&fill);
     printf(")_2");
     V(&empty);
+     _yield();
   }
 }
 void producer3(void *arg)
@@ -89,6 +94,7 @@ void producer3(void *arg)
     P(&empty);
     printf("(_3");
     V(&fill);
+     _yield();
   }
 }
 
@@ -99,6 +105,7 @@ void consumer3(void *arg)
     P(&fill);
     printf(")_3");
     V(&empty);
+     _yield();
   }
 }
 void producer4(void *arg)
@@ -108,6 +115,7 @@ void producer4(void *arg)
     P(&empty);
     printf("(_4");
     V(&fill);
+     _yield();
   }
 }
 
@@ -118,6 +126,7 @@ void consumer4(void *arg)
     P(&fill);
     printf(")_4");
     V(&empty);
+     _yield();
   }
 }
 struct task_t* task_alloc()
@@ -585,11 +594,10 @@ static void sem_wait(struct sem_t *sem)
     {
     current->next=sem->waiter->next;
     sem->waiter->next=current;}
-    _yield();//int $81
+    _yield();
     return;
     }
 kmt->spin_unlock(&sem->lock);
-_yield();
 }
 
 static void sem_signal(struct sem_t *sem)
@@ -605,7 +613,6 @@ static void sem_signal(struct sem_t *sem)
       activate(ptr);//这一部分是弄到active_thread中去
     }
   kmt->spin_unlock(&sem->lock);
-  _yield();
 }
 
 MODULE_DEF(kmt) = {
