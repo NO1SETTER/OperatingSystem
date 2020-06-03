@@ -393,7 +393,8 @@ void sp_lockinit(struct spinlock_t* lk,const char *name)
 _Context* schedule(_Event ev,_Context* c)
 {
 
-  //printf("SCHEDULING\n");
+
+  printf("SCHEDULING\n");
   if(current==NULL)
   {
     current=active_thread[0];
@@ -586,7 +587,7 @@ static void sem_wait(struct sem_t *sem)
     sem->waiter->next=current;}
     _yield();//int $81
     return;
-  }
+    }
 kmt->spin_unlock(&sem->lock);
 _yield();
 }
