@@ -8,7 +8,9 @@ struct sem_t fill;
 #define P kmt->sem_wait
 #define V kmt->sem_signal
 
-
+static int kmt_create(struct task_t *task, const char *name, void (*entry)(void *arg), void *arg);
+static void kmt_teardown(struct task_t *task);
+static void sem_init(struct sem_t *sem, const char *name, int value);
 void producer(void *arg)
 {
   while(1)
@@ -48,6 +50,13 @@ printf(" sp_unlock at %p\n",(intptr_t)sp_unlock);
 printf(" kmt->unlock at %p\n",(intptr_t)kmt->spin_unlock);
 printf(" sp_lock at %p\n",(intptr_t)sp_lock);
 printf(" kmt->lock at %p\n",(intptr_t)kmt->spin_lock);
+
+printf(" create at %p\n",(intptr_t)kmt_create);
+printf(" kmt->create at %p\n",(intptr_t)kmt->create);
+printf(" teardown at %p\n",(intptr_t)kmt_teardown);
+printf(" kmt->teardown at %p\n",(intptr_t)kmt->teardown);
+printf(" sem_init at %p\n",(intptr_t)sem_init);
+printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);
 #ifdef DEBUG_LOCAL
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
