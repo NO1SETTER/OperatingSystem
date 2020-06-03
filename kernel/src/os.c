@@ -148,7 +148,7 @@ kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
   printf(" sem_init at %p\n",(intptr_t)sem_init);
   printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
 #ifdef DEBUG_LOCAL
-  kmt->sem_init(&empty, "empty", 3);  // 缓冲区大小为 5
+  kmt->sem_init(&empty, "empty", 1);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
     
     kmt->create(task_alloc(), "producer1", producer1, NULL);
