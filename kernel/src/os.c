@@ -48,7 +48,8 @@ void producer1(void *arg)
   while(1)
   {
     P(&empty);
-    printf("(_1");
+    printf("(");
+    //printf("(_1");
     V(&fill);
     _yield();
   }
@@ -59,7 +60,8 @@ void consumer1(void *arg)
   while(1)
   {
     P(&fill);
-    printf(")_1");
+    printf(")");
+    //printf(")_1");
     V(&empty);
     _yield();
   }
@@ -70,7 +72,8 @@ void producer2(void *arg)
   while(1)
   {
     P(&empty);
-    printf("(_2");
+    printf("(");
+    //printf("(_2");
     V(&fill);
      _yield();
   
@@ -82,7 +85,8 @@ void consumer2(void *arg)
   while(1)
   {
     P(&fill);
-    printf(")_2");
+    printf(")");
+    //printf(")_2");
     V(&empty);
      _yield();
   }
@@ -92,7 +96,8 @@ void producer3(void *arg)
   while(1)
   {
     P(&empty);
-    printf("(_3");
+    printf("(");
+    //printf("(_3");
     V(&fill);
      _yield();
   }
@@ -103,7 +108,8 @@ void consumer3(void *arg)
   while(1)
   {
     P(&fill);
-    printf(")_3");
+    printf(")");
+    //printf(")_3");
     V(&empty);
      _yield();
   }
@@ -113,7 +119,8 @@ void producer4(void *arg)
   while(1)
   {
     P(&empty);
-    printf("(_4");
+    printf("(");
+    //printf("(_4");
     V(&fill);
      _yield();
   }
@@ -124,7 +131,8 @@ void consumer4(void *arg)
   while(1)
   {
     P(&fill);
-    printf(")_4");
+    printf(")");
+    //printf(")_4");
     V(&empty);
      _yield();
   }
