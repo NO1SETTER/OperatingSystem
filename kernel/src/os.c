@@ -575,8 +575,12 @@ static void sem_wait(struct sem_t *sem)
   {
     kmt->spin_unlock(&sem->lock);
     await(current);
+    if(sem->waiter==NULL)
+    sem->waiter=current;
+    else
+    {
     current->next=sem->waiter->next;
-    sem->waiter->next=current;
+    sem->waiter->next=current;}
     _yield();//int $81
     return;
   }
