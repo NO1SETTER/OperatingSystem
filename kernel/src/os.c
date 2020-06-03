@@ -521,7 +521,6 @@ static void sem_wait(struct sem_t *sem)
     _yield();//int $81
     return;
   }
-  assert(0);
 kmt->spin_unlock(&sem->lock);
 return;
 }
