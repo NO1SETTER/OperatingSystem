@@ -93,13 +93,13 @@ kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
   printf(" sem_init at %p\n",(intptr_t)sem_init);
   printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
 #ifdef DEBUG_LOCAL
-  kmt->sem_init(&empty, "empty", 1);  // 缓冲区大小为 5
+  kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
   for (int i = 0; i < 4; i++) // 4 个生产者
     { char name[20];
     sprintf(name,"%d",i);
       kmt->create(task_alloc(), "producer", producer, name);}
-  for (int i = 0; i < 5; i++) // 5 个消费者
+  for (int i = 0; i < 4; i++) // 4 个消费者
       { char name[20];
     sprintf(name,"%d",i);
     kmt->create(task_alloc(), "consumer", consumer, name);}
