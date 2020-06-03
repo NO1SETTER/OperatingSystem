@@ -511,7 +511,7 @@ static void sem_wait(struct sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);
   sem->val--;
-  printf("sem_wait:%s val=%d\n",sem->name,sem->val);
+  //printf("sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
     kmt->spin_unlock(&sem->lock);
@@ -529,7 +529,7 @@ static void sem_signal(struct sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);
   sem->val++;
-  printf("sem_signal:%s val=%d\n",sem->name,sem->val);
+  //printf("sem_signal:%s val=%d\n",sem->name,sem->val);
   if(sem->val>=0)
   {
     if(sem->waiter)
