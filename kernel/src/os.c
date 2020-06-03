@@ -160,13 +160,13 @@ kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
   kmt->sem_init(&fill,  "fill",  0);
     
     kmt->create(task_alloc(), "producer1", producer1, NULL);
-    kmt->create(task_alloc(), "producer2", producer2, NULL);
-    kmt->create(task_alloc(), "producer3", producer3, NULL);
-    kmt->create(task_alloc(), "producer4", producer4, NULL);
+    //kmt->create(task_alloc(), "producer2", producer2, NULL);
+    //kmt->create(task_alloc(), "producer3", producer3, NULL);
+    //kmt->create(task_alloc(), "producer4", producer4, NULL);
     kmt->create(task_alloc(), "consumer1", consumer1, NULL);
-    kmt->create(task_alloc(), "consumer2", consumer2, NULL);
-    kmt->create(task_alloc(), "consumer3", consumer3, NULL);
-    kmt->create(task_alloc(), "consumer4", consumer4, NULL);
+    //kmt->create(task_alloc(), "consumer2", consumer2, NULL);
+    //kmt->create(task_alloc(), "consumer3", consumer3, NULL);
+    //kmt->create(task_alloc(), "consumer4", consumer4, NULL);
 
     
 #endif
