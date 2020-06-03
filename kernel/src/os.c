@@ -503,6 +503,7 @@ static void sem_init(struct sem_t *sem, const char *name, int value)
   sprintf(lock_name,"%s_lock",name);
   kmt->spin_init(&sem->lock,lock_name);
   sem->name=name;
+  sem->val=value;
   sem->waiter=NULL;
 }
 
