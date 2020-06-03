@@ -50,7 +50,7 @@ static void on_irq (int seq,int event,handler_t handler);
     while(1)
     {
       P(&empty);
-      printf("(");
+      printf("( at CPU#%d\n",_cpu());
       //printf("(_1");
       V(&fill);
     }
@@ -61,7 +61,7 @@ static void on_irq (int seq,int event,handler_t handler);
     while(1)
     {
       P(&fill);
-      printf(")");
+      printf(")at CPU#d\n",_cpu());
       //printf(")_1");
       V(&empty);
     }
