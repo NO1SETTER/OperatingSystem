@@ -524,7 +524,7 @@ static void sem_wait(sem_t *sem)
 
   sp_lock(&print_lock);
     task_t* ptr=sem->waiter;
-    printf("\n%s waiter for CPU#%d:",sem->name,_cpu());
+    printf("%s waiter for CPU#%d:",sem->name,_cpu());
     while(ptr)
     {
       printf("%s ",ptr->name);
