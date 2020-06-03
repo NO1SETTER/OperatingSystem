@@ -97,11 +97,11 @@ kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
   kmt->sem_init(&fill,  "fill",  0);
   for (int i = 0; i < 4; i++) // 4 个生产者
     { char name[20];
-    sprintf(name,"%d",i);
+    sprintf(name,"%s",i);
       kmt->create(task_alloc(), "producer", producer, name);}
   for (int i = 0; i < 4; i++) // 4 个消费者
       { char name[20];
-    sprintf(name,"%d",i);
+    sprintf(name,"%s",i);
     kmt->create(task_alloc(), "consumer", consumer, name);}
 #endif
 }
