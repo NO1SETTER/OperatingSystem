@@ -486,6 +486,7 @@ MODULE_DEF(os) = {
 void activate(struct task_t* t)//wait->running
 {
   sp_lock(&thread_ctrl_lock);
+  t->next=NULL;
   printf("%s trying activated\n",t->name);
   int pos=-1;
   for(int i=0;i<wait_num;i++)
@@ -617,7 +618,6 @@ static void sem_signal(struct sem_t *sem)
   printf(" sem_signal:%s val=%d\n",sem->name,sem->val);
     if(sem->waiter)
     {
-
       struct task_t *ptr = sem->waiter;
       sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
       activate(ptr);//这一部分是弄到active_thread中去
