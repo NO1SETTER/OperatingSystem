@@ -48,6 +48,7 @@ struct spinlock_t
   int holder;//锁的持有者
 };
 
+
 void sp_lockinit(struct spinlock_t* lk,const char *name);
 void sp_lock(struct spinlock_t* lk);
 void sp_unlock(struct spinlock_t *lk);
