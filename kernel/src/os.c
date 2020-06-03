@@ -509,6 +509,7 @@ printf("sem_signal:%s val=%d\n",sem->name,sem->val);
 if(sem->val>=0)
 random_activate();
 kmt->spin_unlock(&sem->lock);
+assert(0);
 }
 
 MODULE_DEF(kmt) = {
