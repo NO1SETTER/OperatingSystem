@@ -581,7 +581,7 @@ static void sem_wait(struct sem_t *sem)
     return;
   }
 kmt->spin_unlock(&sem->lock);
-return;
+_yield();
 }
 
 static void sem_signal(struct sem_t *sem)
@@ -596,6 +596,7 @@ static void sem_signal(struct sem_t *sem)
       activate(ptr);//这一部分是弄到active_thread中去
     }
   kmt->spin_unlock(&sem->lock);
+  _yield();
 }
 
 MODULE_DEF(kmt) = {
