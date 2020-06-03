@@ -44,7 +44,8 @@ static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
 
-assert((intptr_t)sp_lock==(intptr_t)kmt->spin_lock);
+kmt->spin_lock=sp_lock;
+kmt->spin_unlock=sp_unlock;
 printf(" sp_lockinit at %p\n",(intptr_t)sp_lockinit);
 printf(" kmt->lockinit at %p\n",(intptr_t)kmt->spin_init);
 printf(" sp_unlock at %p\n",(intptr_t)sp_unlock);
