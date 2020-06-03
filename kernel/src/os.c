@@ -45,25 +45,23 @@ static _Context *os_trap(_Event ev,_Context *context);
 static void on_irq (int seq,int event,handler_t handler);
 void producer(void *arg)
 {
-  assert(arg);
   while(1)
   {
-    P(&empty);
+    //P(&empty);
     //printf("(");
     printf("(_%s\n",(char *)arg);
-    V(&fill);
+    //V(&fill);
   }
 }
 
 void consumer(void *arg)
 {
-  assert(arg);
   while(1)
   {
-    P(&fill);
+  //  P(&fill);
     //printf(")");
     printf(")_%s\n",(char *)arg);
-    V(&empty);
+    //V(&empty);
   }
 }
 
