@@ -413,7 +413,7 @@ void activate(task_t* t)//wait->running
 {
   sp_lock(&thread_ctrl_lock);
   t->next=NULL;
-  //printf("%s trying activated\n",t->name);
+  printf("%s trying activated for CPU#%d\n",t->name,_cpu());
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
@@ -435,7 +435,7 @@ void activate(task_t* t)//wait->running
 void await(task_t* t)//running->wait
 {
   sp_lock(&thread_ctrl_lock);
-    //printf("try setting %s waiting\n",t->name);
+  printf("try setting %s waiting for CPU#%d\n",t->name,_cpu());
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
