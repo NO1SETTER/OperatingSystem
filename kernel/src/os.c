@@ -573,7 +573,7 @@ static void kmt_teardown(struct task_t *task)
 static void sem_init(struct sem_t *sem, const char *name, int value)
 {
   char lock_name[128];
-  sprintf(lock_name,"%s_lock",name);
+  //sprintf(lock_name,"%s_lock",name);
   kmt->spin_init(&sem->lock,lock_name);
   sem->name=name;
   sem->val=value;
@@ -584,7 +584,7 @@ static void sem_wait(struct sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);
   sem->val--;
-  printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
+  //printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
     kmt->spin_unlock(&sem->lock);
