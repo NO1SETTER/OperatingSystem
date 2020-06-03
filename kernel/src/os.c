@@ -476,6 +476,7 @@ MODULE_DEF(os) = {
 void activate(struct task_t* t)//wait->running
 {
   sp_lock(&thread_ctrl_lock);
+  printf("%s trying activated\n",t->name);
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
@@ -490,13 +491,14 @@ void activate(struct task_t* t)//wait->running
   wait_num=wait_num-1;
   active_thread[active_num++]=t;
   t->status=T_RUNNING;
+  printf("%s is activated\n",t->name);
   sp_unlock(&thread_ctrl_lock);
 }
 
 void await(struct task_t* t)//running->wait
 {
-
   sp_lock(&thread_ctrl_lock);
+    printf("try setting %s waiting\n",t->name);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
@@ -511,6 +513,7 @@ void await(struct task_t* t)//running->wait
   active_num=active_num-1;
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
+    printf("set %s waiting\n",t->name);
   sp_unlock(&thread_ctrl_lock);
 }
 
