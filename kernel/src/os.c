@@ -63,7 +63,6 @@ printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
 #ifdef DEBUG_LOCAL
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
-  assert(0);
   for (int i = 0; i < 4; i++) // 4 个生产者
     { char name[20];
     sprintf(name,"%d",i);
