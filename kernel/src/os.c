@@ -595,13 +595,13 @@ static void sem_wait(struct sem_t *sem)
     current->next=sem->waiter->next;
     sem->waiter->next=current;}
     struct task_t* ptr=sem->waiter;
-    printf("%s waiter :",sem->name);
+    printf("\n%s waiter :",sem->name);
     while(ptr)
     {
       printf("%s ",ptr->name);
       ptr=ptr->next;
     } 
-    printf("\n");
+    printf("\n\n");
     _yield();
     return;
   }
@@ -619,13 +619,13 @@ static void sem_signal(struct sem_t *sem)
       struct task_t *ptr = sem->waiter;
       sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
       activate(ptr);//这一部分是弄到active_thread中去
-          printf("%s waiter :",sem->name);
+          printf("\n%s waiter :",sem->name);
     while(ptr)
     {
       printf("%s ",ptr->name);
       ptr=ptr->next;
     } 
-    printf("\n");
+    printf("\n\n");
     }
   kmt->spin_unlock(&sem->lock);
 }
