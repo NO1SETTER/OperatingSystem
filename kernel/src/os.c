@@ -510,9 +510,21 @@ static void sem_init(struct sem_t *sem, const char *name, int value)
 
 static void sem_wait(struct sem_t *sem)
 {
-  kmt->spin_lock(&sem->lock);
-  sem->val--;
+kmt->spin_lock(&sem->lock);
   printf("sem_wait:%s val=%d\n",sem->name,sem->val);
+  if(sem->val<=0)
+  {
+    kmt->spin_unlock(&sem->lock);
+    await(current);
+    current->next=sem->waiter->next;
+    sem->waiter->next=current;
+    _yield();
+  }
+sem->val--;
+kmt->spin_unlock(&sem->lock);
+  /*kmt->spin_lock(&sem->lock);
+  sem->val--;
+  //printf("sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
     kmt->spin_unlock(&sem->lock);
@@ -523,14 +535,14 @@ static void sem_wait(struct sem_t *sem)
     return;
   }
 kmt->spin_unlock(&sem->lock);
-return;
+return;*/
 }
 
 static void sem_signal(struct sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);
   sem->val++;
-  //printf("sem_signal:%s val=%d\n",sem->name,sem->val);
+  printf("sem_signal:%s val=%d\n",sem->name,sem->val);
   if(sem->val>=0)
   {
     if(sem->waiter)
