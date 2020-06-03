@@ -57,7 +57,7 @@ typedef struct task
 {
   struct
   {
-    const char *name;
+    char name[15];
     enum t_status status;
     struct task* next;//信号量要用
     _Context *ctx;//貌似只要保证它指向栈顶就ok了，上面的可以不管分配在哪里

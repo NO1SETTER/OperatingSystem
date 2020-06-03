@@ -482,7 +482,7 @@ static void kmt_init()
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
   all_thread[thread_num++]=task;
   active_thread[active_num++]=task;
-  task->name=name;
+  strcpy(task->name,name);
   task->status=T_RUNNING;
   task->stack=pmm->alloc(STACK_SIZE);
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
