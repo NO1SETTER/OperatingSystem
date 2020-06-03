@@ -49,7 +49,7 @@ void producer(void *arg)
   {
     P(&empty);
     //printf("(");
-    printf("(_%s\n",(char*)arg);
+    printf("(_%s\n",(char *)arg);
     V(&fill);
   }
 }
@@ -98,6 +98,7 @@ kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
   for (int i = 0; i < 4; i++) // 4 个生产者
     { char name[20];
     sprintf(name,"%d",i);
+    printf("name=%s",name);
       kmt->create(task_alloc(), "producer", producer, name);}
   for (int i = 0; i < 4; i++) // 4 个消费者
       { char name[20];
