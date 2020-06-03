@@ -1,6 +1,6 @@
 #include <common.h>
 //#define _DEBUG
-#define DEBUG_LOCAL
+//#define DEBUG_LOCAL
 #define STACK_SIZE 4096
 //sem管理部分
 #define P kmt->sem_wait
@@ -43,100 +43,104 @@ _Context* cyield(_Event ev,_Context* c);
 static _Context *os_trap(_Event ev,_Context *context);
   //中断注册程序
 static void on_irq (int seq,int event,handler_t handler);
-void producer1(void *arg)
-{
-  while(1)
-  {
-    P(&empty);
-    printf("(");
-    //printf("(_1");
-    V(&fill);
-    _yield();
-  }
-}
 
-void consumer1(void *arg)
-{
-  while(1)
+#ifdef DEBUG_LOCAL
+  void producer1(void *arg)
   {
-    P(&fill);
-    printf(")");
-    //printf(")_1");
-    V(&empty);
-    _yield();
+    while(1)
+    {
+      P(&empty);
+      printf("(");
+      //printf("(_1");
+      V(&fill);
+      _yield();
+    }
   }
-}
 
-void producer2(void *arg)
-{
-  while(1)
+  void consumer1(void *arg)
   {
-    P(&empty);
-    printf("(");
-    //printf("(_2");
-    V(&fill);
-     _yield();
-  
+    while(1)
+    {
+      P(&fill);
+      printf(")");
+      //printf(")_1");
+      V(&empty);
+      _yield();
+    }
   }
-}
 
-void consumer2(void *arg)
-{
-  while(1)
+  void producer2(void *arg)
   {
-    P(&fill);
-    printf(")");
-    //printf(")_2");
-    V(&empty);
-     _yield();
+    while(1)
+    {
+      P(&empty);
+      printf("(");
+      //printf("(_2");
+      V(&fill);
+      _yield();
+    
+    }
   }
-}
-void producer3(void *arg)
-{
-  while(1)
-  {
-    P(&empty);
-    printf("(");
-    //printf("(_3");
-    V(&fill);
-     _yield();
-  }
-}
 
-void consumer3(void *arg)
-{
-  while(1)
+  void consumer2(void *arg)
   {
-    P(&fill);
-    printf(")");
-    //printf(")_3");
-    V(&empty);
-     _yield();
+    while(1)
+    {
+      P(&fill);
+      printf(")");
+      //printf(")_2");
+      V(&empty);
+      _yield();
+    }
   }
-}
-void producer4(void *arg)
-{
-  while(1)
+  void producer3(void *arg)
   {
-    P(&empty);
-    printf("(");
-    //printf("(_4");
-    V(&fill);
-     _yield();
+    while(1)
+    {
+      P(&empty);
+      printf("(");
+      //printf("(_3");
+      V(&fill);
+      _yield();
+    }
   }
-}
 
-void consumer4(void *arg)
-{
-  while(1)
+  void consumer3(void *arg)
   {
-    P(&fill);
-    printf(")");
-    //printf(")_4");
-    V(&empty);
-     _yield();
+    while(1)
+    {
+      P(&fill);
+      printf(")");
+      //printf(")_3");
+      V(&empty);
+      _yield();
+    }
   }
-}
+  void producer4(void *arg)
+  {
+    while(1)
+    {
+      P(&empty);
+      printf("(");
+      //printf("(_4");
+      V(&fill);
+      _yield();
+    }
+  }
+
+  void consumer4(void *arg)
+  {
+    while(1)
+    {
+      P(&fill);
+      printf(")");
+      //printf(")_4");
+      V(&empty);
+      _yield();
+    }
+  }
+#endif
+
 struct task_t* task_alloc()
 {
   return (struct task_t*)pmm->alloc(sizeof(struct task_t));
@@ -150,20 +154,7 @@ static void os_init() {
 
 kmt->spin_lock=sp_lock;
 kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
-  /*
-  printf(" sp_lockinit at %p\n",(intptr_t)sp_lockinit);
-  printf(" kmt->lockinit at %p\n",(intptr_t)kmt->spin_init);
-  printf(" sp_unlock at %p\n",(intptr_t)sp_unlock);
-  printf(" kmt->unlock at %p\n",(intptr_t)kmt->spin_unlock);
-  printf(" sp_lock at %p\n",(intptr_t)sp_lock);
-  printf(" kmt->lock at %p\n",(intptr_t)kmt->spin_lock);
 
-  printf(" create at %p\n",(intptr_t)kmt_create);
-  printf(" kmt->create at %p\n",(intptr_t)kmt->create);
-  printf(" teardown at %p\n",(intptr_t)kmt_teardown);
-  printf(" kmt->teardown at %p\n",(intptr_t)kmt->teardown);
-  printf(" sem_init at %p\n",(intptr_t)sem_init);
-  printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
 #ifdef DEBUG_LOCAL
   kmt->sem_init(&empty, "empty", 3);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
