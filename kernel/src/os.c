@@ -524,7 +524,7 @@ sem->val--;
 kmt->spin_unlock(&sem->lock);*/
   kmt->spin_lock(&sem->lock);
   sem->val--;
-  //printf("sem_wait:%s val=%d\n",sem->name,sem->val);
+  printf("sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
     kmt->spin_unlock(&sem->lock);
