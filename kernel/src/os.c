@@ -85,7 +85,7 @@ kmt->spin_lock=sp_lock;
 kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
 
 #ifdef DEBUG_LOCAL
-  kmt->sem_init(&empty, "empty", 3);  // 缓冲区大小为 5
+  kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
     
 
