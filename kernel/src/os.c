@@ -30,6 +30,7 @@ void consumer(void *arg)
     printf(")");
     //printf(")_%s",arg);
     V(&empty);
+    assert(0);
   }
 }
 
