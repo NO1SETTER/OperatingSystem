@@ -48,7 +48,7 @@ void producer1(void *arg)
   while(1)
   {
     P(&empty);
-    printf("(");
+    printf("(_1");
     V(&fill);
     _yield();
   }
@@ -59,7 +59,7 @@ void consumer1(void *arg)
   while(1)
   {
     P(&fill);
-    printf(")");
+    printf(")_1");
     V(&empty);
     _yield();
   }
