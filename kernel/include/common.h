@@ -40,66 +40,66 @@ static void kfree_safe(void *ptr)
 }
 */
 
-struct spinlock_t 
+typedef struct spinlock 
 {
   const char *name;//锁名
   int lockid;//锁的序号
   intptr_t locked;//锁控制
   int holder;//锁的持有者
-};
+}spinlock_t;
 
 
-void sp_lockinit(struct spinlock_t* lk,const char *name);
-void sp_lock(struct spinlock_t* lk);
-void sp_unlock(struct spinlock_t *lk);
+void sp_lockinit( spinlock_t* lk,const char *name);
+void sp_lock(spinlock_t* lk);
+void sp_unlock(spinlock_t *lk);
 
-struct task_t
+typedef struct task
 {
   struct
   {
     const char *name;
     enum t_status status;
-    struct task_t* next;//信号量要用
+    struct task* next;//信号量要用
     _Context *ctx;//貌似只要保证它指向栈顶就ok了，上面的可以不管分配在哪里
   };
   uint8_t *stack;
-};//管理一个线程的信息
+}task_t;//管理一个线程的信息
 
-struct task_t* all_thread[10005];
-struct task_t* active_thread[10005];
-struct task_t* wait_thread[10005];
+task_t* all_thread[10005];
+task_t* active_thread[10005];
+task_t* wait_thread[10005];
 
 extern int thread_num;
 extern int active_num;
 extern int wait_num;
-extern struct task_t *current;//当前task
+extern  task_t *current;//当前task
 
-extern struct spinlock_t thread_ctrl_lock;//管理控制这三个链表的锁
-void activate(struct task_t* t);
-void await(struct task_t *t);
-void kill(struct task_t *t);
+extern spinlock_t thread_ctrl_lock;//管理控制这三个链表的锁
+void activate( task_t* t);
+void await( task_t *t);
+void kill( task_t *t);
 
 
 
-struct sem_t
+typedef struct sem
 {
-struct spinlock_t lock;
+spinlock_t lock;
 const char *name;
 int val;
-struct task_t* waiter;
-};
+task_t* waiter;
+}sem_t;
 
-extern struct sem_t empty;
-extern struct sem_t fill;
+extern sem_t empty;
+extern sem_t fill;
 
 MODULE(kmt) {
   void (*init)();
-  int  (*create)(struct task_t *task, const char *name, void (*entry)(void *arg), void *arg);
-  void (*teardown)(struct task_t *task);
-  void (*spin_init)(struct spinlock_t *lk, const char *name);
-  void (*spin_lock)(struct spinlock_t *lk);
-  void (*spin_unlock)(struct spinlock_t *lk);
-  void (*sem_init)(struct sem_t *sem, const char *name, int value);
-  void (*sem_wait)(struct sem_t *sem);
-  void (*sem_signal)(struct sem_t *sem);
+  int  (*create)(task_t *task, const char *name, void (*entry)(void *arg), void *arg);
+  void (*teardown)(task_t *task);
+  void (*spin_init)(spinlock_t *lk, const char *name);
+  void (*spin_lock)(spinlock_t *lk);
+  void (*spin_unlock)(spinlock_t *lk);
+  void (*sem_init)(sem_t *sem, const char *name, int value);
+  void (*sem_wait)(sem_t *sem);
+  void (*sem_signal)(sem_t *sem);
 };

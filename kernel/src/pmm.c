@@ -20,9 +20,9 @@ char none[8];
 };
 
 //用三个全局锁
-struct spinlock_t glb_lock;//管理两个链表的锁
-struct spinlock_t alloc_lock;//管理balloc和bfree并发性的锁
-struct spinlock_t print_lock;//printf的锁,保证完整性
+spinlock_t glb_lock;//管理两个链表的锁
+spinlock_t alloc_lock;//管理balloc和bfree并发性的锁
+spinlock_t print_lock;//printf的锁,保证完整性
 //两个链表的起始点
 struct block* free_head;
 struct block* alloc_head;//两个都是空的节点,管理全局

@@ -5,28 +5,28 @@
 //sem管理部分
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-struct sem_t empty;
-struct sem_t fill;
-static void sem_init(struct sem_t *sem, const char *name, int value);
-static void sem_wait(struct sem_t *sem);
-static void sem_signal(struct sem_t *sem);
+sem_t empty;
+sem_t fill;
+static void sem_init(sem_t *sem, const char *name, int value);
+static void sem_wait(sem_t *sem);
+static void sem_signal(sem_t *sem);
 //自旋锁部分
-struct spinlock_t thread_ctrl_lock;
-extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
-void sp_lockinit(struct spinlock_t* lk,const char *name);
-void sp_lock(struct spinlock_t* lk);
-void sp_unlock(struct spinlock_t *lk);
+spinlock_t thread_ctrl_lock;
+extern spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
+void sp_lockinit(spinlock_t* lk,const char *name);
+void sp_lock(spinlock_t* lk);
+void sp_unlock(spinlock_t *lk);
 //线程创建释放
-static int kmt_create(struct task_t *task, const char *name, void (*entry)(void *arg), void *arg);
-static void kmt_teardown(struct task_t *task);
+static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg);
+static void kmt_teardown(task_t *task);
 //线程阻塞唤醒
 int thread_num=0;
 int active_num=0;
 int wait_num=0;
-struct task_t *current=NULL;//当前task
-void activate(struct task_t* t);
-void await(struct task_t *t);
-void kill(struct task_t *t);
+task_t *current=NULL;//当前task
+void activate(task_t* t);
+void await(task_t *t);
+void kill(task_t *t);
 //中断处理程序
 struct EVENT{
 int seq;
@@ -141,9 +141,9 @@ static void on_irq (int seq,int event,handler_t handler);
   }
 #endif
 
-struct task_t* task_alloc()
+task_t* task_alloc()
 {
-  return (struct task_t*)pmm->alloc(sizeof(struct task_t));
+  return (task_t*)pmm->alloc(sizeof(task_t));
 }
 
 
@@ -383,16 +383,16 @@ static void test4()//频繁分配页
 
 
 
-void sp_lock(struct spinlock_t* lk)
+void sp_lock(spinlock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1));
   _intr_write(0);
 }
-void sp_unlock(struct spinlock_t *lk)
+void sp_unlock(spinlock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
 }
-void sp_lockinit(struct spinlock_t* lk,const char *name)
+void sp_lockinit(spinlock_t* lk,const char *name)
 {
   lk->name=name;
   lk->locked=0;
@@ -482,7 +482,7 @@ MODULE_DEF(os) = {
   .on_irq = on_irq,
 };
 
-void activate(struct task_t* t)//wait->running
+void activate(task_t* t)//wait->running
 {
   sp_lock(&thread_ctrl_lock);
   t->next=NULL;
@@ -505,7 +505,7 @@ void activate(struct task_t* t)//wait->running
   sp_unlock(&thread_ctrl_lock);
 }
 
-void await(struct task_t* t)//running->wait
+void await(task_t* t)//running->wait
 {
   sp_lock(&thread_ctrl_lock);
     //printf("try setting %s waiting\n",t->name);
@@ -527,7 +527,7 @@ void await(struct task_t* t)//running->wait
   sp_unlock(&thread_ctrl_lock);
 }
 
-void kill(struct task_t* t)//running->dead
+void kill(task_t* t)//running->dead
 {
 
   sp_lock(&thread_ctrl_lock);
@@ -552,7 +552,7 @@ static void kmt_init()
 
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
 //_Area{*start,*end;},start低地址,end高地址,也即栈顶
-static int kmt_create(struct task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
+static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
   all_thread[thread_num++]=task;
   active_thread[active_num++]=task;
   task->name=name;
@@ -563,13 +563,13 @@ static int kmt_create(struct task_t *task, const char *name, void (*entry)(void 
   return 0;
 }
 
-static void kmt_teardown(struct task_t *task)
+static void kmt_teardown(task_t *task)
 {
   kill(task);//不会从all_thread中删去
   pmm->free(task->stack);
 }
 
-static void sem_init(struct sem_t *sem, const char *name, int value)
+static void sem_init(sem_t *sem, const char *name, int value)
 {
   char lock_name[128];
   //sprintf(lock_name,"%s_lock",name);
@@ -579,7 +579,7 @@ static void sem_init(struct sem_t *sem, const char *name, int value)
   sem->waiter=NULL;
 }
 
-static void sem_wait(struct sem_t *sem)
+static void sem_wait(sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);
   sem->val--;
@@ -610,14 +610,14 @@ static void sem_wait(struct sem_t *sem)
 kmt->spin_unlock(&sem->lock);
 }
 
-static void sem_signal(struct sem_t *sem)
+static void sem_signal(sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);
   sem->val++;
   //printf(" sem_signal:%s val=%d\n",sem->name,sem->val);
     if(sem->waiter)
     {
-      struct task_t *ptr = sem->waiter;
+      task_t *ptr = sem->waiter;
       sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
       activate(ptr);//这一部分是弄到active_thread中去
 
