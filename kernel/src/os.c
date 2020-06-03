@@ -74,6 +74,21 @@ printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);
 
 
 
+void sp_lock(struct spinlock_t* lk)
+{
+  while(_atomic_xchg(&lk->locked,1));
+  _intr_write(0);
+}
+void sp_unlock(struct spinlock_t *lk)
+{
+  _atomic_xchg(&lk->locked,0);
+}
+void sp_lockinit(struct spinlock_t* lk,const char *name)
+{
+  lk->name=name;
+  lk->locked=0;
+}
+
 extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
 extern void check_allocblock(void *ptr);
 extern void check_freeblock();

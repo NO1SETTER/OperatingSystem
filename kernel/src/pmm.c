@@ -8,21 +8,6 @@
 #define BLOCK_AREA_SIZE 0x2000000
 #define SLAB_SIZE 0x800000
 
-void sp_lockinit(struct spinlock_t* lk,const char *name)
-{
-  lk->name=name;
-  lk->locked=0;
-}
-
-void sp_lock(struct spinlock_t* lk)
-{
-  while(_atomic_xchg(&lk->locked,1));
-  _intr_write(0);
-}
-void sp_unlock(struct spinlock_t *lk)
-{
-  _atomic_xchg(&lk->locked,0);
-}
 
 
 struct block//管理空闲块或非空闲块的数据结构
