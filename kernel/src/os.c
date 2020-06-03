@@ -45,7 +45,7 @@ static _Context *os_trap(_Event ev,_Context *context);
 static void on_irq (int seq,int event,handler_t handler);
 
 #ifdef DEBUG_LOCAL
-  void producer1(void *arg)
+  void producer(void *arg)
   {
     while(1)
     {
@@ -57,84 +57,13 @@ static void on_irq (int seq,int event,handler_t handler);
     }
   }
 
-  void consumer1(void *arg)
+  void consumer(void *arg)
   {
     while(1)
     {
       P(&fill);
       printf(")");
       //printf(")_1");
-      V(&empty);
-      _yield();
-    }
-  }
-
-  void producer2(void *arg)
-  {
-    while(1)
-    {
-      P(&empty);
-      printf("(");
-      //printf("(_2");
-      V(&fill);
-      _yield();
-    
-    }
-  }
-
-  void consumer2(void *arg)
-  {
-    while(1)
-    {
-      P(&fill);
-      printf(")");
-      //printf(")_2");
-      V(&empty);
-      _yield();
-    }
-  }
-  void producer3(void *arg)
-  {
-    while(1)
-    {
-      P(&empty);
-      printf("(");
-      //printf("(_3");
-      V(&fill);
-      _yield();
-    }
-  }
-
-  void consumer3(void *arg)
-  {
-    while(1)
-    {
-      P(&fill);
-      printf(")");
-      //printf(")_3");
-      V(&empty);
-      _yield();
-    }
-  }
-  void producer4(void *arg)
-  {
-    while(1)
-    {
-      P(&empty);
-      printf("(");
-      //printf("(_4");
-      V(&fill);
-      _yield();
-    }
-  }
-
-  void consumer4(void *arg)
-  {
-    while(1)
-    {
-      P(&fill);
-      printf(")");
-      //printf(")_4");
       V(&empty);
       _yield();
     }
@@ -159,15 +88,11 @@ kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
   kmt->sem_init(&empty, "empty", 3);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
     
-    kmt->create(task_alloc(), "producer1", producer1, NULL);
-    //kmt->create(task_alloc(), "producer2", producer2, NULL);
-    //kmt->create(task_alloc(), "producer3", producer3, NULL);
-    //kmt->create(task_alloc(), "producer4", producer4, NULL);
-    kmt->create(task_alloc(), "consumer1", consumer1, NULL);
-    //kmt->create(task_alloc(), "consumer2", consumer2, NULL);
-    //kmt->create(task_alloc(), "consumer3", consumer3, NULL);
-    //kmt->create(task_alloc(), "consumer4", consumer4, NULL);
 
+  for(int i=0;i<4;i++)
+    kmt->create(task_alloc(), "producer", producer, NULL);
+  for(int i=0;i<5;i++)
+    kmt->create(task_alloc(), "consumer", consumer, NULL);
     
 #endif
 }
