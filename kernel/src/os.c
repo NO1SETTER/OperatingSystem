@@ -148,17 +148,17 @@ kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
   printf(" sem_init at %p\n",(intptr_t)sem_init);
   printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
 #ifdef DEBUG_LOCAL
-  kmt->sem_init(&empty, "empty", 1);  // 缓冲区大小为 5
+  kmt->sem_init(&empty, "empty", 3);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
     
     kmt->create(task_alloc(), "producer1", producer1, NULL);
-    //kmt->create(task_alloc(), "producer2", producer2, NULL);
-    //kmt->create(task_alloc(), "producer3", producer3, NULL);
-    //kmt->create(task_alloc(), "producer4", producer4, NULL);
+    kmt->create(task_alloc(), "producer2", producer2, NULL);
+    kmt->create(task_alloc(), "producer3", producer3, NULL);
+    kmt->create(task_alloc(), "producer4", producer4, NULL);
     kmt->create(task_alloc(), "consumer1", consumer1, NULL);
-    //kmt->create(task_alloc(), "consumer2", consumer2, NULL);
-    //kmt->create(task_alloc(), "consumer3", consumer3, NULL);
-    //kmt->create(task_alloc(), "consumer4", consumer4, NULL);
+    kmt->create(task_alloc(), "consumer2", consumer2, NULL);
+    kmt->create(task_alloc(), "consumer3", consumer3, NULL);
+    kmt->create(task_alloc(), "consumer4", consumer4, NULL);
 
     
 #endif
