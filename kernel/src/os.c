@@ -512,8 +512,8 @@ kmt->spin_unlock(&sem->lock);
 MODULE_DEF(kmt) = {
   .init=kmt_init,
   .spin_init=sp_lockinit,
-  .spin_lock=sp_lock,
-  .spin_lock=sp_unlock,
+  .spin_lock=(void*)sp_lock,
+  .spin_lock=(void*)sp_unlock,
   .create=kmt_create,
   .teardown=kmt_teardown,
   .sem_init=sem_init,
