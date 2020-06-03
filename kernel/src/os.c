@@ -2,15 +2,47 @@
 //#define _DEBUG
 #define DEBUG_LOCAL
 #define STACK_SIZE 4096
-
-struct sem_t empty;
-struct sem_t fill;
+//sem管理部分
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-
+struct sem_t empty;
+struct sem_t fill;
+static void sem_init(struct sem_t *sem, const char *name, int value);
+static void sem_wait(struct sem_t *sem);
+static void sem_signal(struct sem_t *sem);
+//自旋锁部分
+struct spinlock_t thread_ctrl_lock;
+extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
+void sp_lockinit(struct spinlock_t* lk,const char *name);
+void sp_lock(struct spinlock_t* lk);
+void sp_unlock(struct spinlock_t *lk);
+//线程创建释放
 static int kmt_create(struct task_t *task, const char *name, void (*entry)(void *arg), void *arg);
 static void kmt_teardown(struct task_t *task);
-static void sem_init(struct sem_t *sem, const char *name, int value);
+//线程阻塞唤醒
+int thread_num=0;
+int active_num=0;
+int wait_num=0;
+struct task_t *current=NULL;//当前task
+void activate(struct task_t* t);
+void await(struct task_t *t);
+void kill(struct task_t *t);
+//中断处理程序
+struct EVENT{
+int seq;
+int event;
+handler_t handler;
+struct EVENT* next;
+};
+struct EVENT EV_HEAD={-1,0,NULL,NULL};//用链表记录所有_Event
+struct EVENT * evhead=&EV_HEAD;
+//中断处理函数
+_Context* schedule(_Event ev,_Context* c);
+_Context* cyield(_Event ev,_Context* c);
+  //中断处理程序入口
+static _Context *os_trap(_Event ev,_Context *context);
+  //中断注册程序
+static void on_irq (int seq,int event,handler_t handler);
 void producer(void *arg)
 {
   while(1)
@@ -46,20 +78,20 @@ static void os_init() {
 
 kmt->spin_lock=sp_lock;
 kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
-/*
-printf(" sp_lockinit at %p\n",(intptr_t)sp_lockinit);
-printf(" kmt->lockinit at %p\n",(intptr_t)kmt->spin_init);
-printf(" sp_unlock at %p\n",(intptr_t)sp_unlock);
-printf(" kmt->unlock at %p\n",(intptr_t)kmt->spin_unlock);
-printf(" sp_lock at %p\n",(intptr_t)sp_lock);
-printf(" kmt->lock at %p\n",(intptr_t)kmt->spin_lock);
+  /*
+  printf(" sp_lockinit at %p\n",(intptr_t)sp_lockinit);
+  printf(" kmt->lockinit at %p\n",(intptr_t)kmt->spin_init);
+  printf(" sp_unlock at %p\n",(intptr_t)sp_unlock);
+  printf(" kmt->unlock at %p\n",(intptr_t)kmt->spin_unlock);
+  printf(" sp_lock at %p\n",(intptr_t)sp_lock);
+  printf(" kmt->lock at %p\n",(intptr_t)kmt->spin_lock);
 
-printf(" create at %p\n",(intptr_t)kmt_create);
-printf(" kmt->create at %p\n",(intptr_t)kmt->create);
-printf(" teardown at %p\n",(intptr_t)kmt_teardown);
-printf(" kmt->teardown at %p\n",(intptr_t)kmt->teardown);
-printf(" sem_init at %p\n",(intptr_t)sem_init);
-printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
+  printf(" create at %p\n",(intptr_t)kmt_create);
+  printf(" kmt->create at %p\n",(intptr_t)kmt->create);
+  printf(" teardown at %p\n",(intptr_t)kmt_teardown);
+  printf(" kmt->teardown at %p\n",(intptr_t)kmt->teardown);
+  printf(" sem_init at %p\n",(intptr_t)sem_init);
+  printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
 #ifdef DEBUG_LOCAL
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
@@ -76,22 +108,8 @@ printf(" kmt->sem_init at %p\n",(intptr_t)kmt->sem_init);*/
 
 
 
-void sp_lock(struct spinlock_t* lk)
-{
-  while(_atomic_xchg(&lk->locked,1));
-  _intr_write(0);
-}
-void sp_unlock(struct spinlock_t *lk)
-{
-  _atomic_xchg(&lk->locked,0);
-}
-void sp_lockinit(struct spinlock_t* lk,const char *name)
-{
-  lk->name=name;
-  lk->locked=0;
-}
 
-extern struct spinlock_t print_lock;//print_lock内部不加别的锁,不产生ABBA型
+
 extern void check_allocblock(void *ptr);
 extern void check_freeblock();
 extern void print_FreeBlock();
@@ -294,19 +312,25 @@ static void test4()//频繁分配页
   }
 }*/
 
-int thread_num=0;
-int active_num=0;
-int wait_num=0;
-struct task_t *current=NULL;//当前task
 
-struct EVENT{
-int seq;
-int event;
-handler_t handler;
-struct EVENT* next;
-};
-struct EVENT EV_HEAD={-1,0,NULL,NULL};//用链表记录所有_Event
-struct EVENT * evhead=&EV_HEAD;
+
+
+
+
+void sp_lock(struct spinlock_t* lk)
+{
+  while(_atomic_xchg(&lk->locked,1));
+  _intr_write(0);
+}
+void sp_unlock(struct spinlock_t *lk)
+{
+  _atomic_xchg(&lk->locked,0);
+}
+void sp_lockinit(struct spinlock_t* lk,const char *name)
+{
+  lk->name=name;
+  lk->locked=0;
+}
 
 _Context* schedule(_Event ev,_Context* c)
 {
@@ -392,6 +416,7 @@ MODULE_DEF(os) = {
 
 void activate(struct task_t* t)//wait->running
 {
+  sp_lock(&thread_ctrl_lock);
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
@@ -406,22 +431,13 @@ void activate(struct task_t* t)//wait->running
   wait_num=wait_num-1;
   active_thread[active_num++]=t;
   t->status=T_RUNNING;
-}
-
-void random_activate()
-{
-  int pos=rand()%wait_num;
-  struct task_t *t=wait_thread[pos];
-  for(int i=pos;i<wait_num-1;i++)
-  wait_thread[i]=wait_thread[i+1];
-
-  wait_num=wait_num-1;
-  active_thread[active_num++]=t;
-  t->status=T_RUNNING;
+  sp_unlock(&thread_ctrl_lock);
 }
 
 void await(struct task_t* t)//running->wait
 {
+
+  sp_lock(&thread_ctrl_lock);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
@@ -436,10 +452,13 @@ void await(struct task_t* t)//running->wait
   active_num=active_num-1;
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
+  sp_unlock(&thread_ctrl_lock);
 }
 
 void kill(struct task_t* t)//running->dead
 {
+
+  sp_lock(&thread_ctrl_lock);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
@@ -449,10 +468,12 @@ void kill(struct task_t* t)//running->dead
   }
   assert(pos!=-1);
   t->status=T_DEAD;
+  sp_unlock(&thread_ctrl_lock);
 }
 
 static void kmt_init()
 {
+  kmt->spin_init(&thread_ctrl_lock,"thread_ctrl_lock");
   on_irq(0,_EVENT_YIELD,schedule);
   on_irq(1,_EVENT_IRQ_TIMER,cyield);
 }
@@ -478,24 +499,26 @@ static void kmt_teardown(struct task_t *task)
 
 static void sem_init(struct sem_t *sem, const char *name, int value)
 {
-char lock_name[128];
-sprintf(lock_name,"%s_lock",name);
-kmt->spin_init(&sem->lock,lock_name);
-sem->name=name;
-sem->val=value;
+  char lock_name[128];
+  sprintf(lock_name,"%s_lock",name);
+  kmt->spin_init(&sem->lock,lock_name);
+  sem->name=name;
+  sem->waiter=NULL;
 }
 
 static void sem_wait(struct sem_t *sem)
 {
-kmt->spin_lock(&sem->lock);
-sem->val--;
-printf("sem_wait:%s val=%d\n",sem->name,sem->val);
-if(sem->val<0) 
-{
-  kmt->spin_unlock(&sem->lock);
-  await(current);
-  _yield();//int $81
-  return;
+  kmt->spin_lock(&sem->lock);
+  sem->val--;
+  printf("sem_wait:%s val=%d\n",sem->name,sem->val);
+  if(sem->val<0) 
+  {
+    kmt->spin_unlock(&sem->lock);
+    await(current);
+    current->next=sem->waiter->next;
+    sem->waiter->next=current;
+    _yield();//int $81
+    return;
 }
 kmt->spin_unlock(&sem->lock);
 return;
@@ -503,14 +526,19 @@ return;
 
 static void sem_signal(struct sem_t *sem)
 {
-kmt->spin_lock(&sem->lock);
-sem->val++;
-printf("sem_signal:%s val=%d\n",sem->name,sem->val);
-if(sem->val>=0)
-random_activate();
-assert(0);
-kmt->spin_unlock(&sem->lock);
-assert(0);
+  kmt->spin_lock(&sem->lock);
+  sem->val++;
+  printf("sem_signal:%s val=%d\n",sem->name,sem->val);
+  if(sem->val>=0)
+  {
+    if(sem->waiter)
+    {
+      struct task_t *ptr = sem->waiter;
+      sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
+      activate(ptr);//这一部分是弄到active_thread中去
+    }
+  }
+  kmt->spin_unlock(&sem->lock);
 }
 
 MODULE_DEF(kmt) = {

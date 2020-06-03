@@ -59,6 +59,7 @@ struct task_t
   {
     const char *name;
     enum t_status status;
+    struct task_t* next;//信号量要用
     _Context *ctx;//貌似只要保证它指向栈顶就ok了，上面的可以不管分配在哪里
   };
   uint8_t *stack;
@@ -73,8 +74,8 @@ extern int active_num;
 extern int wait_num;
 extern struct task_t *current;//当前task
 
+extern struct spinlock_t thread_ctrl_lock;//管理控制这三个链表的锁
 void activate(struct task_t* t);
-void random_activate();
 void await(struct task_t *t);
 void kill(struct task_t *t);
 
@@ -85,6 +86,7 @@ struct sem_t
 struct spinlock_t lock;
 const char *name;
 int val;
+struct task_t* waiter;
 };
 
 extern struct sem_t empty;
