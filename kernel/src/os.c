@@ -591,6 +591,7 @@ static void sem_signal(struct sem_t *sem)
   printf("sem_signal:%s val=%d\n",sem->name,sem->val);
     if(sem->waiter)
     {
+      printf("not null\n");
       struct task_t *ptr = sem->waiter;
       sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
       activate(ptr);//这一部分是弄到active_thread中去
