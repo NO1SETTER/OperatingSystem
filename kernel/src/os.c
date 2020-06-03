@@ -521,15 +521,16 @@ static void sem_wait(sem_t *sem)
     current->next=sem->waiter->next;
     sem->waiter->next=current;}
 
-        /*struct task_t* ptr=sem->waiter;
-    printf("\n%s waiter :",sem->name);
+  sp_lock(&print_lock);
+    task_t* ptr=sem->waiter;
+    printf("\n%s waiter for CPU#%d:",sem->name,_cpu());
     while(ptr)
     {
       printf("%s ",ptr->name);
       ptr=ptr->next;
     } 
     printf("\n\n");
-    }*/
+    sp_unlock(&print_lock);
     _yield();
     return;
     }
@@ -544,20 +545,21 @@ static void sem_signal(sem_t *sem)
   //printf(" sem_signal:%s val=%d\n",sem->name,sem->val);
     if(sem->waiter)
     {
-      task_t *ptr = sem->waiter;
+      task_t *nptr = sem->waiter;
       sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
-      activate(ptr);//这一部分是弄到active_thread中去
+      activate(nptr);//这一部分是弄到active_thread中去
 
-          /*struct task_t* ptr=sem->waiter;
-    printf("\n%s waiter :",sem->name);
+    sp_lock(&print_lock);
+    task_t* ptr=sem->waiter;
+    printf("\n%s waiter for CPU#%d:",sem->name,_cpu());
     while(ptr)
     {
       printf("%s ",ptr->name);
       ptr=ptr->next;
     } 
-    printf("\n\n");
-    }*/
-    }
+    printf("\n");
+    sp_unlock(&print_lock);
+  }
   kmt->spin_unlock(&sem->lock);
   _yield();
 }
