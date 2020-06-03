@@ -64,7 +64,7 @@ extern spinlock_t print_lock;
     {
       P(&fill);
       sp_lock(&print_lock);
-      printf(")at CPU#%d\n",_cpu());
+      printf(") at CPU#%d\n",_cpu());
       sp_unlock(&print_lock);
       V(&empty);
     }
