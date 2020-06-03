@@ -54,7 +54,6 @@ extern spinlock_t print_lock;
       sp_lock(&print_lock);
       printf("( at CPU#%d\n",_cpu());
       sp_unlock(&print_lock);
-      //printf("(_1");
       V(&fill);
     }
   }
@@ -67,7 +66,6 @@ extern spinlock_t print_lock;
       sp_lock(&print_lock);
       printf(")at CPU#%d\n",_cpu());
       sp_unlock(&print_lock);
-      //printf(")_1");
       V(&empty);
     }
   }
