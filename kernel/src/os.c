@@ -30,7 +30,6 @@ void consumer(void *arg)
     printf(")");
     //printf(")_%s",arg);
     V(&empty);
-    assert(0);
   }
 }
 
@@ -509,6 +508,7 @@ sem->val++;
 printf("sem_signal:%s val=%d\n",sem->name,sem->val);
 if(sem->val>=0)
 random_activate();
+assert(0);
 kmt->spin_unlock(&sem->lock);
 assert(0);
 }
