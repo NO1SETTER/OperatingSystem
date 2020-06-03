@@ -403,7 +403,7 @@ _Context* schedule(_Event ev,_Context* c)
 {
 
 
-  printf("SCHEDULING\n");
+  //printf("SCHEDULING\n");
   if(current==NULL)
   {
     current=active_thread[0];
