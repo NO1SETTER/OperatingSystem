@@ -44,13 +44,16 @@ static _Context *os_trap(_Event ev,_Context *context);
   //中断注册程序
 static void on_irq (int seq,int event,handler_t handler);
 
+extern spinlock_t print_lock;
 #ifdef DEBUG_LOCAL
   void producer(void *arg)
   {
     while(1)
     {
       P(&empty);
+      sp_lock(&print_lock);
       printf("( at CPU#%d\n",_cpu());
+      sp_unlock(&print_lock);
       //printf("(_1");
       V(&fill);
     }
@@ -61,7 +64,9 @@ static void on_irq (int seq,int event,handler_t handler);
     while(1)
     {
       P(&fill);
+      sp_lock(&print_lock);
       printf(")at CPU#%d\n",_cpu());
+      sp_unlock(&print_lock);
       //printf(")_1");
       V(&empty);
     }
