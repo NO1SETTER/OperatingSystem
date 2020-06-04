@@ -426,7 +426,7 @@ void activate(task_t* t,sem_t* sem)//wait->running
     printf("wait_thread[%d]:%s at %p\n",i,wait_thread[i]->name,(intptr_t)wait_thread[i]);
     if (wait_thread[i]==t) {
       pos = i;
-      break;}
+      }
   }
   assert(pos!=-1);
   for(int i=pos;i<wait_num-1;i++)
@@ -453,7 +453,7 @@ void await(task_t* t,sem_t* sem)//running->wait
     printf("active_thread[%d]:%s at %p\n",i,active_thread[i]->name,(intptr_t)active_thread[i]);
     if (active_thread[i]==t) {
       pos = i;
-      break;}
+      }
   }
   assert(pos!=-1);
   for(int i=pos;i<active_num-1;i++)
