@@ -407,7 +407,6 @@ MODULE_DEF(os) = {
 
 void activate(task_t* t,sem_t* sem)//wait->running
 {
-  
   sp_lock(&thread_ctrl_lock);
   sp_lock(&print_lock);
   int pos=-1;
@@ -417,19 +416,23 @@ void activate(task_t* t,sem_t* sem)//wait->running
       pos = i;
     }
   }
+
   if(pos==-1)
-  {
-      sp_unlock(&print_lock);
-  sp_unlock(&thread_ctrl_lock);
-    return;}
+    {sp_unlock(&print_lock);
+    sp_unlock(&thread_ctrl_lock);
+    _intr_write(1);
+    return;
+    }
   for(int i=pos;i<wait_num-1;i++)
   wait_thread[i]=wait_thread[i+1];
 
   wait_num=wait_num-1;
   active_thread[active_num++]=t;
   t->status=T_RUNNING;
+
   sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
+  _intr_write(1);
 }
 
 void await(task_t* t,sem_t* sem)//running->wait
@@ -443,12 +446,14 @@ void await(task_t* t,sem_t* sem)//running->wait
       pos = i;break;
      }
   }
+
   if(pos==-1)
-  {
-      sp_unlock(&print_lock);
-  sp_unlock(&thread_ctrl_lock);
-  return; 
-  }
+    {
+    sp_unlock(&print_lock);
+    sp_unlock(&thread_ctrl_lock);
+    _intr_write(1);
+    return; 
+    }
   for(int i=pos;i<active_num-1;i++)
   active_thread[i]=active_thread[i+1];
 
@@ -467,10 +472,16 @@ void kill(task_t* t)//running->dead
   for(int i=0;i<active_num;i++)
   {
     if (active_thread[i]==t) {
-      pos = i;
+      pos = i;break;
      }
   }
-  assert(pos!=-1);
+  if(pos==-1)
+  {
+    sp_unlock(&print_lock);
+    sp_unlock(&thread_ctrl_lock);
+    _intr_write(1);
+    return; 
+  }
   t->status=T_DEAD;
   sp_unlock(&thread_ctrl_lock);
 }
@@ -504,10 +515,11 @@ static void kmt_teardown(task_t *task)
   pmm->free(task->stack);
 }
 
+
 static void sem_init(sem_t *sem, const char *name, int value)
 {
   char lock_name[128];
-  //sprintf(lock_name,"%s_lock",name);
+  sprintf(lock_name,"%s_lock",name);
   kmt->spin_init(&sem->lock,lock_name);
   sem->name=name;
   sem->val=value;
@@ -528,21 +540,19 @@ static void sem_wait(sem_t *sem)
     else
     {
     task_t* rep=sem->waiter;
-    int judge=0;
-      while(rep)
-      {if(rep==rec_cur) judge=1;
+      int judge=0;
+      while(rep)  {if(rep==rec_cur) judge=1;}
+      if(!judge)
+      {
+        rec_cur->next=(sem->waiter)->next;
+        (sem->waiter)->next=rec_cur;}
       }
-    if(!judge)
-    {
-      rec_cur->next=(sem->waiter)->next;
-      (sem->waiter)->next=rec_cur;}
-    }
-    kmt->spin_unlock(&sem->lock);
-    _yield();
-    return;
+      kmt->spin_unlock(&sem->lock);
+      _yield();
+      return;
   }
- kmt->spin_unlock(&sem->lock);
-_yield();
+  kmt->spin_unlock(&sem->lock);
+  _yield();
 }
 
 static void sem_signal(sem_t *sem)
