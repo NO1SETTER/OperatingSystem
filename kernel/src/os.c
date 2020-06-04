@@ -450,7 +450,7 @@ void await(task_t* t)//running->wait
   active_num=active_num-1;
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
-    //printf("set %s waiting\n",t->name);
+  printf("set %s waiting\n",t->name);
   sp_unlock(&thread_ctrl_lock);
 }
 
