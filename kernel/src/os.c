@@ -51,10 +51,7 @@ extern spinlock_t print_lock;
     while(1)
     {
       P(&empty);
-      //printf("(");
-      /*sp_lock(&print_lock);
-      printf("( at CPU#%d\n",_cpu());
-      sp_unlock(&print_lock);*/
+      printf("(");
       V(&fill);
     }
   }
@@ -64,10 +61,7 @@ extern spinlock_t print_lock;
     while(1)
     {
       P(&fill);
-      //printf(")");
-      /*sp_lock(&print_lock);
-      printf(") at CPU#%d\n",_cpu());
-      sp_unlock(&print_lock);*/
+      printf(")");
       V(&empty);
     }
   }
@@ -87,10 +81,6 @@ static void os_init() {
 kmt->spin_lock=sp_lock;
 kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
 
-printf("spinlock at%p\n",(intptr_t)sp_lock);
-printf("spinlock_pmm at%p\n",(intptr_t)kmt->spin_lock);
-printf("spinunlock at %p\n",(intptr_t)sp_unlock);
-printf("spinunlock_pmm at %p\n",(intptr_t)kmt->spin_unlock);
 #ifdef DEBUG_LOCAL
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
@@ -319,16 +309,15 @@ static void os_run() {
 
 void sp_lock(spinlock_t* lk)
 {
-  while(_atomic_xchg(&lk->locked,1))
-  {
-    printf("lock\n");
-  }
+  while(_atomic_xchg(&lk->locked,1));
   _intr_write(0);
 }
 void sp_unlock(spinlock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
+  _intr_write(1);
 }
+
 void sp_lockinit(spinlock_t* lk,const char *name)
 {
   lk->name=name;
@@ -424,13 +413,9 @@ void activate(task_t* t,sem_t* sem)//wait->running
   
   sp_lock(&thread_ctrl_lock);
   sp_lock(&print_lock);
-  printf("%s trying activated from %s for CPU#%d\n",t->name,sem->name,_cpu());
-  printf("t at %p\n",(intptr_t)t);
   int pos=-1;
-  printf("wait_num=%d\n",wait_num);
   for(int i=0;i<wait_num;i++)
   {
-    printf("wait_thread[%d]:%s at %p\n",i,wait_thread[i]->name,(intptr_t)wait_thread[i]);
     if (wait_thread[i]==t) {
       pos = i;
     }
@@ -446,9 +431,6 @@ void activate(task_t* t,sem_t* sem)//wait->running
   wait_num=wait_num-1;
   active_thread[active_num++]=t;
   t->status=T_RUNNING;
-  printf("%s is activated from %s\n",t->name,sem->name);
-  for(int i=0;i<wait_num;i++)
-    printf("wait_thread[%d]:%s at %p\n",i,wait_thread[i]->name,(intptr_t)wait_thread[i]);
   sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
 }
@@ -457,15 +439,11 @@ void await(task_t* t,sem_t* sem)//running->wait
 {
   sp_lock(&thread_ctrl_lock);
   sp_lock(&print_lock);
-  printf("%s trying awaited from %s for CPU#%d\n",t->name,sem->name,_cpu());
-  printf("t at %p\n",(intptr_t)t);
   int pos=-1;
-  printf("active_num=%d\n",active_num);
   for(int i=0;i<active_num;i++)
   {
-    printf("active_thread[%d]:%s at %p\n",i,active_thread[i]->name,(intptr_t)active_thread[i]);
     if (active_thread[i]==t) {
-      pos = i;
+      pos = i;break;
      }
   }
   if(pos==-1)
@@ -480,10 +458,6 @@ void await(task_t* t,sem_t* sem)//running->wait
   active_num=active_num-1;
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
-  printf("%s is awaited from %s\n",t->name,sem->name);
-
-  for(int i=0;i<active_num;i++)
-      printf("active_thread[%d]:%s at %p\n",i,active_thread[i]->name,(intptr_t)active_thread[i]);
   sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
 }
@@ -523,9 +497,6 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->stack=pmm->alloc(STACK_SIZE);
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
-  printf("task %s at %p\n",task->name,(intptr_t)task);
-  printf("ptr in all_thread is %p\n",(intptr_t)all_thread[thread_num-1]);
-  printf("ptr in active_thread is %p\n",(intptr_t)active_thread[active_num-1]);
   sp_unlock(&thread_ctrl_lock);
   return 0;
 }
@@ -549,43 +520,27 @@ static void sem_init(sem_t *sem, const char *name, int value)
 static void sem_wait(sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
-  sem->val--;
-  printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
-        task_t * rec_cur=current;
-    printf("current at %p current1 %s\n",rec_cur,rec_cur->name);
+    task_t * rec_cur=current;
     await(rec_cur,sem);
-    printf("current at %p current2 %s\n",rec_cur,rec_cur->name);
     if(sem->waiter==NULL)
-    {      printf("current at %p current3 %s\n",rec_cur,rec_cur->name);
+    {    
       sem->waiter=rec_cur;
       rec_cur->next=NULL;}
     else
     {
-          printf("current at %p current4 %s\n",rec_cur,rec_cur->name);
     task_t* rep=sem->waiter;
     int judge=0;
-    while(rep)
-    {
-      if(rep==rec_cur) judge=1;
-    }
+      while(rep)
+      {if(rep==rec_cur) judge=1;
+      }
     if(!judge)
     {
-    rec_cur->next=(sem->waiter)->next;
-    (sem->waiter)->next=rec_cur;}}
+      rec_cur->next=(sem->waiter)->next;
+      (sem->waiter)->next=rec_cur;}
+    }
     kmt->spin_unlock(&sem->lock);
-  
-    sp_lock(&print_lock);
-    task_t* ptr=sem->waiter;
-    printf("%s waiter:%p for CPU#%d:",sem->name,(intptr_t)ptr,_cpu());
-    while(ptr)
-    {
-      printf("%s:%p ",ptr->name,(intptr_t)ptr);
-      ptr=ptr->next;
-    } 
-    printf("\n\n");
-    sp_unlock(&print_lock);
     _yield();
     return;
   }
@@ -597,25 +552,13 @@ static void sem_signal(sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);
   sem->val++;
-  //printf(" sem_signal:%s val=%d\n",sem->name,sem->val);
     if(sem->waiter)
     {
       task_t *nptr = sem->waiter;
       sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
       nptr->next=NULL;
       activate(nptr,sem);//这一部分是弄到active_thread中去
-
-    sp_lock(&print_lock);
-    task_t* ptr=sem->waiter;
-    printf("%s waiter:%p for CPU#%d:",sem->name,(intptr_t)ptr,_cpu());
-    while(ptr)
-    {
-      printf("%s:%p ",ptr->name,(intptr_t)ptr);
-      ptr=ptr->next;
-    } 
-    printf("\n\n");
-    sp_unlock(&print_lock);
-  }
+    }
   kmt->spin_unlock(&sem->lock);
   _yield();
 }
