@@ -448,7 +448,7 @@ void await(task_t* t,sem_t* sem)//running->wait
   printf("active_num=%d\n",active_num);
   for(int i=0;i<active_num;i++)
   {
-    printf("active_thread[%d]:%s at %p\n",active_thread[i]->name,(intptr_t)active_thread[i]);
+    printf("active_thread[%d]:%s at %p\n",i,active_thread[i]->name,(intptr_t)active_thread[i]);
     if (active_thread[i]==t) {
       pos = i;
       break;}
