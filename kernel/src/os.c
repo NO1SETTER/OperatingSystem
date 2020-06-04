@@ -531,7 +531,7 @@ static void sem_wait(sem_t *sem)
   
     sp_lock(&print_lock);
     task_t* ptr=sem->waiter;
-    printf("%s waiter:%p for CPU#%d:",(intptr_t)ptr,sem->name,_cpu());
+    printf("%s waiter:%p for CPU#%d:",sem->name,(intptr_t)ptr,_cpu());
     while(ptr)
     {
       printf("%s:%p ",ptr->name,(intptr_t)ptr);
@@ -559,7 +559,7 @@ static void sem_signal(sem_t *sem)
 
     sp_lock(&print_lock);
     task_t* ptr=sem->waiter;
-    printf("\n%s waiter:%p for CPU#%d:",(intptr_t)ptr,sem->name,_cpu());
+    printf("\n%s waiter:%p for CPU#%d:",sem->name,(intptr_t)ptr,_cpu());
     while(ptr)
     {
       printf("%s:%p ",ptr->name,(intptr_t)ptr);
