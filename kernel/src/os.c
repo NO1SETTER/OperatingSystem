@@ -315,7 +315,6 @@ void sp_lock(spinlock_t* lk)
 void sp_unlock(spinlock_t *lk)
 {
   _atomic_xchg(&lk->locked,0);
-  _intr_write(1);
 }
 
 void sp_lockinit(spinlock_t* lk,const char *name)
@@ -326,9 +325,7 @@ void sp_lockinit(spinlock_t* lk,const char *name)
 
 _Context* schedule(_Event ev,_Context* c)
 {
-
-
-//printf("\nSCHEDULING\n\n");
+  //printf("\nSCHEDULING\n\n");
   if(current==NULL)
   {
     current=active_thread[0];
@@ -344,9 +341,9 @@ _Context* schedule(_Event ev,_Context* c)
 
 _Context* cyield(_Event ev,_Context* c)
 {
-//printf("\nYIELD\n\n");
-_yield();
-return NULL;
+  printf("\nYIELD\n\n");
+  _yield();
+  return NULL;
 }
 
 
