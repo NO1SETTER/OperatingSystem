@@ -544,7 +544,7 @@ static void sem_wait(sem_t *sem)
     _yield();
     return;
     }
-kmt->spin_unlock(&sem->lock);
+ kmt->spin_unlock(&sem->lock);
 _yield();
 }
 
