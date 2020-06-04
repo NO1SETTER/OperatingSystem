@@ -420,6 +420,7 @@ void activate(task_t* t,sem_t* sem)//wait->running
 {
   
   sp_lock(&thread_ctrl_lock);
+  sp_lock(&print_lock);
   printf("%s trying activated from %s for CPU#%d\n",t->name,sem->name,_cpu());
   printf("t at %p\n",(intptr_t)t);
   int pos=-1;
@@ -441,12 +442,14 @@ void activate(task_t* t,sem_t* sem)//wait->running
   printf("%s is activated from %s\n",t->name,sem->name);
   for(int i=0;i<wait_num;i++)
     printf("wait_thread[%d]:%s at %p\n",i,wait_thread[i]->name,(intptr_t)wait_thread[i]);
+  sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
 }
 
 void await(task_t* t,sem_t* sem)//running->wait
 {
   sp_lock(&thread_ctrl_lock);
+  sp_lock(&print_lock);
   printf("%s trying awaited from %s for CPU#%d\n",t->name,sem->name,_cpu());
   printf("t at %p\n",(intptr_t)t);
   int pos=-1;
@@ -469,6 +472,7 @@ void await(task_t* t,sem_t* sem)//running->wait
 
   for(int i=0;i<active_num;i++)
       printf("active_thread[%d]:%s at %p\n",i,active_thread[i]->name,(intptr_t)active_thread[i]);
+  sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
 }
 
