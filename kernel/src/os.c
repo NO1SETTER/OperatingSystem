@@ -341,7 +341,7 @@ _Context* schedule(_Event ev,_Context* c)
 
 _Context* cyield(_Event ev,_Context* c)
 {
-  printf("\nYIELD\n\n");
+  //printf("\nYIELD\n\n");
   _yield();
   return NULL;
 }
