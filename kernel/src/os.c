@@ -500,6 +500,8 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
   printf("task %s at %p\n",task->name,(intptr_t)task);
+  printf("ptr in all_thread is %p\n",(intptr_t)all_thread[thread_num-1]);
+  printf("ptr in active_thread is %p\n",(intptr_t)active_thread[active_num-1]);
   sp_unlock(&thread_ctrl_lock);
   return 0;
 }
