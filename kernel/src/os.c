@@ -534,7 +534,9 @@ static void sem_wait(sem_t *sem)
   printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
+    printf("current %s\n",current->name);
     await(current,sem);
+    printf("current %s\n",current->name);
     if(sem->waiter==NULL)
       sem->waiter=current;
     else
