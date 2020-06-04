@@ -513,26 +513,26 @@ static void sem_init(sem_t *sem, const char *name, int value)
 
 static void sem_wait(sem_t *sem)
 {
-  kmt->spin_lock(&sem->lock);
+  kmt->spin_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
   sem->val--;
   //printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
-    kmt->spin_unlock(&sem->lock);
     await(current,sem);
     if(sem->waiter==NULL)
-    sem->waiter=current;
+      sem->waiter=current;
     else
     {
     current->next=sem->waiter->next;
     sem->waiter->next=current;}
-
+    kmt->spin_unlock(&sem->lock);
+  
     sp_lock(&print_lock);
     task_t* ptr=sem->waiter;
-    printf("%s waiter for CPU#%d:",sem->name,_cpu());
+    printf("%s waiter:%p for CPU#%d:",(intptr_t)ptr,sem->name,_cpu());
     while(ptr)
     {
-      printf("%s ",ptr->name);
+      printf("%s:%p ",ptr->name,(intptr_t)ptr);
       ptr=ptr->next;
     } 
     printf("\n\n");
@@ -557,10 +557,10 @@ static void sem_signal(sem_t *sem)
 
     sp_lock(&print_lock);
     task_t* ptr=sem->waiter;
-    printf("\n%s waiter for CPU#%d:",sem->name,_cpu());
+    printf("\n%s waiter:%p for CPU#%d:",(intptr_t)ptr,sem->name,_cpu());
     while(ptr)
     {
-      printf("%s ",ptr->name);
+      printf("%s:%p ",ptr->name,(intptr_t)ptr);
       ptr=ptr->next;
     } 
     printf("\n");
