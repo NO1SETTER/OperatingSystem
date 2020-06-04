@@ -126,184 +126,185 @@ static void os_run() {
   while (1) ;
 }
 /*
-static void test1()//在[0,2048)完全随机
-{ printf("Conducting test1\n"); 
-    for(int i=0;i<1000;i++)
-  { 
-    printf("Round %d for CPU#%d\n",i,_cpu());
-    int rand_seed=rand()%5;
-    if(rand_seed!=0)//kalloc
-    {
-      int size=rand()%2048;
-      if(size==0) continue;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocating size %d\n",size);
-      sp_unlock(&print_lock);
-      #endif
-      void* ptr=pmm->alloc(size);
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      allocated[num++]=ptr;
+  static void test1()//在[0,2048)完全随机
+  { printf("Conducting test1\n"); 
+      for(int i=0;i<1000;i++)
+    { 
+      printf("Round %d for CPU#%d\n",i,_cpu());
+      int rand_seed=rand()%5;
+      if(rand_seed!=0)//kalloc
+      {
+        int size=rand()%2048;
+        if(size==0) continue;
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Allocating size %d\n",size);
+        sp_unlock(&print_lock);
+        #endif
+        void* ptr=pmm->alloc(size);
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
+        sp_unlock(&print_lock);
+        #endif
+        allocated[num++]=ptr;
+      }
+      else//kfree
+      {
+        if(num==0) continue;
+        int r=rand()%num;
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
+        sp_unlock(&print_lock);
+        #endif
+        pmm->free(allocated[r]);      
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Successfully freed\n");
+        sp_unlock(&print_lock);
+        #endif
+      }
+      printf("Finishing Round %d for CPU#%d\n",i,_cpu());
     }
-    else//kfree
-    {
-      if(num==0) continue;
-      int r=rand()%num;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      pmm->free(allocated[r]);      
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Successfully freed\n");
-      sp_unlock(&print_lock);
-      #endif
-    }
-     printf("Finishing Round %d for CPU#%d\n",i,_cpu());
   }
-}
 
-static void test2()//交替测试大内存和小内存
-{ printf("Conducting test2\n");
-  
-  for(int i=0;i<1000;i++)//小内存大内存交替分配释放
-  {
-    printf("Round %d for CPU#%d\n",i,_cpu());
-    int rand_seed=rand()%5;
-    if(rand_seed!=0)//kalloc
+  static void test2()//交替测试大内存和小内存
+  { printf("Conducting test2\n");
+    
+    for(int i=0;i<1000;i++)//小内存大内存交替分配释放
     {
-      int size;
-      if(i%2)
-      size=rand()%16;
-      else
-      size=rand()%2048+2048;
-      if(size==0) continue;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocating size %d\n",size);
-      sp_unlock(&print_lock);
-      #endif
-      void* ptr=pmm->alloc(size);
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      allocated[num++]=ptr;
+      printf("Round %d for CPU#%d\n",i,_cpu());
+      int rand_seed=rand()%5;
+      if(rand_seed!=0)//kalloc
+      {
+        int size;
+        if(i%2)
+        size=rand()%16;
+        else
+        size=rand()%2048+2048;
+        if(size==0) continue;
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Allocating size %d\n",size);
+        sp_unlock(&print_lock);
+        #endif
+        void* ptr=pmm->alloc(size);
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
+        sp_unlock(&print_lock);
+        #endif
+        allocated[num++]=ptr;
+      }
+      else//kfree
+      {
+        if(num==0) continue;
+        int r=rand()%num;
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
+        sp_unlock(&print_lock);
+        #endif
+        pmm->free(allocated[r]);      
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Successfully freed\n");
+        sp_unlock(&print_lock);
+        #endif
+      }
+      printf("Finishing Round %d for CPU#%d\n",i,_cpu());
     }
-    else//kfree
-    {
-      if(num==0) continue;
-      int r=rand()%num;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      pmm->free(allocated[r]);      
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Successfully freed\n");
-      sp_unlock(&print_lock);
-      #endif
-    }
-    printf("Finishing Round %d for CPU#%d\n",i,_cpu());
   }
-}
 
-static void test3()//频繁分配小内存
-{ printf("Conducting test3\n");
-  
-  for(int i=0;i<10000;i++)//小内存大内存交替分配释放
-  {
-    printf("Round %d for CPU#%d\n",i,_cpu());
-    int rand_seed=rand()%5;
-    if(rand_seed!=0)//kalloc
+  static void test3()//频繁分配小内存
+  { printf("Conducting test3\n");
+    
+    for(int i=0;i<10000;i++)//小内存大内存交替分配释放
     {
-      int size=rand()%128;
-      if(size==0) continue;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocating size %d\n",size);
-      sp_unlock(&print_lock);
-      #endif
-      void* ptr=pmm->alloc(size);
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      allocated[num++]=ptr;
+      printf("Round %d for CPU#%d\n",i,_cpu());
+      int rand_seed=rand()%5;
+      if(rand_seed!=0)//kalloc
+      {
+        int size=rand()%128;
+        if(size==0) continue;
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Allocating size %d\n",size);
+        sp_unlock(&print_lock);
+        #endif
+        void* ptr=pmm->alloc(size);
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
+        sp_unlock(&print_lock);
+        #endif
+        allocated[num++]=ptr;
+      }
+      else//kfree
+      {
+        if(num==0) continue;
+        int r=rand()%num;
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
+        sp_unlock(&print_lock);
+        #endif
+        pmm->free(allocated[r]);      
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Successfully freed\n");
+        sp_unlock(&print_lock);
+        #endif
+      }
+      printf("Finishing Round %d for CPU#%d\n",i,_cpu());
     }
-    else//kfree
-    {
-      if(num==0) continue;
-      int r=rand()%num;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      pmm->free(allocated[r]);      
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Successfully freed\n");
-      sp_unlock(&print_lock);
-      #endif
-    }
-    printf("Finishing Round %d for CPU#%d\n",i,_cpu());
   }
-}
 
-static void test4()//频繁分配页
-{ printf("Conducting test4\n");
-  
-  for(int i=0;i<2000;i++)
-  {
-    printf("Round %d for CPU#%d\n",i,_cpu());
-    int rand_seed=rand()%5;
-    if(rand_seed!=0)//kalloc
+  static void test4()//频繁分配页
+  { printf("Conducting test4\n");
+    
+    for(int i=0;i<2000;i++)
     {
-      int size=rand()%(4096*4)+2048;
-      if(size==0) continue;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocating size %d\n",size);
-      sp_unlock(&print_lock);
-      #endif
-      void* ptr=pmm->alloc(size);
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      allocated[num++]=ptr;
+      printf("Round %d for CPU#%d\n",i,_cpu());
+      int rand_seed=rand()%5;
+      if(rand_seed!=0)//kalloc
+      {
+        int size=rand()%(4096*4)+2048;
+        if(size==0) continue;
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Allocating size %d\n",size);
+        sp_unlock(&print_lock);
+        #endif
+        void* ptr=pmm->alloc(size);
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Allocated block of size %d at [%p,%p) for CPU#%d\n",size,ptr,ptr+size,_cpu());
+        sp_unlock(&print_lock);
+        #endif
+        allocated[num++]=ptr;
+      }
+      else//kfree
+      {
+        if(num==0) continue;
+        int r=rand()%num;
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
+        sp_unlock(&print_lock);
+        #endif
+        pmm->free(allocated[r]);      
+        #ifdef _DEBUG
+        sp_lock(&print_lock);
+        printf("Successfully freed\n");
+        sp_unlock(&print_lock);
+        #endif
+      }
+      printf("Finishing Round %d for CPU#%d\n",i,_cpu());
     }
-    else//kfree
-    {
-      if(num==0) continue;
-      int r=rand()%num;
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Trying to free %p for CPU#%d\n",allocated[r],_cpu());
-      sp_unlock(&print_lock);
-      #endif
-      pmm->free(allocated[r]);      
-      #ifdef _DEBUG
-      sp_lock(&print_lock);
-      printf("Successfully freed\n");
-      sp_unlock(&print_lock);
-      #endif
-    }
-    printf("Finishing Round %d for CPU#%d\n",i,_cpu());
-  }
-}*/
+  }*/
+
 
 
 
@@ -480,13 +481,17 @@ static void kmt_init()
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
 //_Area{*start,*end;},start低地址,end高地址,也即栈顶
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
+  sp_lock(&thread_ctrl_lock);
   all_thread[thread_num++]=task;
   active_thread[active_num++]=task;
+  
   strcpy(task->name,name);
   task->status=T_RUNNING;
   task->stack=pmm->alloc(STACK_SIZE);
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
+  printf("task %s at %p\n",task->name,(intptr_t)task);
+  sp_unlock(&thread_ctrl_lock);
   return 0;
 }
 
