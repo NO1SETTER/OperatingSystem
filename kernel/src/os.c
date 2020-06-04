@@ -416,7 +416,6 @@ void activate(task_t* t,sem_t* sem)//wait->running
 {
   
   sp_lock(&thread_ctrl_lock);
-  t->next=NULL;
   printf("%s trying activated from %s for CPU#%d\n",t->name,sem->name,_cpu());
   printf("t at %p\n",(intptr_t)t);
   int pos=-1;
@@ -534,15 +533,18 @@ static void sem_wait(sem_t *sem)
   printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
-    printf("current %s\n",current->name);
+    printf("current1 %s\n",current->name);
     await(current,sem);
-    printf("current %s\n",current->name);
+    printf("current2 %s\n",current->name);
     if(sem->waiter==NULL)
+    {      printf("current3 %s\n",current->name);
       sem->waiter=current;
+      current->next=NULL;}
     else
     {
-    current->next=sem->waiter->next;
-    sem->waiter->next=current;}
+          printf("current4 %s\n",current->name);
+    current->next=(sem->waiter)->next;
+    (sem->waiter)->next=current;}
     kmt->spin_unlock(&sem->lock);
   
     sp_lock(&print_lock);
@@ -557,7 +559,7 @@ static void sem_wait(sem_t *sem)
     sp_unlock(&print_lock);
     _yield();
     return;
-    }
+  }
  kmt->spin_unlock(&sem->lock);
 _yield();
 }
@@ -571,6 +573,7 @@ static void sem_signal(sem_t *sem)
     {
       task_t *nptr = sem->waiter;
       sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
+      nptr->next=NULL;
       activate(nptr,sem);//这一部分是弄到active_thread中去
 
     sp_lock(&print_lock);
