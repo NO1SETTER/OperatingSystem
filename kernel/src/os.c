@@ -515,7 +515,7 @@ static void sem_wait(sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
   sem->val--;
-  //printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
+  printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
     await(current,sem);
