@@ -51,6 +51,7 @@ extern spinlock_t print_lock;
     while(1)
     {
       P(&empty);
+      printf("(");
       /*sp_lock(&print_lock);
       printf("( at CPU#%d\n",_cpu());
       sp_unlock(&print_lock);*/
@@ -63,6 +64,7 @@ extern spinlock_t print_lock;
     while(1)
     {
       P(&fill);
+      printf(")");
       /*sp_lock(&print_lock);
       printf(") at CPU#%d\n",_cpu());
       sp_unlock(&print_lock);*/
