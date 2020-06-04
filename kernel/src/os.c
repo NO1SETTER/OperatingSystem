@@ -538,17 +538,18 @@ static void sem_wait(sem_t *sem)
   if(sem->val<0) 
   {
     printf("current at %p current1 %s\n",current,current->name);
-    await(current,sem);
+    task_t * rec_cur=current;
+    await(rec_cur,sem);
     printf("current at %p current2 %s\n",current,current->name);
     if(sem->waiter==NULL)
     {      printf("current at %p current3 %s\n",current,current->name);
-      sem->waiter=current;
-      current->next=NULL;}
+      sem->waiter=rec_cur;
+      rec_cur->next=NULL;}
     else
     {
           printf("current at %p current4 %s\n",current,current->name);
-    current->next=(sem->waiter)->next;
-    (sem->waiter)->next=current;}
+    rec_cur->next=(sem->waiter)->next;
+    (sem->waiter)->next=rec_cur;}
     kmt->spin_unlock(&sem->lock);
   
     sp_lock(&print_lock);
