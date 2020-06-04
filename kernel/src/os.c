@@ -436,6 +436,8 @@ void activate(task_t* t,sem_t* sem)//wait->running
   active_thread[active_num++]=t;
   t->status=T_RUNNING;
   printf("%s is activated from %s\n",t->name,sem->name);
+  for(int i=0;i<wait_num;i++)
+    printf("wait_thread[%d]:%s at %p\n",i,wait_thread[i]->name,(intptr_t)wait_thread[i]);
   sp_unlock(&thread_ctrl_lock);
 }
 
@@ -461,6 +463,9 @@ void await(task_t* t,sem_t* sem)//running->wait
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
   printf("%s is awaited from %s\n",t->name,sem->name);
+
+  for(int i=0;i<active_num;i++)
+      printf("active_thread[%d]:%s at %p\n",i,active_thread[i]->name,(intptr_t)active_thread[i]);
   sp_unlock(&thread_ctrl_lock);
 }
 
