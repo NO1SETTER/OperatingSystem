@@ -1,6 +1,6 @@
 #include <common.h>
 //#define _DEBUG
-//#define DEBUG_LOCAL
+#define DEBUG_LOCAL
 #define STACK_SIZE 4096
 //sem管理部分
 #define P kmt->sem_wait
