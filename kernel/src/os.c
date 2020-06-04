@@ -446,6 +446,7 @@ void await(task_t* t,sem_t* sem)//running->wait
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
+    printf("wait_thread[%d]:%s at %p\n",i,wait_thread[i]->name,(intptr_t)wait_thread[i]);
     if (active_thread[i]==t) {
       pos = i;
       break;}
@@ -563,13 +564,13 @@ static void sem_signal(sem_t *sem)
 
     sp_lock(&print_lock);
     task_t* ptr=sem->waiter;
-    printf("\n%s waiter:%p for CPU#%d:",sem->name,(intptr_t)ptr,_cpu());
+    printf("%s waiter:%p for CPU#%d:",sem->name,(intptr_t)ptr,_cpu());
     while(ptr)
     {
       printf("%s:%p ",ptr->name,(intptr_t)ptr);
       ptr=ptr->next;
     } 
-    printf("\n");
+    printf("\n\n");
     sp_unlock(&print_lock);
   }
   kmt->spin_unlock(&sem->lock);
