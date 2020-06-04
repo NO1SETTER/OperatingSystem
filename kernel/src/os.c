@@ -432,7 +432,11 @@ void activate(task_t* t,sem_t* sem)//wait->running
       pos = i;
     }
   }
-  assert(pos!=-1);
+  if(pos==-1)
+  {
+      sp_unlock(&print_lock);
+  sp_unlock(&thread_ctrl_lock);
+    return;}
   for(int i=pos;i<wait_num-1;i++)
   wait_thread[i]=wait_thread[i+1];
 
@@ -461,7 +465,12 @@ void await(task_t* t,sem_t* sem)//running->wait
       pos = i;
      }
   }
-  assert(pos!=-1);
+  if(pos==-1)
+  {
+      sp_unlock(&print_lock);
+  sp_unlock(&thread_ctrl_lock);
+  return; 
+  }
   for(int i=pos;i<active_num-1;i++)
   active_thread[i]=active_thread[i+1];
 
