@@ -414,12 +414,14 @@ MODULE_DEF(os) = {
 
 void activate(task_t* t,sem_t* sem)//wait->running
 {
+  printf("t at %p\n",(intptr_t)t);
   sp_lock(&thread_ctrl_lock);
   t->next=NULL;
   printf("%s trying activated from %s for CPU#%d\n",t->name,sem->name,_cpu());
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
+    printf("wait_thread[%d] at %p\n",i,(intptr_t)wait_thread[i]);
     if (wait_thread[i]==t) {
       pos = i;
       break;}
