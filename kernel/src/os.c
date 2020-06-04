@@ -24,8 +24,8 @@ int thread_num=0;
 int active_num=0;
 int wait_num=0;
 task_t *current=NULL;//当前task
-void activate(task_t* t);
-void await(task_t *t);
+void activate(task_t* t,sem_t* sem);
+void await(task_t *t,sem_t* sem);
 void kill(task_t *t);
 //中断处理程序
 struct EVENT{
@@ -409,11 +409,11 @@ MODULE_DEF(os) = {
   .on_irq = on_irq,
 };
 
-void activate(task_t* t)//wait->running
+void activate(task_t* t,sem_t* sem)//wait->running
 {
   sp_lock(&thread_ctrl_lock);
   t->next=NULL;
-  printf("%s trying activated for CPU#%d\n",t->name,_cpu());
+  printf("%s trying activated from %s for CPU#%d\n",t->name,sem->name,_cpu());
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
@@ -428,14 +428,14 @@ void activate(task_t* t)//wait->running
   wait_num=wait_num-1;
   active_thread[active_num++]=t;
   t->status=T_RUNNING;
-  printf("%s is activated\n",t->name);
+  printf("%s is activated from %s\n",t->name,sem->name);
   sp_unlock(&thread_ctrl_lock);
 }
 
-void await(task_t* t)//running->wait
+void await(task_t* t,sem_t* sem)//running->wait
 {
   sp_lock(&thread_ctrl_lock);
-  printf("try setting %s waiting for CPU#%d\n",t->name,_cpu());
+  printf("%s trying activated from %s for CPU#%d\n",t->name,sem->name,_cpu());
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
@@ -450,7 +450,7 @@ void await(task_t* t)//running->wait
   active_num=active_num-1;
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
-  printf("%s is waiting\n",t->name);
+  printf("%s is activated from %s\n",t->name,sem->name);
   sp_unlock(&thread_ctrl_lock);
 }
 
@@ -514,7 +514,7 @@ static void sem_wait(sem_t *sem)
   if(sem->val<0) 
   {
     kmt->spin_unlock(&sem->lock);
-    await(current);
+    await(current,sem);
     if(sem->waiter==NULL)
     sem->waiter=current;
     else
@@ -522,7 +522,7 @@ static void sem_wait(sem_t *sem)
     current->next=sem->waiter->next;
     sem->waiter->next=current;}
 
-  sp_lock(&print_lock);
+    sp_lock(&print_lock);
     task_t* ptr=sem->waiter;
     printf("%s waiter for CPU#%d:",sem->name,_cpu());
     while(ptr)
@@ -548,7 +548,7 @@ static void sem_signal(sem_t *sem)
     {
       task_t *nptr = sem->waiter;
       sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
-      activate(nptr);//这一部分是弄到active_thread中去
+      activate(nptr,sem);//这一部分是弄到active_thread中去
 
     sp_lock(&print_lock);
     task_t* ptr=sem->waiter;

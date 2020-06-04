@@ -53,7 +53,10 @@ void sp_lockinit( spinlock_t* lk,const char *name);
 void sp_lock(spinlock_t* lk);
 void sp_unlock(spinlock_t *lk);
 
-typedef struct task
+typedef struct task task_t;
+typedef struct sem sem_t;
+
+struct task
 {
   struct
   {
@@ -63,7 +66,7 @@ typedef struct task
     _Context *ctx;//貌似只要保证它指向栈顶就ok了，上面的可以不管分配在哪里
   };
   uint8_t *stack;
-}task_t;//管理一个线程的信息
+};//管理一个线程的信息
 
 task_t* all_thread[10005];
 task_t* active_thread[10005];
@@ -75,19 +78,17 @@ extern int wait_num;
 extern  task_t *current;//当前task
 
 extern spinlock_t thread_ctrl_lock;//管理控制这三个链表的锁
-void activate( task_t* t);
-void await( task_t *t);
+void activate( task_t* t,sem_t* sem);
+void await( task_t *t,sem_t* sem);
 void kill( task_t *t);
 
-
-
-typedef struct sem
+struct sem
 {
 spinlock_t lock;
 const char *name;
 int val;
 task_t* waiter;
-}sem_t;
+};
 
 extern sem_t empty;
 extern sem_t fill;
