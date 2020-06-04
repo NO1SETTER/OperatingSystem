@@ -319,7 +319,10 @@ static void os_run() {
 
 void sp_lock(spinlock_t* lk)
 {
-  while(_atomic_xchg(&lk->locked,1));
+  while(_atomic_xchg(&lk->locked,1))
+  {
+    printf("lock\n");
+  }
   _intr_write(0);
 }
 void sp_unlock(spinlock_t *lk)
