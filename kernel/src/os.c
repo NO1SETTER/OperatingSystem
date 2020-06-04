@@ -414,10 +414,11 @@ MODULE_DEF(os) = {
 
 void activate(task_t* t,sem_t* sem)//wait->running
 {
-  printf("t at %p\n",(intptr_t)t);
+  
   sp_lock(&thread_ctrl_lock);
   t->next=NULL;
   printf("%s trying activated from %s for CPU#%d\n",t->name,sem->name,_cpu());
+  printf("t at %p\n",(intptr_t)t);
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
@@ -441,6 +442,7 @@ void await(task_t* t,sem_t* sem)//running->wait
 {
   sp_lock(&thread_ctrl_lock);
   printf("%s trying awaited from %s for CPU#%d\n",t->name,sem->name,_cpu());
+  printf("t at %p\n",(intptr_t)t);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
