@@ -421,7 +421,7 @@ void activate(task_t* t,sem_t* sem)//wait->running
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
-    printf("wait_thread[%d] at %p\n",i,(intptr_t)wait_thread[i]);
+    printf("wait_thread[%d]:%s at %p\n",i,wait_thread[i]->name,(intptr_t)wait_thread[i]);
     if (wait_thread[i]==t) {
       pos = i;
       break;}
