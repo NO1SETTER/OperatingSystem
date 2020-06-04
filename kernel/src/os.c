@@ -336,7 +336,7 @@ _Context* schedule(_Event ev,_Context* c)
 {
 
 
-  printf("\nSCHEDULING\n\n");
+//printf("\nSCHEDULING\n\n");
   if(current==NULL)
   {
     current=active_thread[0];
@@ -352,7 +352,7 @@ _Context* schedule(_Event ev,_Context* c)
 
 _Context* cyield(_Event ev,_Context* c)
 {
-printf("\nYIELD\n\n");
+//printf("\nYIELD\n\n");
 _yield();
 return NULL;
 }
@@ -537,16 +537,16 @@ static void sem_wait(sem_t *sem)
   printf(" sem_wait:%s val=%d\n",sem->name,sem->val);
   if(sem->val<0) 
   {
-    printf("current1 %s\n",current->name);
+    printf("current at %p current1 %s\n",current,current->name);
     await(current,sem);
-    printf("current2 %s\n",current->name);
+    printf("current at %p current2 %s\n",current,current->name);
     if(sem->waiter==NULL)
-    {      printf("current3 %s\n",current->name);
+    {      printf("current at %p current3 %s\n",current,current->name);
       sem->waiter=current;
       current->next=NULL;}
     else
     {
-          printf("current4 %s\n",current->name);
+          printf("current at %p current4 %s\n",current,current->name);
     current->next=(sem->waiter)->next;
     (sem->waiter)->next=current;}
     kmt->spin_unlock(&sem->lock);
