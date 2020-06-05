@@ -146,6 +146,11 @@ return atoi(tokens[s].str);
 else if(tokens[s].type==TK_FUNC)
 return getfuncret(tokens[s].str);
 }
+if(s==e-2)//识别负数
+{
+  if(token[s].type==TK_MI)
+  return -calculate(s+1,e,valid);
+}
 
 
 if(tokens[s].type==TK_LB&&tokens[e-1].type==TK_RB)
@@ -179,7 +184,13 @@ for(int i=s;i<e;i++)//找到主操作数
       case TK_AND:nowval=bra+1;break;
       case TK_BITOR:nowval=bra+2;break;
       case TK_BITAND:nowval=bra+3;break;
-      case TK_ADD:case TK_MI:nowval=bra+4;break;
+      case TK_ADD:nowval=bra+4;break;
+      case TK_MI:if(i==s) continue;//开头即为负号
+      int mtype=tokens[i-1].type;
+      if(mtype==TK_ADD||mtype==TK_MI||mtype==TK_MUL||mtype==TK_DI||mtype==TK_LB
+      ||mtype==TK_NOTYPE||mtype==TK_OR||mtype==TK_AND||mtype==TK_BITOR
+      ||mtype==TK_BITAND) continue;//都说明是负号
+      nowval=bra+4;break;
       case TK_MUL:case TK_DI:nowval=bra+5;break;
       default:continue;
     }
