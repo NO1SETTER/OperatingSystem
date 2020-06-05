@@ -272,7 +272,7 @@ int getfuncret(char *s)//s[l,e)
     if(cpid!=0)
     {
         void *func_handler;
-        while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
+        while((func_handler=dlopen(name_so,RTLD_NOW|RTLD_GLOBAL))==NULL);//保证编译完才加载
         int (*func_addr)();
         while((func_addr=(int(*)())dlsym(func_handler,name_func))==NULL);//确保函数加载完成
         return (int)(*func_addr)();
@@ -373,7 +373,7 @@ void recursive_handle()
       if(cpid!=0)//这一部分完成加载，保存
       {
         void *func_handler;
-        while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
+        while((func_handler=dlopen(name_so,RTLD_NOW|RTLD_GLOBAL))==NULL);//保证编译完才加载
         void *func_addr;
         while((func_addr=dlsym(func_handler,name))==NULL);//确保函数加载完成
         dlclose(func_handler);
