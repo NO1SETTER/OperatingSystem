@@ -209,20 +209,15 @@ switch (tokens[pivot].type)
  case TK_DI:
     temp=calculate(pivot+1,e,valid);
     if(temp==0)
-      {printf("Invalid expression: 0 can't be the divisor!\n");
-      *valid=0;
-      return 0;
+      {*valid=0;
+       break;
       }
     return calculate(s,pivot,valid)/temp;
  case TK_OR:return calculate(s,pivot,valid)||calculate(pivot+1,e,valid);
  case TK_AND:return calculate(s,pivot,valid)&&calculate(pivot+1,e,valid);
  case TK_BITOR:return calculate(s,pivot,valid)|calculate(pivot+1,e,valid);
  case TK_BITAND:return calculate(s,pivot,valid)&calculate(pivot+1,e,valid);
-
-default: {
-   printf("Invalid expression: Not conforming to BNF paradigm\n");  
-   *valid=0;
-    return 0;}
+ default: *valid=0;break;
 }
 
 }
