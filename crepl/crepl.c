@@ -51,7 +51,7 @@ static struct rule {
   {"/",  TK_DI},        // divide
   {"\\(",TK_LB},        // left bracket
   {"\\)", TK_RB},       // right bracket   
-  {"-+[0-9]+",TK_NUM},    // number
+  {"[-]?[0-9]+",TK_NUM},    // number
   {"&&",TK_AND},         // and
   {"\\|\\|",TK_OR},          // or
   {"&",TK_BITAND},       // bitand
