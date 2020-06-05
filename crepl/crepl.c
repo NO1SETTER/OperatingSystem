@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -226,7 +225,7 @@ int getfuncret(char *s)//s[l,e)
     char name_c[256];
     char name_so[256];
     char name_func[256];
-    /*
+    
     char name[256];
     for(int i=0,pos=0;i<strlen(s);i++)
     {
@@ -257,9 +256,9 @@ int getfuncret(char *s)//s[l,e)
       exec_argv[15]=name_so;
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
-    }*/
+    }
 
-    sprintf(name_c,"/tmp/expr_wrapper%d.c",wrapper_num);
+    /*sprintf(name_c,"/tmp/expr_wrapper%d.c",wrapper_num);
     sprintf(name_so,"/tmp/expr_wrapper%d.so",wrapper_num);
     sprintf(name_func,"expr_wrapper%d",wrapper_num);
     FILE* fptr=fopen(name_c,"w+");
@@ -283,7 +282,7 @@ int getfuncret(char *s)//s[l,e)
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
     }
-    return 0;
+    return 0;*/
 }
 
 void clean()
