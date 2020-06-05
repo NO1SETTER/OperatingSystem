@@ -376,7 +376,6 @@ void recursive_handle()
         while((func_handler=dlopen(name_so,RTLD_NOW|RTLD_GLOBAL|RTLD_NODELETE))==NULL);//保证编译完才加载
         void *func_addr;
         while((func_addr=dlsym(func_handler,name))==NULL);//确保函数加载完成
-        dlclose(func_handler);
         strcpy(func[func_num].name,name);
         func[func_num].addr=func_addr;
         func_num=func_num+1;
