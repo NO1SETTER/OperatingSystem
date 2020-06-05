@@ -106,6 +106,7 @@ static int make_token(char *e) {
   while (e[position] != '\0') {
     for (i = 0; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch,0) == 0 && pmatch.rm_so == 0) {
+        printf("rule[%d] matched\n",i);
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
         position += substr_len;
