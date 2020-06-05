@@ -227,7 +227,7 @@ int getfuncret(char *s)//s[l,e)
     char name_so[256];
     char name_func[256];
     
-    /*
+    
     char name[256];
     for(int i=0,pos=0;i<strlen(s);i++)
     {
@@ -246,7 +246,7 @@ int getfuncret(char *s)//s[l,e)
     if(cpid!=0)
     {
         void *func_handler;
-        while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
+        while((func_handler=dlopen(name_so,RTLD_NOW|RTLD_GLOBAL))==NULL);//保证编译完才加载
         int (*func_addr)();
         while((func_addr=(int(*)())dlsym(func_handler,name_func))==NULL)//确保函数加载完成
         {fprintf(stderr,"%s\n",dlerror());}
@@ -256,10 +256,14 @@ int getfuncret(char *s)//s[l,e)
     {
       exec_argv[13]=name_c;
       exec_argv[15]=name_so;
+      void* func_handler;
+      while((func_handler=dlopen(name_so,RTLD_LAZY))==NULL);
+      dlclose(func_handler);
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
     }
-    */
+    
+    /*
     sprintf(name_c,"/tmp/expr_wrapper%d.c",wrapper_num);
     sprintf(name_so,"/tmp/expr_wrapper%d.so",wrapper_num);
     sprintf(name_func,"expr_wrapper%d",wrapper_num);
@@ -283,7 +287,7 @@ int getfuncret(char *s)//s[l,e)
       exec_argv[15]=name_so;
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
-    }
+    }*/
     return 0;
 }
 
