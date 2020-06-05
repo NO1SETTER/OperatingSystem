@@ -26,9 +26,9 @@ int func_num=0;
 int wrapper_num=0;
 
 #if __x86_64__
-char * exec_argv[100]={"gcc","-fPIC","-shared","-m64",NULL,"-o",NULL,NULL};
+char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-w",NULL,"-o",NULL,NULL};
 #else
-char * exec_argv[100]={"gcc","-fPIC","-shared","-m32",NULL,"-o",NULL,NULL};
+char * exec_argv[100]={"gcc","-fPIC","-shared","-m32","-2",NULL,"-o",NULL,NULL};
 #endif
 
 void recursive_handle();
@@ -223,39 +223,6 @@ int getfuncret(char *s)//s[l,e)
     char name_so[256];
     char name_func[256];
     
-    /*
-    char name[256];
-    for(int i=0,pos=0;i<strlen(s);i++)
-    {
-      if(s[i]==' ') continue;
-      if(s[i]=='(') break;
-      name[pos++]=s[i];
-    }
-
-    sprintf(name_c,"/tmp/%s.c",name);
-    sprintf(name_so,"/tmp/%s.so",name);
-    sprintf(name_func,"expr_wrapper%d",wrapper_num);
-    FILE *fptr=fopen(name_c,"a+");
-    fprintf(fptr,"int expr_wrapper%d(){ return %s;}\n",wrapper_num,s);  
-    fclose(fptr);
-    int cpid=fork();
-    if(cpid!=0)
-    {
-        void *func_handler;
-        while((func_handler=dlopen(name_so,RTLD_LAZY|RTLD_GLOBAL))==NULL);//保证编译完才加载
-        int (*func_addr)();
-        while((func_addr=(int(*)())dlsym(func_handler,name_func))==NULL)//确保函数加载完成
-        {fprintf(stderr,"%s\n",dlerror());}
-        return (int)(*func_addr)();
-    }
-    else
-    {
-      exec_argv[13]=name_c;
-      exec_argv[15]=name_so;
-      execve(gcc_path,exec_argv,environ);
-      perror("after gcc");
-    }
-    */
     sprintf(name_c,"/tmp/expr_wrapper%d.c",wrapper_num);
     sprintf(name_so,"/tmp/expr_wrapper%d.so",wrapper_num);
     sprintf(name_func,"expr_wrapper%d",wrapper_num);
@@ -275,8 +242,8 @@ int getfuncret(char *s)//s[l,e)
     }
     if(cpid==0)
     {
-      exec_argv[4]=name_c;
-      exec_argv[6]=name_so;
+      exec_argv[5]=name_c;
+      exec_argv[7]=name_so;
       execve(gcc_path,exec_argv,environ);
       perror("after gcc");
     }
@@ -363,8 +330,8 @@ void recursive_handle()
 
     if(line[0]=='i'&&line[1]=='n'&&line[2]=='t')//definition
     {  
-       exec_argv[4]=name_c;
-       exec_argv[6]=name_so;
+       exec_argv[5]=name_c;
+       exec_argv[7]=name_so;
       int cpid=fork();
       if(cpid!=0)//这一部分完成加载，保存
       {
