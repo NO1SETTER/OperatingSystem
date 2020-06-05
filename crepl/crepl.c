@@ -394,7 +394,6 @@ void recursive_handle()
   }
     else//calculate
     {
-      while(1);
       int valid=1;
       if(!make_token(line))
       valid=0;
