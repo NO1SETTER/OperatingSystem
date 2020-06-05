@@ -233,6 +233,7 @@ int getfuncret(char *s)//s[l,e)
       if(s[i]=='(') break;
       name[pos++]=s[i];
     }
+    assert(0);
 
     sprintf(name_c,"/tmp/%s.c",name);
     sprintf(name_so,"/tmp/%s.so",name);
