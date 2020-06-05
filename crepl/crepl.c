@@ -138,7 +138,6 @@ return 1;
 
 int  calculate(int s,int e,int *valid)//[s,e)左闭右开
 {
-printf("haha\n");
 if(s==e-1) 
 {if(tokens[s].type==TK_NUM)
 return atoi(tokens[s].str);
@@ -218,7 +217,7 @@ default: {
 
 int getfuncret(char *s)//s[l,e)
 { 
-    printf("calculating function %s\n",s);
+    //printf("calculating function %s\n",s);
     char name_c[256];
     char name_so[256];
     char name_func[256];
