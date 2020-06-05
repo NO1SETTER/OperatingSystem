@@ -258,6 +258,7 @@ int getfuncret(char *s)//s[l,e)
       perror("after gcc");
     }
 
+    return 0;
     /*sprintf(name_c,"/tmp/expr_wrapper%d.c",wrapper_num);
     sprintf(name_so,"/tmp/expr_wrapper%d.so",wrapper_num);
     sprintf(name_func,"expr_wrapper%d",wrapper_num);
