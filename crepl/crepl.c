@@ -142,7 +142,7 @@ return 1;
 
 int  calculate(int s,int e,int *valid)//[s,e)左闭右开
 {
-  assert(0);
+printf("haha\n");
 if(s==e-1) 
 {if(tokens[s].type==TK_NUM)
 return atoi(tokens[s].str);
