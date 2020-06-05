@@ -148,7 +148,7 @@ return getfuncret(tokens[s].str);
 }
 if(s==e-2)//识别负数
 {
-  if(token[s].type==TK_MI)
+  if(tokens[s].type==TK_MI)
   return -calculate(s+1,e,valid);
 }
 
