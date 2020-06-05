@@ -220,6 +220,7 @@ switch (tokens[pivot].type)
  default: *valid=0;break;
 }
 
+return 0;
 }
 
 int getfuncret(char *s)//s[l,e)
