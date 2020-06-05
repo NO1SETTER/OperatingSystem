@@ -142,6 +142,7 @@ return 1;
 
 int  calculate(int s,int e,int *valid)//[s,e)左闭右开
 {
+  assert(0);
 if(s==e-1) 
 {if(tokens[s].type==TK_NUM)
 return atoi(tokens[s].str);
@@ -233,7 +234,6 @@ int getfuncret(char *s)//s[l,e)
       if(s[i]=='(') break;
       name[pos++]=s[i];
     }
-    assert(0);
 
     sprintf(name_c,"/tmp/%s.c",name);
     sprintf(name_so,"/tmp/%s.so",name);
