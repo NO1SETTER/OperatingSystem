@@ -120,6 +120,7 @@ static int make_token(char *e) {
            memset(tokens[nr_token].str,'\0',sizeof(tokens[nr_token].str));
            strncpy(tokens[nr_token].str,substr_start,substr_len);
            nr_token++; 
+           printf("%s\n",tokens[nr_token].str);
            break;
          case TK_NOTYPE:{break;} 
          default: assert(0);
