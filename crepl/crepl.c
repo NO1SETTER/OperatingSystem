@@ -129,7 +129,7 @@ static int make_token(char *e) {
       }
     }
     if (i == NR_REGEX) {
-      printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
+      //printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
       return 0;
 }
 }
@@ -368,11 +368,7 @@ void recursive_handle()
     else//calculate
     {
       int valid=1;
-      if(!make_token(line))
-      valid=0;
-      /*printf("NR_TOKEN=%d\n",nr_token);
-      for(int i=0;i<nr_token;i++)
-      printf("%d\n",(int)tokens[i].type);*/
+      if(!make_token(line)) valid=0;//只会有无法匹配，除零两种错误
       int ans;
       if(valid)
         ans=calculate(0,nr_token,&valid);
