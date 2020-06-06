@@ -543,6 +543,7 @@ static void sem_wait(sem_t *sem)
     task_t * rec_cur=current;
     printf("current:%s\n",rec_cur->name);
     await(rec_cur,sem);
+     print_active();
     if(sem->waiter==NULL)
     {    
       sem->waiter=rec_cur;
@@ -556,8 +557,8 @@ static void sem_wait(sem_t *sem)
       {
         rec_cur->next=(sem->waiter)->next;
         (sem->waiter)->next=rec_cur;}
-      }
-      print_active();
+    }
+     
       kmt->spin_unlock(&sem->lock);
       _yield();
       return;
