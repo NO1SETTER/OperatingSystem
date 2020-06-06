@@ -9,8 +9,8 @@ enum t_status {
   T_WAITING, // 在 co_wait 上等待
   T_DEAD,    // 已经结束，但还未释放资源
 };
-/*
-static void*kalloc_safe(size_t size)
+
+void*kalloc_safe(size_t size)
 {
     int i = _intr_read();
   _intr_write(0);
@@ -18,14 +18,16 @@ static void*kalloc_safe(size_t size)
   if (i) _intr_write(1);
   return ret;
 }
-static void kfree_safe(void *ptr)
+
+void kfree_safe(void *ptr)
 {
     int i = _intr_read();
   _intr_write(0);
   pmm->free(ptr);
   if (i) _intr_write(1);
 }
-*/
+
+
 
 struct spinlock 
 {
@@ -51,9 +53,9 @@ struct task
   uint8_t *stack;
 };//管理一个线程的信息
 
-task_t* all_thread[805];
-task_t* active_thread[805];
-task_t* wait_thread[805];
+task_t* all_thread[105];
+task_t* active_thread[105];
+task_t* wait_thread[105];
 
 extern int thread_num;
 extern int active_num;

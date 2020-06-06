@@ -8,8 +8,6 @@
 #define BLOCK_AREA_SIZE 0x2000000
 #define SLAB_SIZE 0x800000
 
-
-
 struct block//管理空闲块或非空闲块的数据结构
 {
 uintptr_t start,end;//管理[start,end)
@@ -567,6 +565,7 @@ static void kfree(void *ptr) {
   sp_unlock(&glb_lock);
   return;
 }
+
 
 static void pmm_init() {
   uintptr_t pmsize = ((uintptr_t)_heap.end - (uintptr_t)_heap.start);

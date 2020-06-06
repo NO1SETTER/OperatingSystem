@@ -69,7 +69,7 @@ sem_t fill;
 
 task_t* task_alloc()
 {
-  return (task_t*)pmm->alloc(sizeof(task_t));
+  return (task_t*)kalloc_safe(sizeof(task_t));
 }
 
 
@@ -372,7 +372,7 @@ static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do
 
 static void on_irq (int seq,int event,handler_t handler)//原本是_cte_init中的一部分
 {
-  struct EVENT * NEW_EV=(struct EVENT*)pmm->alloc(sizeof(struct EVENT));
+  struct EVENT * NEW_EV=(struct EVENT*)kalloc_safe(sizeof(struct EVENT));
   NEW_EV->seq=seq;
   NEW_EV->event=event;
   NEW_EV->handler=handler;
@@ -502,7 +502,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   
   strcpy(task->name,name);
   task->status=T_RUNNING;
-  task->stack=pmm->alloc(STACK_SIZE);
+  task->stack=kalloc_safe(STACK_SIZE);
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
   sp_unlock(&thread_ctrl_lock);
@@ -512,7 +512,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
 static void kmt_teardown(task_t *task)
 {
   kill(task);//不会从all_thread中删去
-  pmm->free(task->stack);
+  kfree_safe(task->stack);
 }
 
 
