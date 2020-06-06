@@ -489,7 +489,6 @@ static void kmt_init()
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
 //_Area{*start,*end;},start低地址,end高地址,也即栈顶
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-  sp_lock(&thread_ctrl_lock);
   all_thread[thread_num++]=task;
   active_thread[active_num++]=task;
   
@@ -499,18 +498,13 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   task->stack=kalloc_safe(STACK_SIZE);
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
-  sp_unlock(&thread_ctrl_lock);
-  _intr_write(1);
   return 0;
 }
 
 static void kmt_teardown(task_t *task)
 {
-  sp_lock(&thread_ctrl_lock);
   kill(task);//不会从all_thread中删去
   kfree_safe(task->stack);
-  sp_unlock(&thread_ctrl_lock);
-  _intr_write(1);
 }
 
 
