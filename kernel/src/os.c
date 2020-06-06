@@ -530,6 +530,7 @@ static void sem_init(sem_t *sem, const char *name, int value)
 static void sem_wait(sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
+  sem->val--;
   if(sem->val<0) 
   {
     task_t * rec_cur=current;
