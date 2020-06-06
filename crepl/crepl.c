@@ -28,7 +28,7 @@ int wrapper_num=0;
 #if __x86_64__
 char * exec_argv[100]={"gcc","-fPIC","-shared","-m64","-w",NULL,"-o",NULL,NULL};
 #else
-char * exec_argv[100]={"gcc","-fPIC","-shared","-m32","-2",NULL,"-o",NULL,NULL};
+char * exec_argv[100]={"gcc","-fPIC","-shared","-m32","-w",NULL,"-o",NULL,NULL};
 #endif
 
 void recursive_handle();
