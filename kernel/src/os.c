@@ -545,14 +545,17 @@ static void sem_wait(sem_t *sem)
     await(rec_cur,sem);
      print_active();
     if(sem->waiter==NULL)
-    {    
+    {  
+      printf("NULL\n");
       sem->waiter=rec_cur;
       rec_cur->next=NULL;}
     else
     {
     task_t* rep=sem->waiter;
       int judge=0;
-      while(rep)  {if(rep==rec_cur) judge=1;}
+      while(rep)  {
+        if(rep==rec_cur) judge=1;
+        rep=rep->next;}
       if(!judge)
       {
         rec_cur->next=(sem->waiter)->next;
