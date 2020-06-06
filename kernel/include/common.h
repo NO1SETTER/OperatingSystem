@@ -2,25 +2,12 @@
 #include <klib.h>
 #include <klib-macros.h>
 
+
 enum t_status {
   T_NEW = 1, // 新创建，还未执行过
   T_RUNNING, // 已经执行过
   T_WAITING, // 在 co_wait 上等待
   T_DEAD,    // 已经结束，但还未释放资源
-};
-
-typedef _Context *(*handler_t)(_Event, _Context *);
-MODULE(os) {
-  void (*init)();
-  void (*run)();
-  _Context *(*trap)(_Event ev, _Context *context);
-  void (*on_irq)(int seq, int event, handler_t handler);
-};
-
-MODULE(pmm) {
-  void  (*init)();
-  void *(*alloc)(size_t size);
-  void  (*free)(void *ptr);
 };
 /*
 static void*kalloc_safe(size_t size)
@@ -40,21 +27,17 @@ static void kfree_safe(void *ptr)
 }
 */
 
-typedef struct spinlock 
+struct spinlock 
 {
   const char *name;//锁名
   int lockid;//锁的序号
   intptr_t locked;//锁控制
   int holder;//锁的持有者
-}spinlock_t;
-
+};
 
 void sp_lockinit( spinlock_t* lk,const char *name);
 void sp_lock(spinlock_t* lk);
 void sp_unlock(spinlock_t *lk);
-
-typedef struct task task_t;
-typedef struct sem sem_t;
 
 struct task
 {
@@ -82,7 +65,7 @@ void activate( task_t* t,sem_t* sem);
 void await( task_t *t,sem_t* sem);
 void kill( task_t *t);
 
-struct sem
+struct semaphore
 {
 spinlock_t lock;
 const char *name;
@@ -92,22 +75,9 @@ task_t* waiter;
 
 extern sem_t empty;
 extern sem_t fill;
-
-MODULE(kmt) {
-  void (*init)();
-  int  (*create)(task_t *task, const char *name, void (*entry)(void *arg), void *arg);
-  void (*teardown)(task_t *task);
-  void (*spin_init)(spinlock_t *lk, const char *name);
-  void (*spin_lock)(spinlock_t *lk);
-  void (*spin_unlock)(spinlock_t *lk);
-  void (*sem_init)(sem_t *sem, const char *name, int value);
-  void (*sem_wait)(sem_t *sem);
-  void (*sem_signal)(sem_t *sem);
-};
-
-
+/*
 typedef struct device device_t;
 MODULE(dev) {
   void (*init)();
   device_t *(*lookup)(const char *name);
-};
+};*/
