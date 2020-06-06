@@ -246,7 +246,6 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
 void itoa(char *dest,long long src,int base,int dtype,int up,int prefix,int is_zero_extend,int is_width_limit,int width)
 {
 char temp[50];
-printf("%s\n",dest);
 if(dtype==0)
 {char msrc=(char)src;
 char mbase=(char)base;

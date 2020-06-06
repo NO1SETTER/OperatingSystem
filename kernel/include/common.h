@@ -57,10 +57,6 @@ int val;
 task_t* waiter;
 };
 
-#ifdef DEBUG_LOCAL
-extern sem_t empty;
-extern sem_t fill;
-#endif
 /*
 typedef struct device device_t;
 MODULE(dev) {
