@@ -412,7 +412,6 @@ MODULE_DEF(os) = {
 void activate(task_t* t,sem_t* sem)//wait->running
 {
   sp_lock(&thread_ctrl_lock);
-  sp_lock(&print_lock);
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
@@ -422,7 +421,7 @@ void activate(task_t* t,sem_t* sem)//wait->running
   }
 
   if(pos==-1)
-    {sp_unlock(&print_lock);
+    {
     sp_unlock(&thread_ctrl_lock);
     _intr_write(1);
     return;
@@ -434,7 +433,6 @@ void activate(task_t* t,sem_t* sem)//wait->running
   active_thread[active_num++]=t;
   t->status=T_RUNNING;
 
-  sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
   _intr_write(1);
 }
@@ -442,7 +440,6 @@ void activate(task_t* t,sem_t* sem)//wait->running
 void await(task_t* t,sem_t* sem)//running->wait
 {
   sp_lock(&thread_ctrl_lock);
-  sp_lock(&print_lock);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
@@ -453,7 +450,6 @@ void await(task_t* t,sem_t* sem)//running->wait
 
   if(pos==-1)
     {
-    sp_unlock(&print_lock);
     sp_unlock(&thread_ctrl_lock);
     _intr_write(1);
     return; 
@@ -464,14 +460,13 @@ void await(task_t* t,sem_t* sem)//running->wait
   active_num=active_num-1;
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
-  sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
+  _intr_write(1);
 }
 
 void kill(task_t* t)//running->dead
 {
   sp_lock(&thread_ctrl_lock);
-  sp_unlock(&print_lock);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
@@ -481,14 +476,13 @@ void kill(task_t* t)//running->dead
   }
   if(pos==-1)
   {
-    sp_unlock(&print_lock);
     sp_unlock(&thread_ctrl_lock);
     _intr_write(1);
     return; 
   }
   t->status=T_DEAD;
-  sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
+  _intr_write(1);
 }
 
 static void kmt_init()
@@ -507,6 +501,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   
   strcpy(task->name,name);
   task->status=T_RUNNING;
+  task->ct=0;
   task->stack=kalloc_safe(STACK_SIZE);
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
@@ -541,13 +536,11 @@ static void sem_wait(sem_t *sem)
 {
   sp_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
   sem->val--;
-  printf("%s->val from %d to %d \n",sem->name,sem->val+1,sem->val);
   if(sem->val<0) 
   {
     task_t * rec_cur=current;
-    printf("current:%s\n",rec_cur->name);
     await(rec_cur,sem);
-     print_active();
+     //print_active();
     if(sem->waiter==NULL)
     {  
       sem->waiter=rec_cur;
@@ -566,18 +559,20 @@ static void sem_wait(sem_t *sem)
         (sem->waiter)->next=rec_cur;}
     }
       sp_unlock(&sem->lock);
+      _intr_write(1);
       _yield();
       return;
   }
-  print_active();
+  //print_active();
   sp_unlock(&sem->lock);
+  _intr_write(1);
 }
 
 static void sem_signal(sem_t *sem)
 {
   sp_lock(&sem->lock);
+  _intr_write(0);
   sem->val++;
-  printf("%s->val from %d to %d\n",sem->name,sem->val-1,sem->val);
     if(sem->waiter)
     {
       task_t *nptr = sem->waiter;
@@ -585,8 +580,8 @@ static void sem_signal(sem_t *sem)
       nptr->next=NULL;
       activate(nptr,sem);//这一部分是弄到active_thread中去
     }
-  print_active();
   sp_unlock(&sem->lock);
+  _intr_write(1);
   _yield();
 }
 
