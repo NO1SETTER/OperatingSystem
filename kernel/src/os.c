@@ -561,7 +561,6 @@ static void sem_wait(sem_t *sem)
         rec_cur->next=(sem->waiter)->next;
         (sem->waiter)->next=rec_cur;}
     }
-     
       kmt->spin_unlock(&sem->lock);
       _yield();
       return;
