@@ -519,6 +519,7 @@ static void kmt_teardown(task_t *task)
 
 static void sem_init(sem_t *sem, const char *name, int value)
 {
+  printf("name=%s\n",name);
   char lock_name[128];
   sprintf(lock_name,"%s_lock",name);
   kmt->spin_init(&sem->lock,lock_name);
