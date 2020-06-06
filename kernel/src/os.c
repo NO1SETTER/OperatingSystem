@@ -321,7 +321,7 @@ void sp_unlock(spinlock_t *lk)
 
 void sp_lockinit(spinlock_t* lk,const char *name)
 {
-  sprintf(lk->name,name);
+  strcpy(lk->name,name);
   lk->locked=0;
 }
 
@@ -415,11 +415,10 @@ void activate(task_t* t,sem_t* sem)//wait->running
   }
 
   if(pos==-1)
-    {
-    sp_unlock(&thread_ctrl_lock);
-    _intr_write(1);
-    return;
-    }
+  {sp_unlock(&thread_ctrl_lock);
+  _intr_write(1);
+  return;
+  }
   for(int i=pos;i<wait_num-1;i++)
   wait_thread[i]=wait_thread[i+1];
 
@@ -454,6 +453,7 @@ void await(task_t* t,sem_t* sem)//running->wait
   active_num=active_num-1;
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
+
   sp_unlock(&thread_ctrl_lock);
   _intr_write(1);
 }
@@ -500,13 +500,17 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
   sp_unlock(&thread_ctrl_lock);
+  _intr_write(1);
   return 0;
 }
 
 static void kmt_teardown(task_t *task)
 {
+  sp_lock(&thread_ctrl_lock);
   kill(task);//不会从all_thread中删去
   kfree_safe(task->stack);
+  sp_unlock(&thread_ctrl_lock);
+  _intr_write(1);
 }
 
 
@@ -515,7 +519,7 @@ static void sem_init(sem_t *sem, const char *name, int value)
   char lock_name[128];
   sprintf(lock_name,"%s_lock",name);
   kmt->spin_init(&sem->lock,lock_name);
-  sprintf(sem->name,"%s",name);
+  strcpy(sem->name,name);
   sem->val=value;
   sem->waiter=NULL;
 }
