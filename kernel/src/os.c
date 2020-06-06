@@ -52,7 +52,7 @@ sem_t fill;
     while(1)
     {
       P(&empty);
-      printf("(");
+      fprintf(2,"(");
       V(&fill);
     }
   }
@@ -62,7 +62,7 @@ sem_t fill;
     while(1)
     {
       P(&fill);
-      printf(")");
+      fprintf(2,")");
       V(&empty);
     }
   }
