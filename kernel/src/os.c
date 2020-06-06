@@ -323,7 +323,7 @@ void sp_unlock(spinlock_t *lk)
 
 void sp_lockinit(spinlock_t* lk,const char *name)
 {
-  lk->name=name;
+  sprintf(lk->name,name);
   lk->locked=0;
 }
 

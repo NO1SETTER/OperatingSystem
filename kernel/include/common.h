@@ -12,7 +12,7 @@ enum t_status {
 
 struct spinlock 
 {
-  const char *name;//锁名
+  char name[20];//锁名
   int lockid;//锁的序号
   intptr_t locked;//锁控制
   int holder;//锁的持有者
