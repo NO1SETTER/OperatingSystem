@@ -51,9 +51,9 @@ struct task
   uint8_t *stack;
 };//管理一个线程的信息
 
-task_t* all_thread[10005];
-task_t* active_thread[10005];
-task_t* wait_thread[10005];
+task_t* all_thread[1005];
+task_t* active_thread[1005];
+task_t* wait_thread[1005];
 
 extern int thread_num;
 extern int active_num;
