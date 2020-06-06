@@ -541,6 +541,7 @@ static void sem_wait(sem_t *sem)
   if(sem->val<0) 
   {
     task_t * rec_cur=current;
+    printf("current:%s\n",rec_cur->name);
     await(rec_cur,sem);
     if(sem->waiter==NULL)
     {    
