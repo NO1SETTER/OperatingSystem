@@ -470,8 +470,8 @@ void await(task_t* t,sem_t* sem)//running->wait
 
 void kill(task_t* t)//running->dead
 {
-
   sp_lock(&thread_ctrl_lock);
+  sp_unlock(&print_lock);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
@@ -487,6 +487,7 @@ void kill(task_t* t)//running->dead
     return; 
   }
   t->status=T_DEAD;
+  sp_unlock(&print_lock);
   sp_unlock(&thread_ctrl_lock);
 }
 
@@ -538,7 +539,7 @@ void print_active()
 }
 static void sem_wait(sem_t *sem)
 {
-  kmt->spin_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
+  sp_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
   sem->val--;
   printf("%s->val from %d to %d \n",sem->name,sem->val+1,sem->val);
   if(sem->val<0) 
@@ -564,17 +565,17 @@ static void sem_wait(sem_t *sem)
         rec_cur->next=(sem->waiter)->next;
         (sem->waiter)->next=rec_cur;}
     }
-      kmt->spin_unlock(&sem->lock);
+      sp_unlock(&sem->lock);
       _yield();
       return;
   }
   print_active();
-  kmt->spin_unlock(&sem->lock);
+  sp_unlock(&sem->lock);
 }
 
 static void sem_signal(sem_t *sem)
 {
-  kmt->spin_lock(&sem->lock);
+  sp_lock(&sem->lock);
   sem->val++;
   printf("%s->val from %d to %d\n",sem->name,sem->val-1,sem->val);
     if(sem->waiter)
@@ -585,7 +586,7 @@ static void sem_signal(sem_t *sem)
       activate(nptr,sem);//这一部分是弄到active_thread中去
     }
   print_active();
-  kmt->spin_unlock(&sem->lock);
+  sp_unlock(&sem->lock);
   _yield();
 }
 
