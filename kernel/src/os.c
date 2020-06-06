@@ -1,6 +1,7 @@
 #include <common.h>
 //#define _DEBUG
 #define STACK_SIZE 4096
+#define INT_MAX 2147483647
 #define P kmt->sem_wait
 #define V kmt->sem_signal
 static void sem_init(sem_t *sem, const char *name, int value);
@@ -308,6 +309,7 @@ static void os_run() {
 
 
 
+
 void sp_lock(spinlock_t* lk)
 {
   while(_atomic_xchg(&lk->locked,1));
@@ -327,7 +329,7 @@ void sp_lockinit(spinlock_t* lk,const char *name)
 
 _Context* schedule(_Event ev,_Context* c)
 {
-  if(current==NULL)
+  /*if(current==NULL)
   {
     current=active_thread[0];
   }
@@ -335,6 +337,29 @@ _Context* schedule(_Event ev,_Context* c)
   {
     current->ctx = c;
     current = active_thread[rand()%active_num]; 
+  }
+  assert(current);
+  return current->ctx;*/
+
+  if(current==NULL)
+  {
+    current=active_thread[0];
+  }
+  else
+  {
+    current->ctx = c;
+    int pivot=-1;
+    int val=INT_MAX;
+    for(int i=0;i<active_num;i++)
+    {
+      if(active_thread[i]->ct<val)
+      {
+        val=active_thread[i]->ct;
+        pivot=i;
+      }
+    }
+    assert(pivot>=0&&pivot<active_num);
+    current=active_thread[pivot];
   }
   assert(current);
   return current->ctx;
