@@ -1,12 +1,10 @@
 #include <common.h>
 //#define _DEBUG
-#define DEBUG_LOCAL
+
 #define STACK_SIZE 4096
 //sem管理部分
 #define P kmt->sem_wait
 #define V kmt->sem_signal
-sem_t empty;
-sem_t fill;
 static void sem_init(sem_t *sem, const char *name, int value);
 static void sem_wait(sem_t *sem);
 static void sem_signal(sem_t *sem);
@@ -46,6 +44,8 @@ static void on_irq (int seq,int event,handler_t handler);
 
 extern spinlock_t print_lock;
 #ifdef DEBUG_LOCAL
+sem_t empty;
+sem_t fill;
   void producer(void *arg)
   {
     while(1)

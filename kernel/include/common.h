@@ -1,7 +1,7 @@
 #include <kernel.h>
 #include <klib.h>
 #include <klib-macros.h>
-
+//#define DEBUG_LOCAL
 
 enum t_status {
   T_NEW = 1, // 新创建，还未执行过
@@ -73,8 +73,10 @@ int val;
 task_t* waiter;
 };
 
+#ifdef DEBUG_LOCAL
 extern sem_t empty;
 extern sem_t fill;
+#endif
 /*
 typedef struct device device_t;
 MODULE(dev) {
