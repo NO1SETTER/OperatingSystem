@@ -314,6 +314,7 @@ void sp_lock(spinlock_t* lk)
   {
     printf("%s acquring\n",current->name);
   }
+   printf("%s acquried\n",current->name);
   _intr_write(0);
 }
 void sp_unlock(spinlock_t *lk)
