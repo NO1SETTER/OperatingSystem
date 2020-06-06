@@ -310,10 +310,7 @@ static void os_run() {
 
 void sp_lock(spinlock_t* lk)
 {
-  while(_atomic_xchg(&lk->locked,1))
-  {
-    printf("%s acquring %s\n",current->name,lk->name);
-  }
+  while(_atomic_xchg(&lk->locked,1));
   _intr_write(0);
 }
 void sp_unlock(spinlock_t *lk)
