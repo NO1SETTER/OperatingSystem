@@ -527,6 +527,12 @@ static void sem_init(sem_t *sem, const char *name, int value)
   sem->waiter=NULL;
 }
 
+void print_active()
+{
+  for(int i=0;i<active_num;i++)
+  printf("%s ",active_thread[i]->name);
+  printf("\n");
+}
 static void sem_wait(sem_t *sem)
 {
   kmt->spin_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
@@ -550,10 +556,12 @@ static void sem_wait(sem_t *sem)
         rec_cur->next=(sem->waiter)->next;
         (sem->waiter)->next=rec_cur;}
       }
+      print_active();
       kmt->spin_unlock(&sem->lock);
       _yield();
       return;
   }
+  print_active();
   kmt->spin_unlock(&sem->lock);
 }
 
@@ -568,6 +576,7 @@ static void sem_signal(sem_t *sem)
       nptr->next=NULL;
       activate(nptr,sem);//这一部分是弄到active_thread中去
     }
+  print_active();
   kmt->spin_unlock(&sem->lock);
   _yield();
 }
