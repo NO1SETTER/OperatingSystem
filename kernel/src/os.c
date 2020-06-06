@@ -310,7 +310,10 @@ static void os_run() {
 
 void sp_lock(spinlock_t* lk)
 {
-  while(_atomic_xchg(&lk->locked,1));
+  while(_atomic_xchg(&lk->locked,1))
+  {
+    printf("acquring\n");
+  }
   _intr_write(0);
 }
 void sp_unlock(spinlock_t *lk)
@@ -555,7 +558,7 @@ static void sem_wait(sem_t *sem)
       while(rep)  {
         if(rep==rec_cur) judge=1;
         rep=rep->next;
-              printf("NULL\n");}
+        }
       if(!judge)
       {
         rec_cur->next=(sem->waiter)->next;
