@@ -546,7 +546,6 @@ static void sem_wait(sem_t *sem)
      print_active();
     if(sem->waiter==NULL)
     {  
-      printf("NULL\n");
       sem->waiter=rec_cur;
       rec_cur->next=NULL;}
     else
@@ -555,7 +554,8 @@ static void sem_wait(sem_t *sem)
       int judge=0;
       while(rep)  {
         if(rep==rec_cur) judge=1;
-        rep=rep->next;}
+        rep=rep->next;
+              printf("NULL\n");}
       if(!judge)
       {
         rec_cur->next=(sem->waiter)->next;
