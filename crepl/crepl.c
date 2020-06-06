@@ -200,6 +200,11 @@ for(int i=s;i<e;i++)//找到主操作数
     }
 }
 
+if(bra!=0) 
+{
+  *valid=0;
+  return 0;
+}
 int temp;
 switch (tokens[pivot].type)
 {case TK_ADD:return calculate(s,pivot,valid)+calculate(pivot+1,e,valid);
