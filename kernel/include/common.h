@@ -51,7 +51,7 @@ void kill( task_t *t);
 struct semaphore
 {
 spinlock_t lock;
-const char *name;
+char name[15];
 int val;
 task_t* waiter;
 };
