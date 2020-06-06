@@ -1,8 +1,6 @@
 #include <common.h>
 //#define _DEBUG
-
 #define STACK_SIZE 4096
-//sem管理部分
 #define P kmt->sem_wait
 #define V kmt->sem_signal
 static void sem_init(sem_t *sem, const char *name, int value);
@@ -41,6 +39,9 @@ _Context* cyield(_Event ev,_Context* c);
 static _Context *os_trap(_Event ev,_Context *context);
   //中断注册程序
 static void on_irq (int seq,int event,handler_t handler);
+//安全分配
+void *kalloc_safe(size_t size);
+void kfree_safe(void *ptr);
 
 extern spinlock_t print_lock;
 #ifdef DEBUG_LOCAL
@@ -568,6 +569,24 @@ static void sem_signal(sem_t *sem)
     }
   kmt->spin_unlock(&sem->lock);
   _yield();
+}
+
+
+void*kalloc_safe(size_t size)
+{
+    int i = _intr_read();
+  _intr_write(0);
+  void *ret = pmm->alloc(size);
+  if (i) _intr_write(1);
+  return ret;
+}
+
+void kfree_safe(void *ptr)
+{
+    int i = _intr_read();
+  _intr_write(0);
+  pmm->free(ptr);
+  if (i) _intr_write(1);
 }
 
 MODULE_DEF(kmt) = {
