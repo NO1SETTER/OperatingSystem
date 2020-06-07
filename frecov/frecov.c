@@ -3,7 +3,8 @@
 #include<string.h>
 #include<stdint.h>
 #include<assert.h>
-struct 
+typedef FAT_HEADER fat_header
+struct FAT_HEADER
 {
 uint8_t BS_jmpBoot[3];//跳转到boot code
 uint8_t BS_OEMName[8];//代工厂名字?
@@ -34,7 +35,7 @@ uint8_t BS_VolLab[11];
 uint8_t BS_FilSysType[8];//字符串"FAT32"
 uint8_t padding[420];//补充空位
 uint32_t signature_word:16;//0x55AA
-}fat_header __attribute__((packed)) ;
+}__attribute__((packed)) ;
 
 int main(int argc, char *argv[]) {
     printf("%d\n",(int)sizeof(fat_header));
