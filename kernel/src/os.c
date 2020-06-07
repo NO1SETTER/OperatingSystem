@@ -327,19 +327,10 @@ void sp_lockinit(spinlock_t* lk,const char *name)
   lk->locked=0;
 }
 
+#define RANDOM
 _Context* schedule(_Event ev,_Context* c)
 {
-  /*if(current==NULL)
-  {
-    current=active_thread[0];
-  }
-  else
-  {
-    current->ctx = c;
-    current = active_thread[rand()%active_num]; 
-  }
-  assert(current);
-  return current->ctx;*/
+  #ifdef RANDOM
 
   if(current==NULL)
   {
@@ -363,6 +354,20 @@ _Context* schedule(_Event ev,_Context* c)
   }
   assert(current);
   return current->ctx;
+  #else
+  if(current==NULL)
+  {
+    current=active_thread[0];
+  }
+  else
+  {
+    current->ctx = c;
+    current = active_thread[rand()%active_num]; 
+  }
+  assert(current);
+  return current->ctx;
+  #endif
+
 }
 
 _Context* cyield(_Event ev,_Context* c)
