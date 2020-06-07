@@ -331,30 +331,30 @@ void sp_lockinit(spinlock_t* lk,const char *name)
 _Context* schedule(_Event ev,_Context* c)
 {
   #ifdef NO_STARVATION
-
-  if(current==NULL)
-  {
-    current=active_thread[0];
-  }
-  else//寻找最小线程是不是可以在activate和ｗait的时候进行?
-  {
-    current->ctx = c;
-    current=active_thread[0];
-  }
-  assert(current);
-  return current->ctx;
+      if(current==NULL)
+      {
+        current=active_thread[0];
+      }
+      else//寻找最小ct线程是不是可以在activate和ｗait的时候进行?
+      {
+        current->ctx = c;
+        current=active_thread[0];
+      }
+      current->ct=current->ct+1;
+      assert(current);
+    return current->ctx;
   #else
-  if(current==NULL)
-  {
-    current=active_thread[0];
-  }
-  else
-  {
-    current->ctx = c;
-    current = active_thread[rand()%active_num]; 
-  }
-  assert(current);
-  return current->ctx;
+      if(current==NULL)
+      {
+        current=active_thread[0];
+      }
+      else
+      {
+        current->ctx = c;
+        current = active_thread[rand()%active_num]; 
+      }
+      assert(current);
+      return current->ctx;
   #endif
 
 }
@@ -443,18 +443,18 @@ void activate(task_t* t,sem_t* sem)//wait->running
   wait_num=wait_num-1;
   
   #ifdef NO_STARVATION//NO_STARVATION状态下,调整为按ct升序排列
-  int pivot=0;//插入的位置
-  for(int i=0;i<active_num;i++)
-  {
-    if((active_thread[i]->ct)>=(t->ct)) break;
-    pivot=i;
-  }
-  for(int i=active_num;i>pivot;i++)
-  active_thread[i]=active_thread[i-1];
-  active_thread[pivot]=t;
-  active_num++;
+    int pivot=0;//插入的位置
+    for(int i=0;i<active_num;i++)
+    {
+      pivot=i;
+      if((active_thread[i]->ct)>=(t->ct)) break;
+    }
+    for(int i=active_num;i>pivot;i++)
+    active_thread[i]=active_thread[i-1];
+    active_thread[pivot]=t;
+    active_num++;
   #else
-  active_thread[active_num++]=t;
+    active_thread[active_num++]=t;
   #endif
   
   t->status=T_RUNNING;
