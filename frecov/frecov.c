@@ -37,7 +37,7 @@ uint32_t signature_word:16;
 } __attribute__((packed)) fat_header;
 
 int main(int argc, char *argv[]) {
-    printf("%ld\n",sizeof(fat_header));
+    printf("%d\n",(int)sizeof(fat_header));
 assert(sizeof(fat_header)==512);
 
 }
