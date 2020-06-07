@@ -327,10 +327,10 @@ void sp_lockinit(spinlock_t* lk,const char *name)
   lk->locked=0;
 }
 
-//#define RANDOM
+#define NO_STARVATION
 _Context* schedule(_Event ev,_Context* c)
 {
-  #ifdef RANDOM
+  #ifdef NO_STARVATION
 
   if(current==NULL)
   {
@@ -339,18 +339,7 @@ _Context* schedule(_Event ev,_Context* c)
   else//寻找最小线程是不是可以在activate和ｗait的时候进行?
   {
     current->ctx = c;
-    int pivot=-1;
-    int val=INT_MAX;
-    for(int i=0;i<active_num;i++)
-    {
-      if(active_thread[i]->ct<val)
-      {
-        val=active_thread[i]->ct;
-        pivot=i;
-      }
-    }
-    assert(pivot>=0&&pivot<active_num);
-    current=active_thread[pivot];
+    current=active_thread[0];
   }
   assert(current);
   return current->ctx;
@@ -453,7 +442,7 @@ void activate(task_t* t,sem_t* sem)//wait->running
   wait_thread[i]=wait_thread[i+1];
   wait_num=wait_num-1;
   
-  #ifdef RANDOM//RANDOM状态下,调整为按ct升序排列
+  #ifdef NO_STARVATION//NO_STARVATION状态下,调整为按ct升序排列
   int pivot=0;//插入的位置
   for(int i=0;i<active_num;i++)
   {
