@@ -327,7 +327,7 @@ void sp_lockinit(spinlock_t* lk,const char *name)
   lk->locked=0;
 }
 
-#define NO_STARVATION
+// /#define NO_STARVATION
 _Context* schedule(_Event ev,_Context* c)
 {
   #ifdef NO_STARVATION
