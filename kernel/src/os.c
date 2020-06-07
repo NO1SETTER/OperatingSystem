@@ -327,7 +327,7 @@ void sp_lockinit(spinlock_t* lk,const char *name)
   lk->locked=0;
 }
 
-#define RANDOM
+//#define RANDOM
 _Context* schedule(_Event ev,_Context* c)
 {
   #ifdef RANDOM
