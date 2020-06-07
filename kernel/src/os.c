@@ -53,7 +53,7 @@ sem_t fill;
     while(1)
     {
       P(&empty);
-      printf("(");
+      //printf("(");
       V(&fill);
     }
   }
@@ -63,7 +63,7 @@ sem_t fill;
     while(1)
     {
       P(&fill);
-      printf(")");
+      //printf(")");
       V(&empty);
     }
   }
@@ -341,6 +341,7 @@ _Context* schedule(_Event ev,_Context* c)
         current=active_thread[0];
       }
       current->ct=current->ct+1;
+      printf("task %s on CPU#%d\n",current->name,_cpu());
       assert(current);
     return current->ctx;
   #else
