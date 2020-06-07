@@ -413,7 +413,7 @@ void activate(task_t* t,sem_t* sem)//wait->running
   for(int i=0;i<wait_num;i++)
   {
     if (wait_thread[i]==t) {
-      pos = i;
+      pos = i;break;
     }
   }
 
