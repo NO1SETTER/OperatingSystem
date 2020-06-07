@@ -336,7 +336,7 @@ _Context* schedule(_Event ev,_Context* c)
   {
     current=active_thread[0];
   }
-  else
+  else//寻找最小线程是不是可以在activate和ｗait的时候进行?
   {
     current->ctx = c;
     int pivot=-1;
@@ -451,11 +451,24 @@ void activate(task_t* t,sem_t* sem)//wait->running
   }
   for(int i=pos;i<wait_num-1;i++)
   wait_thread[i]=wait_thread[i+1];
-
   wait_num=wait_num-1;
+  
+  #ifdef RANDOM//RANDOM状态下,调整为按ct升序排列
+  int pivot=0;//插入的位置
+  for(int i=0;i<active_num;i++)
+  {
+    if((active_thread[i]->ct)>=(t->ct)) break;
+    pivot=i;
+  }
+  for(int i=active_num;i>pivot;i++)
+  active_thread[i]=active_thread[i-1];
+  active_thread[pivot]=t;
+  active_num++;
+  #else
   active_thread[active_num++]=t;
+  #endif
+  
   t->status=T_RUNNING;
-
   sp_unlock(&thread_ctrl_lock);
   _intr_write(1);
 }
@@ -480,7 +493,7 @@ void await(task_t* t,sem_t* sem)//running->wait
   for(int i=pos;i<active_num-1;i++)
   active_thread[i]=active_thread[i+1];
 
-  active_num=active_num-1;
+  active_num=active_num-1;//wait_thread不用调整顺序
   wait_thread[wait_num++]=t;
   t->status=T_WAITING;
 
