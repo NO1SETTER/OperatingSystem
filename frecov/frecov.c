@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdint.h>
-
+#include<assert.h>
 typedef struct 
 {
 uint8_t BS_jmpBoot[3];
