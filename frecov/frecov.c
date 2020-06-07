@@ -34,7 +34,7 @@ uint8_t BS_ValLab[11];
 uint8_t BS_FilSysType[8];
 uint8_t padding[420];
 uint32_t signature_word:16;
-}fat_header __attribute__((packed));
+} __attribute__((packed)) fat_header;
 
 int main(int argc, char *argv[]) {
 assert(sizeof(fat_header)==512);
