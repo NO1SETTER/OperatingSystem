@@ -3,8 +3,8 @@
 #include<string.h>
 #include<stdint.h>
 #include<assert.h>
-typedef FAT_HEADER fat_header
-struct FAT_HEADER
+typedef struct FH fat_header;
+struct FH
 {
 uint8_t BS_jmpBoot[3];//跳转到boot code
 uint8_t BS_OEMName[8];//代工厂名字?
