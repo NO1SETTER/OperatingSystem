@@ -52,7 +52,7 @@ uint32_t signature_word:16;//0x55AA
 uint32_t GetDataClusters(struct fat_header header)//得到数据区的cluster数
 {
     uint32_t sectors = header.BPB_TotSec32-header.BPB_RsvdSecCnt-header.BPB_FATSz32*header.BPB_NumFATs;
-    uint32_t clusters = sectors/BPB_SecPerClus;
+    uint32_t clusters = sectors/header.BPB_SecPerClus;
     return clusters;
 }
 
