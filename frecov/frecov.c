@@ -74,11 +74,10 @@ return ret;
 }
 
 int main(int argc, char *argv[]) {
-assert(sizeof(fat_header)==512);
-
+assert(sizeof(struct fat_header)==512);
 char fname[128]="/home/ebata/Downloads/M5=frecov.img";
 int fsize=getsize(fname);
-int fd=open(fname,O_RFONLY);
+int fd=open(fname,O_RDONLY);
 assert(fd>=0);
 void *ret=mmap(NULL,
 fsize,
