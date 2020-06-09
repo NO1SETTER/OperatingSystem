@@ -39,7 +39,7 @@ uint32_t BPB_RootClus;//根目录的第一个cluster号
 uint32_t BPB_FSinfo:16;//????
 uint32_t BPB_BkBootSec:16;//????
 uint8_t  BPB_Reserved[12];//不重要，必须为0
-uint8_t  BS_DrvNum；//不重要
+uint8_t  BS_DrvNum;//不重要
 uint8_t  BS_Reserved1;//不重要,必须为0
 uint8_t  BS_BootSig;//????
 uint32_t BS_VolID;//????
