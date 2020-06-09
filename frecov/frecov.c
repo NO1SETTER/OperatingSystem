@@ -3,6 +3,11 @@
 #include<string.h>
 #include<stdint.h>
 #include<assert.h>
+#include<fcntl.h>
+#include<unistd.h>
+#include"stdafx.h"
+#include<sys/mman.h>
+#include<sys/stat.h>
 /*
 ----------------------------------------------------
 |           |        |           |                 |
@@ -52,13 +57,34 @@ uint32_t GetDataClusters(struct fat_header header)//得到数据区的cluster数
     return clusters;
 }
 
+
 struct fat
 {
     struct fat_header header;
     uint8_t padding[1024];
 };
 
+int getsize(char *fname)
+{
+FILE* fp=fopen(fname,"r");
+assert(fp);
+fseek(fp,0,SEEK_END);
+int ret=ftell(fp);
+rewind(fp);
+return ret;
+}
+
 int main(int argc, char *argv[]) {
 assert(sizeof(fat_header)==512);
 
+char fname[128]="/home/ebata/Downloads/M5=frecov.img";
+int fsize=getsize(fname);
+int fd=open(fname,O_RFONLY);
+assert(fd>=0);
+void *ret=mmap(NULL,
+fsize,
+PROT_READ | PROT_WRITE | PROT_EXEC,
+MAP_PRIVATE,
+fd,0
+);
 }
