@@ -5,7 +5,6 @@
 #include<assert.h>
 #include<fcntl.h>
 #include<unistd.h>
-#include"stdafx.h"
 #include<sys/mman.h>
 #include<sys/stat.h>
 /*
