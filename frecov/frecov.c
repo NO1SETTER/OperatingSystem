@@ -112,16 +112,16 @@ uint32_t retrieve(const void *ptr,int byte)
     switch(byte)
     {
       case 1:
-        return (uint32_t)(*(char *)ptr);
+        return (uint32_t)(*(unsigned char *)ptr);
       case 2:
-        p1=(uint32_t)(*(char *)ptr);
-        p2=(uint32_t)(*(char *)(ptr+1));
+        p1=*(unsigned char *)ptr;
+        p2=*(unsigned char *)(ptr+1);
         return (uint32_t)((p2<<8)|p1);
       case 4:
-        p1=(uint32_t)(*(char *)ptr);
-        p2=(uint32_t)(*(char *)(ptr+1));
-        p3=(*(char *)(ptr+2));
-        p4=(*(char *)(ptr+3));
+        p1=*(unsigned char *)ptr;
+        p2=*(unsigned char *)(ptr+1);
+        p3=*(unsigned char *)(ptr+2);
+        p4=*(unsigned char *)(ptr+3);
         printf("p1=%x p2=%x p3=%x p4=%x\n",p1,p2,p3,p4);
         return (uint32_t)((p4<<24)|(p3<<16)|(p2<<8)|p1);
       default:printf("bytes not aligned\n");assert(0);
