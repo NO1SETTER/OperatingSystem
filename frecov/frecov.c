@@ -74,7 +74,7 @@ assert(fd>=0);
 struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);
 
-printf("fh->SPC=%d\n",fh->BPB_SecPerClus);
+printf("fh->SPC=%d\n",fh->BPB_BytePerSec);
 }
 uint32_t retrieve(const void *ptr,int byte)
 {
