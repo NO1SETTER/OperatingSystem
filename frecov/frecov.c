@@ -7,6 +7,10 @@
 #include<unistd.h>
 #include<sys/mman.h>
 #include<sys/stat.h>
+enum DIR_ARRTIBUTE{ATTR_READ_ONLY=0x1,ATTR_HIDDEN=0x2,ATTR_SYSTEM=0x4,
+ATTR_VOLUME_ID=0x8,ATTR_DIRECTORY=0x10,ATTR_ARCHIVE=0x20,
+ATTR_LONG_NAME=ATTR_READ_ONLY| ATTR_HIDDEN | ATTR_SYSTEM | ATTR_VOLUME_ID};
+enum CLUSTER_TYPE{DIRECTORY_ENTRY,BMP_HEADER,BMP_DATA,UNUSED};
 /*
 ----------------------------------------------------
 |           |        |           |                 |
@@ -69,10 +73,11 @@ uint32_t DIR_FstClusLO:16;
 uint32_t DIR_FileSize;
 }__attribute__((packed));
 
+int ctype[1000000];//记录cluster的type
 int GetSize(char *fname);//得到文件大小
 void SetBasicAttributes(const struct fat_header* header);//计算文件的一些属性
 uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为byte的数据
-
+void ScanCluster(const void* header);
 int main(int argc, char *argv[]) {
 assert(sizeof(struct fat_header)==512);
 assert(sizeof(struct bmp_header)==32);
@@ -86,8 +91,20 @@ assert(fd>=0);
 const struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
+retrieve(fh,4);
 SetBasicAttributes(fh);
 }
+
+void ScanCluster(const void* header)
+{
+  void* datastart=header+DataOffset;
+  for(int i=0;i<DataClusters;i++)
+  {
+
+  }
+}
+
+
 
 uint32_t retrieve(const void *ptr,int byte)
   {
