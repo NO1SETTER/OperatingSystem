@@ -119,5 +119,5 @@ int GetSize(char *fname)
       DataOffset=sectors*header->BPB_BytePerSec;
       printf("Data Region has 0x%x clusters\n",DataClusters);
       printf("Clustersize is 0x%x bytes\n",ClusterSize);
-      printf("Data Region started at 0x%x\n",DataOffset)''
+      printf("Data Region started at 0x%x\n",DataOffset);
   }
