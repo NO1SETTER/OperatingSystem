@@ -120,7 +120,7 @@ uint32_t retrieve(const void *ptr,int byte)
       case 4:
         p1=(uint32_t)(*(char *)ptr);
         p2=(uint32_t)(*(char *)(ptr+1));
-        p3=(uint32_t)(*(char *)(ptr+2));
+        p3=(*(char *)(ptr+2));
         p4=(*(char *)(ptr+3));
         printf("p1=%x p2=%x p3=%x p4=%x\n",p1,p2,p3,p4);
         return (uint32_t)((p4<<24)|(p3<<16)|(p2<<8)|p1);
