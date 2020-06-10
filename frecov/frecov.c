@@ -49,14 +49,25 @@ struct fat_header//考虑FAT32,注意是小端模式！！！！
     uint32_t signature_word:16;//0xaa55
 }__attribute__((packed));
 
-int DataClusters;
-int ClusterSize;
+int DataClusters;//数据区的cluser数
+int ClusterSize;//cluster的大小(byte)
 int DataOffset;//数据区的起始
 
-struct Bmp
+struct bmp_header
 {
-
-};
+uint8_t DIR_Name[11];
+uint8_t DIR_Attr;
+uint8_t DIR_NTRes;
+uint8_t DIR_CrtTimeTenth;
+uint32_t DIR_CrtTime:16;
+uint32_t DIR_CrtDate:16;
+uint32_t DIR_LstAccDate:16;
+uint32_t DIR_FstClusHI:16;
+uint32_t DIR_WrtTime:16;
+uint32_t DIR_WrtDate:16;
+uint32_t DIR_FstClusLO:16;
+uint32_t DIR_FileSize;
+}__attribute__((packed));
 
 int GetSize(char *fname);//得到文件大小
 void SetBasicAttributes(const struct fat_header* header);//计算文件的一些属性
@@ -64,6 +75,7 @@ uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为b
 
 int main(int argc, char *argv[]) {
 assert(sizeof(struct fat_header)==512);
+assert(sizeof(struct bmp_header)==32);
 
 char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=GetSize(fname);
