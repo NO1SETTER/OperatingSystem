@@ -110,7 +110,7 @@ int GetSize(char *fname)
   return ret;
 }
 
-  void SetBasicAttributes(struct fat_header* header)
+  void SetBasicAttributes(const struct fat_header* header)
   {
       uint32_t sectors = header->BPB_TotSec32-header->BPB_RsvdSecCnt-header->BPB_FATSz32*header->BPB_NumFATs;
       DataClusters = sectors/header->BPB_SecPerClus;
