@@ -73,7 +73,8 @@ assert(fd>=0);
 
 struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);
-printf("%x\n",retrieve(fh+1,4));
+
+printf("fh->NumzFat=%d\n",fh->NumzFat);
 }
 uint32_t retrieve(const void *ptr,int byte)
 {
