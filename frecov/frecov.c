@@ -118,7 +118,7 @@ void ScanCluster(const void* header)
     if(isbmphd==3)
     {ctype[i]=DIRECTORY_ENTRY;
     continue;}
-    uint32_t temp=retrieve(datastart,2);
+    uint32_t temp=retrieve(cstart,2);
     
     if(temp==0x4d42)
     {ctype[i]=BMP_HEADER;
