@@ -58,7 +58,7 @@ int DataClusters;//数据区的cluser数
 int ClusterSize;//cluster的大小(byte)
 int DataOffset;//数据区的起始
 
-struct Dir_entry
+struct dir_entry
 {
   uint8_t DIR_Name[11];
   uint8_t DIR_Attr;
@@ -81,7 +81,7 @@ uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为b
 void ScanCluster(const void* header);
 int main(int argc, char *argv[]) {
 assert(sizeof(struct fat_header)==512);
-assert(sizeof(struct bmp_header)==32);
+assert(sizeof(struct dir_entry)==32);
 
 char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=GetSize(fname);
@@ -93,18 +93,39 @@ const struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
 SetBasicAttributes(fh);
+ScanCluster(fh);
 }
 
 void ScanCluster(const void* header)
 {
-  void* datastart=(void *)header+DataOffset;
+  void* cstart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++)
   {
-    void *ptr=datastart;
-    for(int i=0;i<ClusterSize;i++)
+    void *ptr=cstart;
+    int isbmphd=0;
+    
+    for(int j=0;j<ClusterSize;j++)
     {
-      
+      char c=retrieve(ptr,1);
+      if(c=='B'&&isbmphd==0) isbmphd=1;
+      else if(c=='M'&&isbmphd==1) isbmphd=2;
+      else if(c=='P'&&isbmphd==2) isbmphd=3;
+      else isbmphd=0;
+      if(isbmphd==3) break;
+      ptr++;
     }
+
+    if(isbmphd==3)
+    {ctype[i]=DIRECTORY_ENTRY;
+    continue;}
+    uint32_t temp=retrieve(datastart,2);
+    
+    if(temp==0x4d42)
+    {ctype[i]=BMP_HEADER;
+    continue;}
+
+    ctype[i]=UNCERTAIN;
+    cstart=cstart+ClusterSize;
   }
 }
 
