@@ -91,7 +91,6 @@ assert(fd>=0);
 const struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
-printf("%x\n",retrieve(fh,4));
 SetBasicAttributes(fh);
 }
 
@@ -122,7 +121,6 @@ uint32_t retrieve(const void *ptr,int byte)
         p2=*(unsigned char *)(ptr+1);
         p3=*(unsigned char *)(ptr+2);
         p4=*(unsigned char *)(ptr+3);
-        printf("p1=%x p2=%x p3=%x p4=%x\n",p1,p2,p3,p4);
         return (uint32_t)((p4<<24)|(p3<<16)|(p2<<8)|p1);
       default:printf("bytes not aligned\n");assert(0);
     }
