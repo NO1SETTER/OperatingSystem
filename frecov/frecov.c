@@ -10,7 +10,8 @@
 enum DIR_ARRTIBUTE{ATTR_READ_ONLY=0x1,ATTR_HIDDEN=0x2,ATTR_SYSTEM=0x4,
 ATTR_VOLUME_ID=0x8,ATTR_DIRECTORY=0x10,ATTR_ARCHIVE=0x20,
 ATTR_LONG_NAME=ATTR_READ_ONLY| ATTR_HIDDEN | ATTR_SYSTEM | ATTR_VOLUME_ID};
-enum CLUSTER_TYPE{DIRECTORY_ENTRY,BMP_HEADER,BMP_DATA,UNUSED};
+enum CLUSTER_TYPE{DIRECTORY_ENTRY,BMP_HEADER,BMP_DATA,UNUSED,UNCERTAIN};
+//UNCERTAIN可能是bmp数据或者未使用
 /*
 ----------------------------------------------------
 |           |        |           |                 |
@@ -57,20 +58,20 @@ int DataClusters;//数据区的cluser数
 int ClusterSize;//cluster的大小(byte)
 int DataOffset;//数据区的起始
 
-struct bmp_header
+struct Dir_entry
 {
-uint8_t DIR_Name[11];
-uint8_t DIR_Attr;
-uint8_t DIR_NTRes;
-uint8_t DIR_CrtTimeTenth;
-uint32_t DIR_CrtTime:16;
-uint32_t DIR_CrtDate:16;
-uint32_t DIR_LstAccDate:16;
-uint32_t DIR_FstClusHI:16;
-uint32_t DIR_WrtTime:16;
-uint32_t DIR_WrtDate:16;
-uint32_t DIR_FstClusLO:16;
-uint32_t DIR_FileSize;
+  uint8_t DIR_Name[11];
+  uint8_t DIR_Attr;
+  uint8_t DIR_NTRes;
+  uint8_t DIR_CrtTimeTenth;
+  uint32_t DIR_CrtTime:16;
+  uint32_t DIR_CrtDate:16;
+  uint32_t DIR_LstAccDate:16;
+  uint32_t DIR_FstClusHI:16;
+  uint32_t DIR_WrtTime:16;
+  uint32_t DIR_WrtDate:16;
+  uint32_t DIR_FstClusLO:16;
+  uint32_t DIR_FileSize;
 }__attribute__((packed));
 
 int ctype[1000000];//记录cluster的type
@@ -99,7 +100,11 @@ void ScanCluster(const void* header)
   void* datastart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++)
   {
-
+    void *ptr=datastart;
+    for(int i=0;i<ClusterSize;i++)
+    {
+      
+    }
   }
 }
 
@@ -145,6 +150,6 @@ int GetSize(char *fname)
       ClusterSize=header->BPB_SecPerClus*header->BPB_BytePerSec;
       DataOffset=(header->BPB_RsvdSecCnt+header->BPB_NumFATs*header->BPB_FATSz32)*header->BPB_BytePerSec;
       printf("Data Region has 0x%x clusters\n",DataClusters);
-      printf("Clustersize is 0x%x bytes\n",ClusterSize);
+      printf("Cluster Size is 0x%x bytes\n",ClusterSize);
       printf("Data Region started at 0x%x\n",DataOffset);
   }
