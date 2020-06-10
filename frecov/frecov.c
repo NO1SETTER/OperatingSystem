@@ -103,7 +103,7 @@ void ScanCluster(const void* header)
   {
     if(i>1)
     {
-      printf("Cluster at offset %d is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
+      printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
     }
     void *ptr=cstart;
     int isbmphd=0;
