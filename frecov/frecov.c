@@ -114,7 +114,9 @@ void ScanCluster(const void* header)
       else if(c=='M'&&isbmphd==1) isbmphd=2;
       else if(c=='P'&&isbmphd==2) isbmphd=3;
       else isbmphd=0;
-      if(isbmphd==3) break;
+      if(isbmphd==3) {
+      printf("offset %x\n",DataOffset+i*ClusterSize+j);
+      break;}
       ptr++;
     }
 
