@@ -106,8 +106,7 @@ void ScanCluster(const void* header)
       printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
     }
     void *ptr=cstart;
-    int isbmphd=0;
-    
+    int isbmphd=0; 
     for(int j=0;j<ClusterSize;j++)
     {
       char c=retrieve(ptr,1);
