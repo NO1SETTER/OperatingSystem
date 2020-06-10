@@ -58,7 +58,7 @@ struct Bmp
 };
 
 int GetSize(char *fname);//得到文件大小
-void SetBasicAttributes(struct fat_header* header);//计算文件的一些属性
+void SetBasicAttributes(const struct fat_header* header);//计算文件的一些属性
 uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为byte的数据
 
 int main(int argc, char *argv[]) {
