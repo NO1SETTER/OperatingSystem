@@ -59,7 +59,46 @@ struct cluster
 
 };
 
-int getsize(char *fname)
+int GetSize(char *fname);//得到文件大小
+uint32_t GetDataClusters(struct fat_header* header);//得到数据区的cluster数
+uint32_t retrieve(void *ptr,int byte);//从ptr所指的位置取出长为byte的数据
+
+int main(int argc, char *argv[]) {
+assert(sizeof(struct fat_header)==512);
+char fname[128]="/home/ebata/img/M5-frecov.img";
+int fsize=GetSize(fname);
+printf("fsize=%d\n",fsize);
+int fd=open(fname,O_RDONLY);
+assert(fd>=0);
+
+struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
+PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);
+
+}
+uint32_t retrieve(const void *ptr,int byte)
+{
+  uint32_t p1,p2,p3,p4;
+
+  switch(byte)
+  {
+    case 1:
+      return uint32_t(*(char *)ptr);
+    case 2:
+      p1=uint32_t(*(char *)ptr);
+      p2=uint32_t(*(char *)(ptr+1));
+      return (uint32_t)((p2<<8)|p1);
+    case 4:
+      p1=uint32_t(*(char *)ptr);
+      p2=uint32_t(*(char *)(ptr+1));
+      p3=uint32_t(*(char *)(ptr+2));
+      p4=uint32_t(*(char *)(ptr+3));
+      return (uint32_t)((p4<<24)|(p3<<16)|(p2<<8)|p1);
+    default:printf("bytes not aligned\n");assert(0);
+  }
+  return 0;
+}
+
+int GetSize(char *fname)
 {
 FILE* fp=fopen(fname,"r");
 assert(fp);
@@ -69,22 +108,9 @@ rewind(fp);
 return ret;
 }
 
-uint32_t GetDataClusters(struct fat_header* header)//得到数据区的cluster数
+uint32_t GetDataClusters(struct fat_header* header)
 {
     uint32_t sectors = header->BPB_TotSec32-header->BPB_RsvdSecCnt-header->BPB_FATSz32*header->BPB_NumFATs;
     uint32_t clusters = sectors/header->BPB_SecPerClus;
     return clusters;
-}
-
-int main(int argc, char *argv[]) {
-assert(sizeof(struct fat_header)==512);
-char fname[128]="/home/ebata/img/M5-frecov.img";
-int fsize=getsize(fname);
-printf("fsize=%d\n",fsize);
-int fd=open(fname,O_RDONLY);
-assert(fd>=0);
-
-struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
-PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);
-
 }
