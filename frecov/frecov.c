@@ -61,7 +61,7 @@ struct cluster
 
 int GetSize(char *fname);//得到文件大小
 uint32_t GetDataClusters(struct fat_header* header);//得到数据区的cluster数
-uint32_t retrieve(void *ptr,int byte);//从ptr所指的位置取出长为byte的数据
+uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为byte的数据
 
 int main(int argc, char *argv[]) {
 assert(sizeof(struct fat_header)==512);
