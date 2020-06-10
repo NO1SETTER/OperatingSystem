@@ -82,16 +82,16 @@ uint32_t retrieve(const void *ptr,int byte)
   switch(byte)
   {
     case 1:
-      return uint32_t(*(char *)ptr);
+      return (uint32_t)(*(char *)ptr);
     case 2:
-      p1=uint32_t(*(char *)ptr);
-      p2=uint32_t(*(char *)(ptr+1));
+      p1=(uint32_t)(*(char *)ptr);
+      p2=(uint32_t)(*(char *)(ptr+1));
       return (uint32_t)((p2<<8)|p1);
     case 4:
-      p1=uint32_t(*(char *)ptr);
-      p2=uint32_t(*(char *)(ptr+1));
-      p3=uint32_t(*(char *)(ptr+2));
-      p4=uint32_t(*(char *)(ptr+3));
+      p1=(uint32_t)(*(char *)ptr);
+      p2=(uint32_t)(*(char *)(ptr+1));
+      p3=(uint32_t)(*(char *)(ptr+2));
+      p4=(uint32_t)(*(char *)(ptr+3));
       return (uint32_t)((p4<<24)|(p3<<16)|(p2<<8)|p1);
     default:printf("bytes not aligned\n");assert(0);
   }
