@@ -65,17 +65,19 @@ uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为b
 
 int main(int argc, char *argv[]) {
 assert(sizeof(struct fat_header)==512);
+
 char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=GetSize(fname);
-printf("fsize=%d\n",fsize);
+
 int fd=open(fname,O_RDONLY);
 assert(fd>=0);
 
 struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
-PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);
+PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
+assert(fat_header->signature_word==0x55AA)
 
-printf("fh->SPC=%d\n",fh->BPB_BytePerSec);
 }
+
 uint32_t retrieve(const void *ptr,int byte)
 {
   uint32_t p1,p2,p3,p4;
@@ -106,6 +108,7 @@ assert(fp);
 fseek(fp,0,SEEK_END);
 int ret=ftell(fp);
 rewind(fp);
+fclose(fp);
 return ret;
 }
 
