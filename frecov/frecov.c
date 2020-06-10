@@ -51,6 +51,7 @@ struct fat_header//考虑FAT32,注意是小端模式！！！！
 
 int DataClusters;
 int ClusterSize;
+int DataOffset;//数据区的起始
 
 struct Bmp
 {
@@ -115,6 +116,8 @@ int GetSize(char *fname)
       uint32_t sectors = header->BPB_TotSec32-header->BPB_RsvdSecCnt-header->BPB_FATSz32*header->BPB_NumFATs;
       DataClusters = sectors/header->BPB_SecPerClus;
       ClusterSize=header->BPB_SecPerClus*header->BPB_BytePerSec;
+      DataOffset=sectors*header->BPB_BytePerSec;
       printf("Data Region has 0x%x clusters\n",DataClusters);
       printf("Clustersize is 0x%x bytes\n",ClusterSize);
+      printf("Data Region started at 0x%x\n",DataOffset)''
   }
