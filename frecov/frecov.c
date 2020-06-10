@@ -49,18 +49,16 @@ struct fat_header//考虑FAT32,注意是小端模式！！！！
     uint32_t signature_word:16;//0xaa55
 }__attribute__((packed));
 
-struct fat_table
-{
+int DataClusters;
+int ClusterSize;
 
-};
-
-struct cluster
+struct Bmp
 {
 
 };
 
 int GetSize(char *fname);//得到文件大小
-uint32_t GetDataClusters(struct fat_header* header);//得到数据区的cluster数
+void SetBasicAttributes(struct fat_header* header);//计算文件的一些属性
 uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为byte的数据
 
 int main(int argc, char *argv[]) {
@@ -75,46 +73,48 @@ assert(fd>=0);
 struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
-
+SetBasicAttributes(fh);
 }
 
 uint32_t retrieve(const void *ptr,int byte)
-{
-  uint32_t p1,p2,p3,p4;
-
-  switch(byte)
   {
-    case 1:
-      return (uint32_t)(*(char *)ptr);
-    case 2:
-      p1=(uint32_t)(*(char *)ptr);
-      p2=(uint32_t)(*(char *)(ptr+1));
-      return (uint32_t)((p2<<8)|p1);
-    case 4:
-      p1=(uint32_t)(*(char *)ptr);
-      p2=(uint32_t)(*(char *)(ptr+1));
-      p3=(uint32_t)(*(char *)(ptr+2));
-      p4=(uint32_t)(*(char *)(ptr+3));
-      return (uint32_t)((p4<<24)|(p3<<16)|(p2<<8)|p1);
-    default:printf("bytes not aligned\n");assert(0);
-  }
-  return 0;
+    uint32_t p1,p2,p3,p4;
+
+    switch(byte)
+    {
+      case 1:
+        return (uint32_t)(*(char *)ptr);
+      case 2:
+        p1=(uint32_t)(*(char *)ptr);
+        p2=(uint32_t)(*(char *)(ptr+1));
+        return (uint32_t)((p2<<8)|p1);
+      case 4:
+        p1=(uint32_t)(*(char *)ptr);
+        p2=(uint32_t)(*(char *)(ptr+1));
+        p3=(uint32_t)(*(char *)(ptr+2));
+        p4=(uint32_t)(*(char *)(ptr+3));
+        return (uint32_t)((p4<<24)|(p3<<16)|(p2<<8)|p1);
+      default:printf("bytes not aligned\n");assert(0);
+    }
+    return 0;
 }
 
 int GetSize(char *fname)
 {
-FILE* fp=fopen(fname,"r");
-assert(fp);
-fseek(fp,0,SEEK_END);
-int ret=ftell(fp);
-rewind(fp);
-fclose(fp);
-return ret;
+  FILE* fp=fopen(fname,"r");
+  assert(fp);
+  fseek(fp,0,SEEK_END);
+  int ret=ftell(fp);
+  rewind(fp);
+  fclose(fp);
+  return ret;
 }
 
-uint32_t GetDataClusters(struct fat_header* header)
-{
-    uint32_t sectors = header->BPB_TotSec32-header->BPB_RsvdSecCnt-header->BPB_FATSz32*header->BPB_NumFATs;
-    uint32_t clusters = sectors/header->BPB_SecPerClus;
-    return clusters;
-}
+  void SetBasicAttributes(struct fat_header* header)
+  {
+      uint32_t sectors = header->BPB_TotSec32-header->BPB_RsvdSecCnt-header->BPB_FATSz32*header->BPB_NumFATs;
+      DataClusters = sectors/header->BPB_SecPerClus;
+      ClusterSize=header->BPB_SecPerClus*BPB_BytePerSec;
+      printf("Data Region has %x clusters\n",DataClusters);
+      printf("Clustersize is %x bytes\n",ClusterSize);
+  }
