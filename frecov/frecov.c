@@ -83,11 +83,8 @@ int fsize=getsize(fname);
 printf("fsize=%d\n",fsize);
 int fd=open(fname,O_RDONLY);
 assert(fd>=0);
-(struct fat_header*)fh=(struct fat_header*)mmap(NULL,
-fsize,
-PROT_READ | PROT_WRITE | PROT_EXEC,
-MAP_PRIVATE,
-fd,0
-);
+
+struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
+PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);
 
 }
