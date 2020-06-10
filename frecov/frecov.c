@@ -78,7 +78,7 @@ uint32_t GetDataClusters(struct fat_header* header)//得到数据区的cluster�
 
 int main(int argc, char *argv[]) {
 assert(sizeof(struct fat_header)==512);
-char fname[128]="/home/ebata/Downloads/M5-frecov.img";
+char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=getsize(fname);
 printf("fsize=%d\n",fsize);
 int fd=open(fname,O_RDONLY);
