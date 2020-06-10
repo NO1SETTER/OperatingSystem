@@ -97,7 +97,7 @@ SetBasicAttributes(fh);
 
 void ScanCluster(const void* header)
 {
-  void* datastart=header+DataOffset;
+  void* datastart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++)
   {
 
