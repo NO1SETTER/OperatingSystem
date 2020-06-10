@@ -114,7 +114,7 @@ int GetSize(char *fname)
   {
       uint32_t sectors = header->BPB_TotSec32-header->BPB_RsvdSecCnt-header->BPB_FATSz32*header->BPB_NumFATs;
       DataClusters = sectors/header->BPB_SecPerClus;
-      ClusterSize=header->BPB_SecPerClus*BPB_BytePerSec;
+      ClusterSize=header->BPB_SecPerClus*header->BPB_BytePerSec;
       printf("Data Region has %x clusters\n",DataClusters);
       printf("Clustersize is %x bytes\n",ClusterSize);
   }
