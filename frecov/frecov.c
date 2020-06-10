@@ -46,7 +46,7 @@ struct fat_header//考虑FAT32,注意是小端模式！！！！
     uint8_t  BS_VolLab[11];
     uint8_t  BS_FilSysType[8];//字符串"FAT32"
     uint8_t  padding[420];//补充空位
-    uint32_t signature_word:16;//0x55AA
+    uint32_t signature_word:16;//0xaa55
 }__attribute__((packed));
 
 struct fat_table
@@ -74,8 +74,7 @@ assert(fd>=0);
 
 struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
-printf("%x\n",fh->signature_word);
-assert(fh->signature_word==0x55AA);
+assert(fh->signature_word==0xaa55);
 
 }
 
