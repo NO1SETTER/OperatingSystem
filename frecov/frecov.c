@@ -179,7 +179,7 @@ for(int i=0;i<DataClusters;i++)
     sprintf(name1,"%s.%s",name1,name2);
     printf("short name=%s\n",name);
   }
-  
+  cstart=cstart+ClusterSize;
  }
 
 }
