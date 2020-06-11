@@ -223,6 +223,7 @@ for(int i=0;i<DataClusters;i++)
             printf("%x %x %x\n",bmpsize,height,width);
             assert(bmpsize==height*width);
           }
+          assert(0);
           //this field:recover data
     cptr++;
   }
