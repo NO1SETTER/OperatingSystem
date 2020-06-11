@@ -15,6 +15,7 @@ ATTR_LONG_NAME=0xF};
 enum CLUSTER_TYPE{DIRECTORY_ENTRY,BMP_HEADER,BMP_DATA,UNUSED,UNCERTAIN};
 //一个cluster内可能包含多个DIRECTORY_ENTRY;
 //UNCERTAIN可能是bmp数据或者未使用
+
 /*
 ----------------------------------------------------
 |           |        |           |                 |
@@ -89,6 +90,25 @@ struct ldir_entry
   uint8_t LDIR_Name3[4];//Name part3
 }__attribute__((packed));
 
+struct bitmap_header//事实上它包含了信息头的一部分
+{
+  uint8_t bfType[2];
+  uint32_t bfSize;//文件大小
+  uint32_t bfReserved1:16;
+  uint32_t bfReserved2:16;
+  uint32_t bfOffBits;//数据的偏移量
+  uint32_t biSize;
+  uint32_t biWidth;//宽度
+  uint32_t biHeight;//高度
+  uint32_t biPlanes:16;
+  uint32_t biCompression;
+  uint32_t biSizeImage;
+  uint32_t biXPelsPexMeter;
+  uint32_t biYPelsPexMeter;
+  uint32_t biClrUsed;
+  uint32_t BiClrImportant;
+}__attribute__((packed));
+
 int ctype[1000000];//记录cluster的type
 int GetSize(char *fname);//得到文件大小
 void SetBasicAttributes(const struct fat_header* header);//计算文件的一些属性
@@ -97,11 +117,10 @@ void ScanCluster(const void* header);
 void Recover(const void* header);
 
 int main(int argc, char *argv[]) {
-//printf("sizeof wchar:%d\n",(int)sizeof(wchar_t));
 assert(sizeof(struct fat_header)==512);
 assert(sizeof(struct sdir_entry)==32);
 assert(sizeof(struct ldir_entry)==32);
-
+assert(sizeof(struct bitmap_header)==54);
 char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=GetSize(fname);
 int fd=open(fname,O_RDONLY);
@@ -117,14 +136,14 @@ Recover(fh);
 
 uint8_t Chksum(unsigned char* pFcbName)
 {
-uint16_t FcbNameLen;
-unsigned char sum;
-sum=0;
-for(int i=11;i!=0;i--)
-{
-  sum=((sum&1)?0x80:0)+(sum>>1)+*pFcbName++;
-}
-return sum;
+  uint16_t FcbNameLen;
+  unsigned char sum;
+  sum=0;
+  for(int i=11;i!=0;i--)
+  {
+    sum=((sum&1)?0x80:0)+(sum>>1)+*pFcbName++;
+  }
+  return sum;
 }
 
 void Recover(const void* header)
@@ -192,8 +211,6 @@ for(int i=0;i<DataClusters;i++)
           printf("First Cluster at cluster %d at %x\n",cid,ClusterSize*cid+DataOffset);
           if(ctype[cid]==BMP_HEADER)//定位到BMP头才进行恢复
           {
-
-
           }
           //this field:recover data
     cptr++;
@@ -201,14 +218,11 @@ for(int i=0;i<DataClusters;i++)
 }
 }
 
-#define _DEBUG
 void ScanCluster(const void* header)
 {
   void* cstart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   {
-    //if(ctype[i-1]==BMP_HEADER){
-      //printf("bmp_header cluster %d\n",i-1);}
     void *ptr=cstart;
     int isbmphd=0; 
     int ct=0;
