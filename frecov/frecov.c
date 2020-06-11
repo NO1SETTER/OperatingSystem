@@ -184,7 +184,7 @@ for(int i=0;i<DataClusters;i++)
         ldir=ldir-1;
         no=no+1;
       }
-      printf("File Name:%s\n",name);
+      printf("%s\n",name);
     cptr++;
   }
 }
