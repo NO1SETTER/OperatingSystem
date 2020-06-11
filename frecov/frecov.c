@@ -137,15 +137,15 @@ for(int i=0;i<DataClusters;i++)
   //先定位到BMP字符串
   while(1)
   {
-        if(cptr>=(char *)header+DataOffset+(i+1)*ClusterSize) break;//偏移量超出,退出
-        if(!((*cptr=='B')&&(*(cptr+1)=='M')&&(*(cptr+2)=='P')))
-        {cptr++;
-        continue;}
-        printf("Located bmp at %x\n",(unsigned)(cptr-(char*)header));
-        char name[1024];
-        memset(name,'\0',sizeof(name));
-        struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
-        struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
+          if(cptr>=(char *)header+DataOffset+(i+1)*ClusterSize) break;//偏移量超出,退出
+          if(!((*cptr=='B')&&(*(cptr+1)=='M')&&(*(cptr+2)=='P')))
+          {cptr++;
+          continue;}
+          printf("Located bmp at %x\n",(unsigned)(cptr-(char*)header));
+          char name[1024];
+          memset(name,'\0',sizeof(name));
+          struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
+          struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
 
           if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum) {cptr++;continue;}
           //匹配失败,不管了
