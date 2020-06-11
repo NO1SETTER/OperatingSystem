@@ -125,7 +125,6 @@ for(int i=0;i<DataClusters;i++)
   struct sdir_entry* sdir=cstart;
     if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
     {
-      assert(0);
       wchar_t name[1024];
       memset(name,'\0',sizeof(name));
       struct ldir_entry* ldir= (struct ldir_entry* )sdir;
@@ -134,30 +133,30 @@ for(int i=0;i<DataClusters;i++)
       {
         wchar_t lname[1024];
         int pos=0;
-        for(int i=0;i<5;i++)
+        for(int j=0;j<5;j++)
         {
           if(reachend) break;
-          wchar_t wch=ldir->LDIR_Name1[i];
+          wchar_t wch=ldir->LDIR_Name1[j];
           if(wch!=0xffff)
           lname[pos++]=wch;
           else
           reachend=1;
         }
         
-        for(int i=0;i<6;i++)
+        for(int j=0;j<6;j++)
         {
           if(reachend) break;
-          wchar_t wch=ldir->LDIR_Name2[i];
+          wchar_t wch=ldir->LDIR_Name2[j];
           if(wch!=0xffff)
           lname[pos++]=wch;
           else
           reachend=1;
         }
         
-        for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
         {
           if(reachend) break;
-          wchar_t wch=ldir->LDIR_Name3[i];
+          wchar_t wch=ldir->LDIR_Name3[j];
           if(wch!=0xffff)
             lname[pos++]=wch;
           else
@@ -170,19 +169,20 @@ for(int i=0;i<DataClusters;i++)
       }
     wprintf(L"long name=%s\n",name);
   }
-  else
-  {
-    assert(0);
-    char name[15];
-    char name1[10];
-    char name2[5];
-    strncpy(name1,(void *)sdir,8);
-    strncpy(name2,(void *)sdir+8,3);
-    sprintf(name1,"%s.%s",name1,name2);
-    printf("short name=%s\n",name);
-  }
+    else
+    {
+
+      assert(0);
+      char name[15];
+      char name1[10];
+      char name2[5];
+      strncpy(name1,(void *)sdir,8);
+      strncpy(name2,(void *)sdir+8,3);
+      sprintf(name1,"%s.%s",name1,name2);
+      printf("short name=%s\n",name);
+    }
   cstart=cstart+ClusterSize;
- }
+}
 
 }
 
