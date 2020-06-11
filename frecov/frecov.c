@@ -13,6 +13,7 @@ enum DIR_ARRTIBUTE{ATTR_READ_ONLY=0x1,ATTR_HIDDEN=0x2,ATTR_SYSTEM=0x4,
 ATTR_VOLUME_ID=0x8,ATTR_DIRECTORY=0x10,ATTR_ARCHIVE=0x20,
 ATTR_LONG_NAME=0xF};
 enum CLUSTER_TYPE{DIRECTORY_ENTRY,BMP_HEADER,BMP_DATA,UNUSED,UNCERTAIN};
+//一个cluster内可能包含多个DIRECTORY_ENTRY;
 //UNCERTAIN可能是bmp数据或者未使用
 /*
 ----------------------------------------------------
@@ -112,7 +113,7 @@ PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
 SetBasicAttributes(fh);
 ScanCluster(fh);
-Recover(fh);
+//Recover(fh);
 }
 
 void Recover(const void* header)
@@ -184,12 +185,14 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
 
 }
 
+#define _DEBUG
 void ScanCluster(const void* header)
 {
   void* cstart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   {
     #ifdef _DEBUG
+    if(ctype[i-1]==DIRECTORY_ENTRY)
       printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
     #endif
     void *ptr=cstart;
