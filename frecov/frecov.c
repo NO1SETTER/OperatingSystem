@@ -121,11 +121,11 @@ for(int i=0;i<DataClusters;i++)
 {
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
   struct sdir_entry* sdir=cstart;
-  if(sdir_entry->DIR_Attr==ATTR_LONG_NAME)//变长文件头
+  if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
   {
     wchar_t name[1024];
     memset(name,'\0',sizeof(name));
-    struct ldir_entry* ldir= (struct ldir_entry* )sdir_entry;
+    struct ldir_entry* ldir= (struct ldir_entry* )sdir;
     int reachend=0;
     while(ldir->DIR_Attr==ATTR_LONG_NAME)
     {
