@@ -160,11 +160,11 @@ for(int i=0;i<DataClusters;i++)
     else//匹配成功:长文件名
     {
       assert(sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1'); 
-      int reachend=0;
       while(1)//提取每一个长文件目录项里的文件名Part
       {
         char name_tp[25];
         int pos=0;
+        int reachend=0;
         for(int j=0;j<5;j++)
         {
           if(reachend) break;
