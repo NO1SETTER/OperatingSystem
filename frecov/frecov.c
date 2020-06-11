@@ -157,16 +157,17 @@ for(int i=0;i<DataClusters;i++)
     }
     else//匹配成功:长文件名
     {
-      assert(sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1'); 
+      assert(sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1');
+      int no=1; 
       while(1)//提取每一个长文件目录项里的文件名Part
       {
         //printf("ldir_entry at %x\n",(unsigned)((void *)ldir-header));
+        int reachend=0;
+        if(ldir->LDIR_Ord==(no|0x40)) reachend=1;
         char name_tp[25];
         int pos=0;
-        int reachend=0;
         for(int j=0;j<5;j++)
         {
-          if(reachend) break;
           if(ldir->LDIR_Name1[2*j]!=0xFF)
             name_tp[pos++]=(char)ldir->LDIR_Name1[2*j];
           else reachend=1;
@@ -174,7 +175,6 @@ for(int i=0;i<DataClusters;i++)
 
         for(int j=0;j<6;j++)
         {
-          if(reachend) break;
           if(ldir->LDIR_Name2[2*j]!=0xFF)
           name_tp[pos++]=(char)ldir->LDIR_Name2[2*j];
           else reachend=1;
@@ -182,7 +182,6 @@ for(int i=0;i<DataClusters;i++)
 
         for(int j=0;j<2;j++)
         {
-          if(reachend) break;
           if(ldir->LDIR_Name3[2*j]!=0xFF)
           name_tp[pos++]=(char)ldir->LDIR_Name3[2*j];
           else reachend=1;
@@ -192,6 +191,7 @@ for(int i=0;i<DataClusters;i++)
         //printf("name_tp : %s\n",name_tp);
         if(reachend) break;
         ldir=ldir-1;
+        no=no+1;
       }
       printf("Long File Name:%s\n",name);
     }
