@@ -148,7 +148,7 @@ for(int i=0;i<DataClusters;i++)
     if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum)//未匹配成功:短文件名
     {
       char prefix[10];
-      char suffix[5]
+      char suffix[5];
       strncpy(prefix,sdir,8);
       strncpy(suffix,ldir,3);
       sprintf(name,"%s.%s",prefix,suffix);
