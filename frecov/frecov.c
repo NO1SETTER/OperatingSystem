@@ -209,6 +209,7 @@ for(int i=0;i<DataClusters;i++)
           //this field:recover data
 
           uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
+          assert(cid>=0);
           struct bitmap_header* bheader=(struct bitmap_header* )(void *)header+ClusterSize*cid+DataOffset;
           printf("First Cluster_id:%d at %x\n",cid,(unsigned)(bheader-(struct bitmap_header*)header));
           if(ctype[cid]==BMP_HEADER)//定位到BMP头才进行恢复
