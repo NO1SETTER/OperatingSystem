@@ -137,7 +137,7 @@ for(int i=0;i<DataClusters;i++)
   //先定位到BMP字符串
   while(1)
   {
-    if(cptr>=header+DataOffset+(i+1)*ClusterSize) break;//偏移量超出,退出
+    if(cptr>=(char *)header+DataOffset+(i+1)*ClusterSize) break;//偏移量超出,退出
     if(!((*cptr=='B')&&(*(cptr+1)=='M')&&(*(cptr+2)=='P')))
     {cptr++;
     continue;}
