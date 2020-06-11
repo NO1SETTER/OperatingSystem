@@ -217,7 +217,8 @@ for(int i=0;i<DataClusters;i++)
             uint32_t bmpoffset=bheader->bfOffBits;
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
-            //assert(bmpsize==height*width);
+            printf("bmpsize = %d height = %d width = %d\n",bmpsize,height,width);
+            assert(bmpsize==height*width);
           }
           //this field:recover data
     cptr++;
