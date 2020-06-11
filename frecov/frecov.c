@@ -149,8 +149,8 @@ for(int i=0;i<DataClusters;i++)
     {
       char prefix[10];
       char suffix[5];
-      strncpy(prefix,sdir,8);
-      strncpy(suffix,ldir,3);
+      strncpy(prefix,(char* )sdir,8);
+      strncpy(suffix,(char* )ldir,3);
       sprintf(name,"%s.%s",prefix,suffix);
       printf("Short File Name:%s\n",name);
     }
