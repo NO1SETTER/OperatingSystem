@@ -202,7 +202,7 @@ void ScanCluster(const void* header)
   void* cstart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   {
-    printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
+    //printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
     #ifdef _DEBUG
     if(ctype[i-1]==DIRECTORY_ENTRY){}
     #endif
