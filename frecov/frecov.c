@@ -188,7 +188,7 @@ for(int i=0;i<DataClusters;i++)
 
           //this field:recover data
 
-          uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)+((struct fat_header*)header)->BPB_TotSec32-DataClusters;
+          uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO);
           if(ctype[cid]!=BMP_HEADER) printf("not\n");
           printf("First Cluster at cluster %d at %x\n",cid,ClusterSize*cid);
 
