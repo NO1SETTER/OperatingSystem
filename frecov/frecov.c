@@ -101,6 +101,7 @@ struct bitmap_header//事实上它包含了信息头的一部分
   uint32_t biWidth;//宽度
   uint32_t biHeight;//高度
   uint32_t biPlanes:16;
+  uint32_t biBitCount:16;
   uint32_t biCompression;
   uint32_t biSizeImage;
   uint32_t biXPelsPexMeter;
