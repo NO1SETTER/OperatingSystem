@@ -197,6 +197,7 @@ void ScanCluster(const void* header)
     #endif
     void *ptr=cstart;
     int isbmphd=0; 
+    int ct=0;
     for(int j=0;j<ClusterSize;j++)
     {
       char c=retrieve(ptr,1);
@@ -204,11 +205,14 @@ void ScanCluster(const void* header)
       else if(c=='M'&&isbmphd==1) isbmphd=2;
       else if(c=='P'&&isbmphd==2) isbmphd=3;
       else isbmphd=0;
-      if(isbmphd==3) break;
+      if(isbmphd==3) 
+      {
+        ct++;isbmphd=0;
+      }
       ptr++;
     }
 
-    if(isbmphd==3)
+    if(ct>=2)
     {ctype[i]=DIRECTORY_ENTRY;
     continue;}
 
