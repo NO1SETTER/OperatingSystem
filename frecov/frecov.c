@@ -104,7 +104,7 @@ assert(sizeof(struct ldir_entry)==32);
 
 char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=GetSize(fname);
-printf("filesize=%x\n",filesize);
+printf("filesize=%x\n",fsize);
 int fd=open(fname,O_RDONLY);
 assert(fd>=0);
 
