@@ -137,63 +137,64 @@ for(int i=0;i<DataClusters;i++)
   //先定位到BMP字符串
   while(1)
   {
-    if(cptr>=(char *)header+DataOffset+(i+1)*ClusterSize) break;//偏移量超出,退出
-    if(!((*cptr=='B')&&(*(cptr+1)=='M')&&(*(cptr+2)=='P')))
-    {cptr++;
-    continue;}
-    printf("Located bmp at %x\n",(unsigned)(cptr-(char*)header));
-    char name[1024];
-    memset(name,'\0',sizeof(name));
-    struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
-    struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
+          if(cptr>=(char *)header+DataOffset+(i+1)*ClusterSize) break;//偏移量超出,退出
+          if(!((*cptr=='B')&&(*(cptr+1)=='M')&&(*(cptr+2)=='P')))
+          {cptr++;
+          continue;}
+          printf("Located bmp at %x\n",(unsigned)(cptr-(char*)header));
+          char name[1024];
+          memset(name,'\0',sizeof(name));
+          struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
+          struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
 
-      if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum) {cptr++;continue;}
-      //匹配失败,不管了
-      int no=1;
-      //不管文件名长短都会有长目录项,只从长目录项里读名字;
-      while(1)//提取每一个长文件目录项里的文件名Part
-      {
-        if((void *)ldir<(void *)header+DataOffset+i*ClusterSize) break;//向下越界，不读了
-        int reachend=0;
-        if(ldir->LDIR_Ord==(no|0x40)) reachend=1;
-        char name_tp[25];
-        int pos=0;
-        for(int j=0;j<5;j++)
-        {
-          if(ldir->LDIR_Name1[2*j]!=0xFF)
-            name_tp[pos++]=(char)ldir->LDIR_Name1[2*j];
-          else reachend=1;
-        }
+          if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum) {cptr++;continue;}
+          //匹配失败,不管了
+          int no=1;
+          //不管文件名长短都会有长目录项,只从长目录项里读名字;
+          while(1)//提取每一个长文件目录项里的文件名Part
+          {
+            if((void *)ldir<(void *)header+DataOffset+i*ClusterSize) break;//向下越界，不读了
+            int reachend=0;
+            if(ldir->LDIR_Ord==(no|0x40)) reachend=1;
+            char name_tp[25];
+            int pos=0;
+            for(int j=0;j<5;j++)
+            {
+              if(ldir->LDIR_Name1[2*j]!=0xFF)
+                name_tp[pos++]=(char)ldir->LDIR_Name1[2*j];
+              else reachend=1;
+            }
 
-        for(int j=0;j<6;j++)
-        {
-          if(ldir->LDIR_Name2[2*j]!=0xFF)
-          name_tp[pos++]=(char)ldir->LDIR_Name2[2*j];
-          else reachend=1;
-        }
+            for(int j=0;j<6;j++)
+            {
+              if(ldir->LDIR_Name2[2*j]!=0xFF)
+              name_tp[pos++]=(char)ldir->LDIR_Name2[2*j];
+              else reachend=1;
+            }
 
-        for(int j=0;j<2;j++)
-        {
-          if(ldir->LDIR_Name3[2*j]!=0xFF)
-          name_tp[pos++]=(char)ldir->LDIR_Name3[2*j];
-          else reachend=1;
-        }
+            for(int j=0;j<2;j++)
+            {
+              if(ldir->LDIR_Name3[2*j]!=0xFF)
+              name_tp[pos++]=(char)ldir->LDIR_Name3[2*j];
+              else reachend=1;
+            }
 
-        strcat(name,name_tp);
-        if(reachend) break;
-        ldir=ldir-1;
-        no=no+1;
-      }
-      printf("%s\n",name);
+            strcat(name,name_tp);
+            if(reachend) break;
+            ldir=ldir-1;
+            no=no+1;
+          }
+          printf("%s\n",name);
 
-      //this field:recover data
-
-
-
+          //this field:recover data
+          
 
 
 
-      cptr++;
+
+
+          //this field:recover data
+    cptr++;
   }
 }
 }
