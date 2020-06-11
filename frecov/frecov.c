@@ -120,8 +120,8 @@ void Recover(const void* header)
 void *cstart=(void *)header+DataOffset;
 for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
 {
-  //printf("Scanning cluster at %x\n",(unsigned)(cstart-header));
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
+    printf("Scanning cluster at %x\n",(unsigned)(cstart-header));
     //printf("This is a directory_entry\n");
     struct sdir_entry* sdir=(struct sdir_entry* )cstart;
     if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
