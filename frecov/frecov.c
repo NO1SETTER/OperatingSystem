@@ -188,8 +188,7 @@ for(int i=0;i<DataClusters;i++)
 
           //this field:recover data
 
-          uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO);
-          if(ctype[cid]!=BMP_HEADER) printf("not\n");
+          uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
           printf("First Cluster at cluster %d at %x\n",cid,ClusterSize*cid);
 
 
@@ -205,9 +204,8 @@ void ScanCluster(const void* header)
   void* cstart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   {
-    if(ctype[i-1]==BMP_HEADER){
-      printf("bmp_header cluster %d\n",i-1);
-    }
+    //if(ctype[i-1]==BMP_HEADER){
+      //printf("bmp_header cluster %d\n",i-1);}
     void *ptr=cstart;
     int isbmphd=0; 
     int ct=0;
