@@ -190,7 +190,7 @@ for(int i=0;i<DataClusters;i++)
           else reachend=1;
         }
         strcat(name,name_tp);
-        printf("name_tp : %s\n",name_tp);
+        //printf("name_tp : %s\n",name_tp);
         if(reachend) break;
         ldir=ldir-1;
       }
