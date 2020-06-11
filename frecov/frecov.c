@@ -172,12 +172,12 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
     }
     else
     {
-      assert(0);
       char name[15];
       char name1[10];
       char name2[5];
       strncpy(name1,(void *)sdir,8);
       strncpy(name2,(void *)sdir+8,3);
+      assert(0);
       sprintf(name1,"%s.%s",name1,name2);
       printf("short name=%s\n",name);
     }
