@@ -123,50 +123,51 @@ for(int i=0;i<DataClusters;i++)
   printf("Scanning cluster at %x\n",(unsigned)(cstart-header));
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
   struct sdir_entry* sdir=cstart;
-  if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
-  {
-    wchar_t name[1024];
-    memset(name,'\0',sizeof(name));
-    struct ldir_entry* ldir= (struct ldir_entry* )sdir;
-    int reachend=0;
-    while(ldir->LDIR_Attr==ATTR_LONG_NAME)
+    if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
     {
-      wchar_t lname[1024];
-      int pos=0;
-      for(int i=0;i<5;i++)
+      wchar_t name[1024];
+      memset(name,'\0',sizeof(name));
+      struct ldir_entry* ldir= (struct ldir_entry* )sdir;
+      int reachend=0;
+      while(ldir->LDIR_Attr==ATTR_LONG_NAME)
       {
-        if(reachend) break;
-        wchar_t wch=ldir->LDIR_Name1[i];
-        if(wch!=0xffff)
-        lname[pos++]=wch;
-        else
-        reachend=1;
-      }
-      
-      for(int i=0;i<6;i++)
-      {
-        if(reachend) break;
-        wchar_t wch=ldir->LDIR_Name2[i];
-        if(wch!=0xffff)
-        lname[pos++]=wch;
-        else
-        reachend=1;
-      }
-      
-      for(int i=0;i<2;i++)
-      {
-        if(reachend) break;
-        wchar_t wch=ldir->LDIR_Name3[i];
-        if(wch!=0xffff)
+        wchar_t lname[1024];
+        int pos=0;
+        for(int i=0;i<5;i++)
+        {
+          if(reachend) break;
+          wchar_t wch=ldir->LDIR_Name1[i];
+          if(wch!=0xffff)
           lname[pos++]=wch;
-        else
+          else
           reachend=1;
+        }
+        
+        for(int i=0;i<6;i++)
+        {
+          if(reachend) break;
+          wchar_t wch=ldir->LDIR_Name2[i];
+          if(wch!=0xffff)
+          lname[pos++]=wch;
+          else
+          reachend=1;
+        }
+        
+        for(int i=0;i<2;i++)
+        {
+          if(reachend) break;
+          wchar_t wch=ldir->LDIR_Name3[i];
+          if(wch!=0xffff)
+            lname[pos++]=wch;
+          else
+            reachend=1;
+        }
+        lname[pos]=0;
+        wcscat(lname,name);
+        wcscpy(name,lname);
+        ldir=ldir+1;
+        printf("ldir at %p\n",ldir);
       }
-      lname[pos]=0;
-      wcscat(lname,name);
-      wcscpy(name,lname);
-      ldir=ldir+1;
-    }
     wprintf(L"long name=%s\n",name);
   }
   else
