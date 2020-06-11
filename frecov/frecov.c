@@ -148,7 +148,6 @@ for(int i=0;i<DataClusters;i++)
     struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
     if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum)//未匹配成功:短文件名
     {
-      assert(0);
       char prefix[10];
       char suffix[5];
       strncpy(prefix,(char* )sdir,8);
@@ -158,6 +157,7 @@ for(int i=0;i<DataClusters;i++)
     }
     else//匹配成功:长文件名
     {
+            assert(0);
       assert(sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1'); 
       int reachend=0;
       while(1)//提取每一个长文件里的文件名Part
