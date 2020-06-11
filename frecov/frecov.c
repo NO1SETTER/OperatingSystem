@@ -146,20 +146,18 @@ for(int i=0;i<DataClusters;i++)
     memset(name,'\0',sizeof(name));
     struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
     struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
-    if(sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1')//未匹配成功:短文件名
+    if(!(sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1'))//短文件名
     {
-      if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum)
-      {
       char prefix[10];
       char suffix[5];
       strncpy(prefix,(char* )sdir,8);
       strncpy(suffix,(char* )ldir,3);
       sprintf(name,"%s.%s",prefix,suffix);
       printf("Short File Name:%s\n",name);
-      }
     }
     else//匹配成功:长文件名
     {
+      if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum) continue;
       int no=1; 
       while(1)//提取每一个长文件目录项里的文件名Part
       {
