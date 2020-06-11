@@ -214,7 +214,7 @@ for(int i=0;i<DataClusters;i++)
           if(ctype[cid]==BMP_HEADER)//定位到BMP头才进行恢复
           {
             uint32_t bmpsize=bheader->bfSize;
-            assert(bmpsize>0);
+            printf("WHY?\n");
             uint32_t bmpoffset=bheader->bfOffBits;
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
