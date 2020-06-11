@@ -293,6 +293,7 @@ int GetSize(char *fname)
   int ret=ftell(fp);
   rewind(fp);
   fclose(fp);
+  printf("FileSize=%x\n",ret);
   return ret;
 }
 
