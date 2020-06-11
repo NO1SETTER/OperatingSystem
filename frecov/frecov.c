@@ -147,22 +147,12 @@ for(int i=0;i<DataClusters;i++)
     struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
     struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
 
-    //Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum
-    if(!((sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1')))//未匹配成功:短文件名
-    {
-      char prefix[10];
-      char suffix[5];
-      strncpy(prefix,(char* )sdir,8);
-      strncpy(suffix,(char* )ldir,3);
-      sprintf(name,"%s.%s",prefix,suffix);
-      printf("Short File Name:%s\n",name);
-    }
-    else//匹配成功:长文件名
-    {
-      int no=1; 
+      if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum) {cptr++;continue;}
+      //匹配失败,不管了
+      int no=1;
+      //不管文件名长短都会有长目录项,只从长目录项里读名字;
       while(1)//提取每一个长文件目录项里的文件名Part
       {
-        //printf("ldir_entry at %x\n",(unsigned)((void *)ldir-header));
         int reachend=0;
         if(ldir->LDIR_Ord==(no|0x40)) reachend=1;
         char name_tp[25];
@@ -189,13 +179,11 @@ for(int i=0;i<DataClusters;i++)
         }
 
         strcat(name,name_tp);
-        //printf("name_tp : %s\n",name_tp);
         if(reachend) break;
         ldir=ldir-1;
         no=no+1;
       }
-      printf("Long File Name:%s\n",name);
-    }
+      printf("File Name:%s\n",name);
     cptr++;
   }
 }
