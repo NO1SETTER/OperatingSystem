@@ -162,7 +162,7 @@ for(int i=0;i<DataClusters;i++)
         else
           reachend=1;
       }
-      name[pos]=0;
+      lname[pos]=0;
       wcscat(lname,name);
       wcscpy(name,lname);
       ldir=ldir+1;
