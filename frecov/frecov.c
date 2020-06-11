@@ -187,7 +187,8 @@ for(int i=0;i<DataClusters;i++)
           printf("%s\n",name);
 
           //this field:recover data
-
+          uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO);
+          printf("First Cluster at cluster %d at %p",cid,header+ClusterSize*cid);
 
 
 
