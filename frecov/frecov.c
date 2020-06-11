@@ -169,7 +169,7 @@ for(int i=0;i<DataClusters;i++)
         {
           if(reachend) break;
           if(ldir->LDIR_Name1[2*j]!=0xFF)
-          name_tp[pos++]=ldir->LDIR_Name1[2*j+1];
+            name_tp[pos++]=(char)ldir->LDIR_Name1[2*j+1];
           else reachend=1;
         }
 
@@ -177,7 +177,7 @@ for(int i=0;i<DataClusters;i++)
         {
           if(reachend) break;
           if(ldir->LDIR_Name2[2*j]!=0xFF)
-          name_tp[pos++]=ldir->LDIR_Name2[2*j];
+          name_tp[pos++]=(char)ldir->LDIR_Name2[2*j];
           else reachend=1;
         }
 
@@ -185,7 +185,7 @@ for(int i=0;i<DataClusters;i++)
         {
           if(reachend) break;
           if(ldir->LDIR_Name3[2*j]!=0xFF)
-          name_tp[pos++]=ldir->LDIR_Name3[2*j];
+          name_tp[pos++]=(char)ldir->LDIR_Name3[2*j];
           else reachend=1;
         }
         strcat(name,name_tp);
