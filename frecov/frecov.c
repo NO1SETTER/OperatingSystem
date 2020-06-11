@@ -109,6 +109,7 @@ assert(fd>=0);
 
 const struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
+printf("fh at %p\n",fh);
 assert(fh->signature_word==0xaa55);
 SetBasicAttributes(fh);
 ScanCluster(fh);
@@ -124,7 +125,7 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
     printf("This is a directory_entry\n");
     struct sdir_entry* sdir=(struct sdir_entry*)cstart;
-    assert(sdir);
+    printf("sdir_entry at %p\n",sdir_entry);
     if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
     {
       assert(0);
@@ -189,7 +190,7 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
 void ScanCluster(const void* header)
 {
   void* cstart=(void *)header+DataOffset;
-  for(int i=0;i<DataClusters;i++)
+  for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   {
     #ifdef _DEBUG
       printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
@@ -209,21 +210,16 @@ void ScanCluster(const void* header)
 
     if(isbmphd==3)
     {ctype[i]=DIRECTORY_ENTRY;
-    cstart=cstart+ClusterSize;
     continue;}
 
     uint32_t temp=retrieve(cstart,2);
     if(temp==0x4d42)
     {ctype[i]=BMP_HEADER;
-    cstart=cstart+ClusterSize;
     continue;}
 
     ctype[i]=UNCERTAIN;
-    cstart=cstart+ClusterSize;
   }
 }
-
-
 
 uint32_t retrieve(const void *ptr,int byte)
 {
