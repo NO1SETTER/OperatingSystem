@@ -124,6 +124,7 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
     printf("This is a directory_entry\n");
     struct sdir_entry* sdir=(struct sdir_entry*)cstart;
+    assert(sdir);
     if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
     {
       assert(0);
