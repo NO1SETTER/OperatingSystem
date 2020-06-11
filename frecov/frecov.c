@@ -141,6 +141,7 @@ for(int i=0;i<DataClusters;i++)
     if(!((*cptr=='B')&&(*(cptr+1)=='M')&&(*(cptr+2)=='P')))
     {cptr++;
     continue;}
+    printf("Located bmp at %x\n",(unsigned)(cptr-(char*)header));
     char name[1024];
     memset(name,'\0',sizeof(name));
     struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
