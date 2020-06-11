@@ -127,7 +127,7 @@ for(int i=0;i<DataClusters;i++)
     memset(name,'\0',sizeof(name));
     struct ldir_entry* ldir= (struct ldir_entry* )sdir;
     int reachend=0;
-    while(ldir->DIR_Attr==ATTR_LONG_NAME)
+    while(ldir->LDIR_Attr==ATTR_LONG_NAME)
     {
       wchar_t lname[1024];
       int pos=0;
@@ -160,7 +160,7 @@ for(int i=0;i<DataClusters;i++)
         else
           reachend=1;
       }
-      wchar[pos]=0;
+      name[pos]=0;
       wcscat(lname,name);
       wcscpy(name,lname);
       ldir=ldir+sizeof(struct ldir_entry);
