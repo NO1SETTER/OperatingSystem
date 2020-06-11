@@ -165,7 +165,7 @@ for(int i=0;i<DataClusters;i++)
       wcscpy(name,lname);
       ldir=ldir+sizeof(struct ldir_entry);
     }
-    fwprintf(L"long name=%s\n",name);
+    wprintf(L"long name=%s\n",name);
   }
   else
   {
