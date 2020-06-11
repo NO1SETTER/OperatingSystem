@@ -127,7 +127,7 @@ int fsize=GetSize(fname);
 int fd=open(fname,O_RDONLY);
 assert(fd>=0);
 
-const struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
+const struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize*2,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
 SetBasicAttributes(fh);
