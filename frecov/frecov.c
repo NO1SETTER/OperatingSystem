@@ -122,7 +122,8 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
 {
   printf("Scanning cluster at %x\n",(unsigned)(cstart-header));
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
-  struct sdir_entry* sdir=cstart;
+    printf("This is a directory_entry\n");
+    struct sdir_entry* sdir=cstart;
     if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
     {
       wchar_t name[1024];
