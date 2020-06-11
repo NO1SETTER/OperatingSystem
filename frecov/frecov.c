@@ -128,6 +128,7 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
     {
       wchar_t name[1024];
       memset(name,'\0',sizeof(name));
+      assert(0);
       struct ldir_entry* ldir= (struct ldir_entry* )sdir;
       int reachend=0;
       while(ldir->LDIR_Attr==ATTR_LONG_NAME)
@@ -153,7 +154,6 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
           else
           reachend=1;
         }
-        
         for(int j=0;j<2;j++)
         {
           if(reachend) break;
