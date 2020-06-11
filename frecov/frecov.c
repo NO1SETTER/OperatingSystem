@@ -63,30 +63,30 @@ int DataOffset;//数据区的起始
 
 struct sdir_entry
 {
-  uint8_t DIR_Name[11];
-  uint8_t DIR_Attr;
-  uint8_t DIR_NTRes;
+  uint8_t DIR_Name[11];//名字
+  uint8_t DIR_Attr;//属性
+  uint8_t DIR_NTRes;//大小写相关
   uint8_t DIR_CrtTimeTenth;
   uint32_t DIR_CrtTime:16;
   uint32_t DIR_CrtDate:16;
   uint32_t DIR_LstAccDate:16;
-  uint32_t DIR_FstClusHI:16;
+  uint32_t DIR_FstClusHI:16;//指向的块数高位
   uint32_t DIR_WrtTime:16;
   uint32_t DIR_WrtDate:16;
-  uint32_t DIR_FstClusLO:16;
-  uint32_t DIR_FileSize;
+  uint32_t DIR_FstClusLO:16;//指向的块数低位
+  uint32_t DIR_FileSize;//文件大小
 }__attribute__((packed));
 
 struct ldir_entry
 {
-  uint8_t LDIR_Ord;
-  uint16_t LDIR_Name1[5];
-  uint8_t LDIR_Attr;
-  uint8_t LDIR_Type;
-  uint8_t LDIR_Chksum;
-  uint16_t LDIR_Name2[6];
-  uint32_t LDIR_FstClusLO:16;
-  uint16_t LDIR_Name3[2];
+  uint8_t LDIR_Ord;//长文件头编号
+  uint8_t LDIR_Name1[10];//Name Part1
+  uint8_t LDIR_Attr;//属性
+  uint8_t LDIR_Type;//0
+  uint8_t LDIR_Chksum;//用于校验
+  uint8_t LDIR_Name2[12];//Name Part2
+  uint32_t LDIR_FstClusLO:16;//0
+  uint8_t LDIR_Name3[4];//Name part3
 }__attribute__((packed));
 
 int ctype[1000000];//记录cluster的type
@@ -104,7 +104,6 @@ assert(sizeof(struct ldir_entry)==32);
 
 char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=GetSize(fname);
-printf("filesize=%x\n",fsize);
 int fd=open(fname,O_RDONLY);
 assert(fd>=0);
 
@@ -113,76 +112,88 @@ PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
 SetBasicAttributes(fh);
 ScanCluster(fh);
-//Recover(fh);
+Recover(fh);
+}
+
+uint8_t char Chksum(unsigned char pFcbName)
+{
+uint16_t FcbNameLen;
+unsigned char sum;
+sum=0;
+for(int i=11;i!=0;i--)
+{
+  sum=((sum&1)?0x80:0)+)sum>>1+*pFcbName++;
+}
+return sum;
 }
 
 void Recover(const void* header)
 { 
-void *cstart=(void *)header+DataOffset;
-for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
+for(int i=0;i<DataClusters;i++)
 {
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
-    printf("Scanning cluster at %x\n",(unsigned)(cstart-header));
-    //printf("This is a directory_entry\n");
-    struct sdir_entry* sdir=(struct sdir_entry* )cstart;
-    if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
+  printf("Locating Directory_Entry\n");
+  char *cptr=header+DataOffset+i*ClusterSize;//当前块的起始
+  //先定位到BMP字符串
+  while(1)
+  {
+    if(cptr>=header+DataOffset+(i+1)*ClusterSize) break;//偏移量超出,退出
+    if(!((*cptr=='B')&&(*(cptr+1)=='M')&&(*(cptr+2)=='P')))
+    {cptr++;
+    continue;}
+    char name[1024];
+    memset(name,'\0',sizeof(name));
+    struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
+    struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
+    if(Chksum(sdir)!=ldir->LDIR_Chksum)//未匹配成功:短文件名
     {
-      wchar_t name[1024];
-      memset(name,'\0',sizeof(name));
-      struct ldir_entry* ldir= (struct ldir_entry* )sdir;
+      char prefix[10];
+      char suffix[5]
+      strncpy(prefix,sdir,8);
+      strncpy(suffix,ldir,3);
+      sprintf(name,"%s.%s",prefix,suffix);
+      printf("Short File Name:%s\n",name);
+    }
+    else//匹配成功:长文件名
+    {
+      assert(sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1'); 
       int reachend=0;
-      while(ldir->LDIR_Attr==ATTR_LONG_NAME)
+      while(1)//提取每一个长文件里的文件名Part
       {
-        wchar_t lname[1024];
+        char name_tp[25];
         int pos=0;
         for(int j=0;j<5;j++)
         {
           if(reachend) break;
-          wchar_t wch=ldir->LDIR_Name1[j];
-          if(wch!=0xffff)
-          lname[pos++]=wch;
-          else
-          reachend=1;
+          if(ldir->LDIR_Name1[2*j]!=0xFF)
+          name_tp[pos++]=ldir->LDIR_Name1[2*j+1];
+          else reachend=1;
         }
-        
+
         for(int j=0;j<6;j++)
         {
           if(reachend) break;
-          wchar_t wch=ldir->LDIR_Name2[j];
-          if(wch!=0xffff)
-          lname[pos++]=wch;
-          else
-          reachend=1;
+          if(ldir->LDIR_Name2[2*j]!=0xFF)
+          name_tp[pos++]=ldir->LDIR_Name2[2*j];
+          else reachend=1;
         }
 
         for(int j=0;j<2;j++)
         {
           if(reachend) break;
-          wchar_t wch=ldir->LDIR_Name3[j];
-          if(wch!=0xffff)
-            lname[pos++]=wch;
-          else
-            reachend=1;
+          if(ldir->LDIR_Name3[2*j]!=0xFF)
+          name_tp[pos++]=ldir->LDIR_Name3[2*j];
+          else reachend=1;
         }
-        lname[pos]=0;
-        wcscat(lname,name);
-        wcscpy(name,lname);
-        ldir=ldir+1;
+        strcat(name,name_tp);
+        if(reachend) break;
+        ldir_entry=ldir_entry-32;
       }
-    wprintf(L"long name=%s\n",name);
+      printf("Long File Name:%s\n",name);
     }
-    else
-    {
-      char name[15];
-      char name1[10];
-      char name2[5];
-      strncpy(name1,(void *)sdir,8);
-      strncpy(name2,(void *)sdir+8,3);
-      sprintf(name,"%s.%s",name1,name2);
-      printf("short name=%s\n",name);
-    }
+    cptr++;
+  }
 }
-
 }
 
 #define _DEBUG
@@ -191,7 +202,7 @@ void ScanCluster(const void* header)
   void* cstart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   {
-    //printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
+    printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
     #ifdef _DEBUG
     if(ctype[i-1]==DIRECTORY_ENTRY){}
     #endif
