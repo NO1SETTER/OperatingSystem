@@ -79,13 +79,13 @@ struct sdir_entry
 struct ldir_entry
 {
   uint8_t LDIR_Ord;
-  wchar_t LDIR_Name1[5];
+  uint16_t LDIR_Name1[5];
   uint8_t LDIR_Attr;
   uint8_t LDIR_Type;
   uint8_t LDIR_Chksum;
-  wchar_t LDIR_Name2[6];
+  uint16_t LDIR_Name2[6];
   uint32_t LDIR_FstClusLO:16;
-  uint32_t LDIR_Name3[2];
+  uint16_t LDIR_Name3[2];
 }__attribute__((packed));
 
 int ctype[1000000];//记录cluster的type
@@ -96,7 +96,7 @@ void ScanCluster(const void* header);
 void Recover(const void* header);
 
 int main(int argc, char *argv[]) {
-  printf("sizeof wchar:%d\n",(int)sizeof(wchar_t));
+//printf("sizeof wchar:%d\n",(int)sizeof(wchar_t));
 assert(sizeof(struct fat_header)==512);
 assert(sizeof(struct sdir_entry)==32);
 assert(sizeof(struct ldir_entry)==32);
