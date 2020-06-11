@@ -122,7 +122,7 @@ unsigned char sum;
 sum=0;
 for(int i=11;i!=0;i--)
 {
-  sum=((sum&1)?0x80:0)+sum>>1+*pFcbName++;
+  sum=((sum&1)?0x80:0)+(sum>>1)+*pFcbName++;
 }
 return sum;
 }
