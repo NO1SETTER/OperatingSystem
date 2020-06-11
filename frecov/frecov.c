@@ -11,7 +11,7 @@
 //#define _DEBUG
 enum DIR_ARRTIBUTE{ATTR_READ_ONLY=0x1,ATTR_HIDDEN=0x2,ATTR_SYSTEM=0x4,
 ATTR_VOLUME_ID=0x8,ATTR_DIRECTORY=0x10,ATTR_ARCHIVE=0x20,
-ATTR_LONG_NAME=ATTR_READ_ONLY| ATTR_HIDDEN | ATTR_SYSTEM | ATTR_VOLUME_ID};
+ATTR_LONG_NAME=0xF};
 enum CLUSTER_TYPE{DIRECTORY_ENTRY,BMP_HEADER,BMP_DATA,UNUSED,UNCERTAIN};
 //UNCERTAIN可能是bmp数据或者未使用
 /*
@@ -124,7 +124,6 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
     printf("This is a directory_entry\n");
     struct sdir_entry* sdir=(struct sdir_entry* )cstart;
-    printf("asdafsa %d qwfqd\n",sdir->DIR_Attr);
     if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
     {
       assert(0);
