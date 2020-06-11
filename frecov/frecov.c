@@ -219,6 +219,7 @@ for(int i=0;i<DataClusters;i++)
             
             char c=*(char*)bheader;
             //assert(c);
+            assert(0);
             printf("LOLING\n");
             assert(*((char*)bheader+1)=='M');
            
