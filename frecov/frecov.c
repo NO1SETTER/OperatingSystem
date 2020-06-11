@@ -216,7 +216,7 @@ for(int i=0;i<DataClusters;i++)
             printf("WHY?\n");
             assert(bheader);
             uint32_t bmpsize=bheader->bfSize;
-            
+            printf("LOL\n");
             uint32_t bmpoffset=bheader->bfOffBits;
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
