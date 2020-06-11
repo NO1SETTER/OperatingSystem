@@ -177,8 +177,8 @@ for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
       char name2[5];
       strncpy(name1,(void *)sdir,8);
       strncpy(name2,(void *)sdir+8,3);
-      assert(0);
       sprintf(name1,"%s.%s",name1,name2);
+      assert(0);
       printf("short name=%s\n",name);
     }
 }
