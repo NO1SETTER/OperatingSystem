@@ -145,7 +145,7 @@ for(int i=0;i<DataClusters;i++)
     memset(name,'\0',sizeof(name));
     struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
     struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
-    if(Chksum(sdir)!=ldir->LDIR_Chksum)//未匹配成功:短文件名
+    if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum)//未匹配成功:短文件名
     {
       char prefix[10];
       char suffix[5]
