@@ -218,8 +218,8 @@ for(int i=0;i<DataClusters;i++)
             printf("header at %p cstart at %p\n",header,header+ClusterSize*cid+DataOffset);
             fflush(stdout);
             assert(bheader);
-            assert(*bheader=='B');
-            assert(*(bheader+1)=='M');
+            assert(*(char*)bheader=='B');
+            assert(*((char*)bheader+1)=='M');
             printf("LOLING\n");
             uint32_t bmpsize=bheader->bfSize;
             printf("LOL\n");
