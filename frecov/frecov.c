@@ -186,9 +186,9 @@ for(int i=0;i<DataClusters;i++)
           name_tp[pos++]=ldir->LDIR_Name3[2*j];
           else reachend=1;
         }
-        assert(0);
         strcat(name,name_tp);
         if(reachend) break;
+        assert(0);
         ldir=ldir-32;
       }
       printf("Long File Name:%s\n",name);
