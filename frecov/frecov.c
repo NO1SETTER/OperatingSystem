@@ -172,6 +172,7 @@ for(int i=0;i<DataClusters;i++)
   }
   else
   {
+    assert(0);
     char name[15];
     char name1[10];
     char name2[5];
