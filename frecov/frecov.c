@@ -213,11 +213,11 @@ for(int i=0;i<DataClusters;i++)
           printf("First Cluster at cluster %d at %x\n",cid,(unsigned)(bheader-(struct bitmap_header*)header));
           if(ctype[cid]==BMP_HEADER)//定位到BMP头才进行恢复
           {
-            assert(0);
             uint32_t bmpsize=bheader->bfSize;
             uint32_t bmpoffset=bheader->bfOffBits;
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
+                        assert(0);
             printf("bmpsize = %d height = %d width = %d\n",bmpsize,height,width);
             assert(bmpsize==height*width);
           }
