@@ -207,7 +207,9 @@ void ScanCluster(const void* header)
   {
     //printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
     #ifdef _DEBUG
-    if(ctype[i-1]==DIRECTORY_ENTRY){}
+    if(ctype[i-1]==BMP_HEADER){
+      printf("bmp_header cluster %d\n",i-1);}
+    }
     #endif
     void *ptr=cstart;
     int isbmphd=0; 
