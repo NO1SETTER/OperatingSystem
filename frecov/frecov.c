@@ -147,6 +147,8 @@ uint8_t Chksum(unsigned char* pFcbName)
   return sum;
 }
 
+void call_null()
+{}
 void Recover(const void* header)
 { 
 for(int i=0;i<DataClusters;i++)
@@ -216,12 +218,12 @@ for(int i=0;i<DataClusters;i++)
             printf("WHY?\n");
             printf("bheader offset=%x\n",(unsigned)(bheader-(struct bitmap_header*)header));
             printf("header at %p cstart at %p\n",header,header+ClusterSize*cid+DataOffset);
-            
+            call_null();//方便定位gdb
             char c=*(char*)bheader;
             if(c)
             printf("LOLING\n");
             assert(*((char*)bheader+1)=='M');
-           
+  
             uint32_t bmpsize=bheader->bfSize;
             printf("LOL\n");
             uint32_t bmpoffset=bheader->bfOffBits;
