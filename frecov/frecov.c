@@ -133,7 +133,7 @@ for(int i=0;i<DataClusters;i++)
 {
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
   char *cptr=(char *)header+DataOffset+i*ClusterSize;//当前块的起始
-    printf("Locating Directory_Entry at %x\n",(unsigned)(cptr-(char*)header)));
+    printf("Locating Directory_Entry at %x\n",(unsigned)(cptr-(char*)header));
   //先定位到BMP字符串
   while(1)
   {
