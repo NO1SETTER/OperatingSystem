@@ -153,6 +153,7 @@ for(int i=0;i<DataClusters;i++)
       //不管文件名长短都会有长目录项,只从长目录项里读名字;
       while(1)//提取每一个长文件目录项里的文件名Part
       {
+        if((void *)ldir<(void *)header+DataOffset+i*ClusterSize) break;//向下越界，不读了
         int reachend=0;
         if(ldir->LDIR_Ord==(no|0x40)) reachend=1;
         char name_tp[25];
