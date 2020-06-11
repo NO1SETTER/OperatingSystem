@@ -96,6 +96,7 @@ void ScanCluster(const void* header);
 void Recover(const void* header);
 
 int main(int argc, char *argv[]) {
+  printf("sizeof wchar:%d\n",sizeof(wchar_t));
 assert(sizeof(struct fat_header)==512);
 assert(sizeof(struct sdir_entry)==32);
 assert(sizeof(struct ldir_entry)==32);
