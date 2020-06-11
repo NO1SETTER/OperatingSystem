@@ -162,6 +162,7 @@ for(int i=0;i<DataClusters;i++)
       assert(sdir->DIR_Name[6]=='~'&&sdir->DIR_Name[7]=='1'); 
       while(1)//提取每一个长文件目录项里的文件名Part
       {
+        printf("ldir_entry at %x\n",(unsigned)((void *)ldir-header));
         char name_tp[25];
         int pos=0;
         int reachend=0;
