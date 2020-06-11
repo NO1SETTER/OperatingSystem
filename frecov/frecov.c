@@ -218,8 +218,7 @@ for(int i=0;i<DataClusters;i++)
             printf("header at %p cstart at %p\n",header,header+ClusterSize*cid+DataOffset);
             
             char c=*(char*)bheader;
-            printf("c=%c\n",c);
-            assert(c=='B');
+            assert(c);
             printf("LOLING\n");
             assert(*((char*)bheader+1)=='M');
            
