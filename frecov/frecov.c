@@ -215,6 +215,7 @@ for(int i=0;i<DataClusters;i++)
           {
             printf("WHY?\n");
             printf("bheader offset=%x\n",(unsigned)(bheader-(struct bitmap_header*)header));
+            printf("header at %p cstart at %p\n",header,header+ClusterSize*cid+DataOffset;
             assert(bheader);
             assert(bheader->bfType[0]=='B');
             assert(bheader->bfType[1]=='M');
