@@ -5,8 +5,10 @@
 #include<assert.h>
 #include<fcntl.h>
 #include<unistd.h>
+#include<wchar.h>
 #include<sys/mman.h>
 #include<sys/stat.h>
+//#define _DEBUG
 enum DIR_ARRTIBUTE{ATTR_READ_ONLY=0x1,ATTR_HIDDEN=0x2,ATTR_SYSTEM=0x4,
 ATTR_VOLUME_ID=0x8,ATTR_DIRECTORY=0x10,ATTR_ARCHIVE=0x20,
 ATTR_LONG_NAME=ATTR_READ_ONLY| ATTR_HIDDEN | ATTR_SYSTEM | ATTR_VOLUME_ID};
@@ -58,7 +60,7 @@ int DataClusters;//数据区的cluser数
 int ClusterSize;//cluster的大小(byte)
 int DataOffset;//数据区的起始
 
-struct dir_entry
+struct sdir_entry
 {
   uint8_t DIR_Name[11];
   uint8_t DIR_Attr;
@@ -74,14 +76,29 @@ struct dir_entry
   uint32_t DIR_FileSize;
 }__attribute__((packed));
 
+struct ldir_entry
+{
+  uint8_t LDIR_Ord;
+  wchar_t LDIR_Name1[5];
+  uint8_t LDIR_Attr;
+  uint8_t LDIR_Type;
+  uint8_t LDIR_Chksum;
+  wchar_t LDIR_Name2[6];
+  uint32_t LDIR_FstClusLO:16;
+  uint32_t LDIR_Name3[2];
+}__attribute__((packed));
+
 int ctype[1000000];//记录cluster的type
 int GetSize(char *fname);//得到文件大小
 void SetBasicAttributes(const struct fat_header* header);//计算文件的一些属性
 uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为byte的数据
 void ScanCluster(const void* header);
+void Recover(const void* header);
+
 int main(int argc, char *argv[]) {
 assert(sizeof(struct fat_header)==512);
-assert(sizeof(struct dir_entry)==32);
+assert(sizeof(struct sdir_entry)==32);
+assert(sizeof(struct ldir_entry)==32);
 
 char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=GetSize(fname);
@@ -94,6 +111,75 @@ PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
 SetBasicAttributes(fh);
 ScanCluster(fh);
+Recover(fh);
+}
+
+void Recover(const void* header)
+{
+void *cstart=(void *)header+DataOffset;
+for(int i=0;i<DataClusters;i++)
+{
+  if(ctype[i]!=DIRECTORY_ENTRY) continue;
+  struct sdir_entry* sdir=cstart;
+  if(sdir_entry->DIR_Attr==ATTR_LONG_NAME)//变长文件头
+  {
+    wchar_t name[1024];
+    memset(name,'\0',sizeof(name));
+    struct ldir_entry* ldir= (struct ldir_entry* )sdir_entry;
+    int reachend=0;
+    while(ldir->DIR_Attr==ATTR_LONG_NAME)
+    {
+      wchar_t lname[1024];
+      int pos=0;
+      for(int i=0;i<5;i++)
+      {
+        if(reachend) break;
+        wchar_t wch=ldir->LDIR_Name1[i];
+        if(wch!=0xffff)
+        lname[pos++]=wch;
+        else
+        reachend=1;
+      }
+      
+      for(int i=0;i<6;i++)
+      {
+        if(reachend) break;
+        wchar_t wch=ldir->LDIR_Name2[i];
+        if(wch!=0xffff)
+        lname[pos++]=wch;
+        else
+        reachend=1;
+      }
+      
+      for(int i=0;i<2;i++)
+      {
+        if(reachend) break;
+        wchar_t wch=ldir->LDIR_Name3[i];
+        if(wch!=0xffff)
+          lname[pos++]=wch;
+        else
+          reachend=1;
+      }
+      wchar[pos]=0;
+      wcscat(lname,name);
+      wcscpy(name,lname);
+      ldir=ldir+sizeof(struct ldir_entry);
+    }
+    fwprintf(L"long name=%s\n",name);
+  }
+  else
+  {
+    char name[15];
+    char name1[10];
+    char name2[5];
+    strcpy(name1,(void *)sdir,8);
+    strcpy(name2,(void *)sdir+8,3);
+    sprintf(name1,"%s.%s",name1,name2);
+    printf("short name=%s\n",name);
+  }
+  
+ }
+
 }
 
 void ScanCluster(const void* header)
@@ -101,10 +187,9 @@ void ScanCluster(const void* header)
   void* cstart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++)
   {
-    if(i>=1)
-    {
+    #ifdef _DEBUG
       printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
-    }
+    #endif
     void *ptr=cstart;
     int isbmphd=0; 
     for(int j=0;j<ClusterSize;j++)
