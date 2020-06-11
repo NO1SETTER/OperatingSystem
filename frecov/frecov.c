@@ -280,4 +280,5 @@ int GetSize(char *fname)
       printf("Data Region has 0x%x clusters\n",DataClusters);
       printf("Cluster Size is 0x%x bytes\n",ClusterSize);
       printf("Data Region started at 0x%x\n",DataOffset);
+      printf("FAT size=%x\n",header->BPB_FATSz32*header->BPB_BytePerSec);
   }
