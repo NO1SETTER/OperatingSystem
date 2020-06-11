@@ -148,6 +148,7 @@ for(int i=0;i<DataClusters;i++)
     struct ldir_entry* ldir=(struct ldir_entry* )(cptr-40);
     if(Chksum((unsigned char*)sdir)!=ldir->LDIR_Chksum)//未匹配成功:短文件名
     {
+      assert(0);
       char prefix[10];
       char suffix[5];
       strncpy(prefix,(char* )sdir,8);
