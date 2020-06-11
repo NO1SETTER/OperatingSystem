@@ -167,7 +167,7 @@ for(int i=0;i<DataClusters;i++)
         wcscpy(name,lname);
         ldir=ldir+1;
       }
-    wprintf(L"long name=%s\n",name);
+    //wprintf(L"long name=%s\n",name);
   }
     else
     {
@@ -177,7 +177,7 @@ for(int i=0;i<DataClusters;i++)
       strncpy(name1,(void *)sdir,8);
       strncpy(name2,(void *)sdir+8,3);
       sprintf(name1,"%s.%s",name1,name2);
-      printf("short name=%s\n",name);
+      //printf("short name=%s\n",name);
     }
   cstart=cstart+ClusterSize;
 }
