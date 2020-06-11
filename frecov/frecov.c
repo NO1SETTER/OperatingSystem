@@ -191,9 +191,9 @@ void ScanCluster(const void* header)
   void* cstart=(void *)header+DataOffset;
   for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
   {
+    printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
     #ifdef _DEBUG
-    if(ctype[i-1]==DIRECTORY_ENTRY)
-      printf("Cluster at offset 0x%x is labeled as %d\n",DataOffset+(i-1)*ClusterSize,ctype[i-1]);
+    if(ctype[i-1]==DIRECTORY_ENTRY){}
     #endif
     void *ptr=cstart;
     int isbmphd=0; 
@@ -212,7 +212,7 @@ void ScanCluster(const void* header)
       ptr++;
     }
 
-    if(ct>=2)
+    if(ct>=5)//认为BMP至少出现五次才是目录项
     {ctype[i]=DIRECTORY_ENTRY;
     continue;}
 
