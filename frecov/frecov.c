@@ -166,8 +166,8 @@ for(int i=0;i<DataClusters;i++)
         wcscat(lname,name);
         wcscpy(name,lname);
         ldir=ldir+1;
-        printf("ldir at %p\n",ldir);
       }
+    assert(0);
     wprintf(L"long name=%s\n",name);
   }
   else
