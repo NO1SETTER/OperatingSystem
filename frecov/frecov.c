@@ -118,14 +118,13 @@ Recover(fh);
 void Recover(const void* header)
 { 
 void *cstart=(void *)header+DataOffset;
-for(int i=0;i<DataClusters;i++)
+for(int i=0;i<DataClusters;i++,cstart=cstart+ClusterSize)
 {
   printf("Scanning cluster at %x\n",(unsigned)(cstart-header));
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
   struct sdir_entry* sdir=cstart;
     if(sdir->DIR_Attr==ATTR_LONG_NAME)//变长文件头
     {
-      /*
       wchar_t name[1024];
       memset(name,'\0',sizeof(name));
       struct ldir_entry* ldir= (struct ldir_entry* )sdir;
@@ -168,19 +167,18 @@ for(int i=0;i<DataClusters;i++)
         wcscpy(name,lname);
         ldir=ldir+1;
       }
-    //wprintf(L"long name=%s\n",name);*/
+    wprintf(L"long name=%s\n",name);
   }
     else
     {
-      /*char name[15];
+      char name[15];
       char name1[10];
       char name2[5];
       strncpy(name1,(void *)sdir,8);
       strncpy(name2,(void *)sdir+8,3);
-      sprintf(name1,"%s.%s",name1,name2);*/
-      //printf("short name=%s\n",name);
+      sprintf(name1,"%s.%s",name1,name2);
+      printf("short name=%s\n",name);
     }
-  cstart=cstart+ClusterSize;
 }
 
 }
