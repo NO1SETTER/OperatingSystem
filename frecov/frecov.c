@@ -211,7 +211,6 @@ for(int i=0;i<DataClusters;i++)
           uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
           struct bitmap_header* bheader=(struct bitmap_header* )header+ClusterSize*cid+DataOffset;
           printf("First Cluster at cluster %d at %x\n",cid,(unsigned)(bheader-(struct bitmap_header*)header));
-          assert(*(char *)bheader);
           if(ctype[cid]==BMP_HEADER)//定位到BMP头才进行恢复
           {
             printf("WHY?\n");
