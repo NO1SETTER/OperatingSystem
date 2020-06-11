@@ -115,14 +115,14 @@ ScanCluster(fh);
 Recover(fh);
 }
 
-uint8_t char Chksum(unsigned char pFcbName)
+uint8_t  = Chksum(unsigned char pFcbName)
 {
 uint16_t FcbNameLen;
 unsigned char sum;
 sum=0;
 for(int i=11;i!=0;i--)
 {
-  sum=((sum&1)?0x80:0)+)sum>>1+*pFcbName++;
+  sum=((sum&1)?0x80:0)+sum>>1+*pFcbName++;
 }
 return sum;
 }
