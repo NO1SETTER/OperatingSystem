@@ -170,7 +170,6 @@ for(int i=0;i<DataClusters;i++)
 {
   if(ctype[i]!=DIRECTORY_ENTRY) continue;
   char *cptr=(char *)header+DataOffset+i*ClusterSize;//当前块的起始
-    printf("Locating Directory_Entry at %x\n",(unsigned)(cptr-(char*)header));
   //先定位到BMP字符串
   while(1)
   {
@@ -178,7 +177,6 @@ for(int i=0;i<DataClusters;i++)
           if(!((*cptr=='B')&&(*(cptr+1)=='M')&&(*(cptr+2)=='P')))
           {cptr++;
           continue;}
-          printf("Located bmp at %x\n",(unsigned)(cptr-(char*)header));
           char name[1024];
           memset(name,'\0',sizeof(name));
           struct sdir_entry* sdir=(struct sdir_entry* )(cptr-8);
@@ -227,7 +225,6 @@ for(int i=0;i<DataClusters;i++)
           //this field:recover data
           uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
           struct bitmap_header* bheader=(struct bitmap_header* )(void *)(header+ClusterSize*cid+DataOffset);
-          printf("bheader at %p Offset:%x\n",bheader,ClusterSize*cid+DataOffset);
           if(ctype[cid]==BMP_HEADER)//定位到BMP头才进行恢复
           {
             uint32_t bmpsize=bheader->bfSize;
@@ -236,11 +233,11 @@ for(int i=0;i<DataClusters;i++)
             uint32_t width=bheader->biWidth;
             printf("BMP Data Offset:%x\n",bheader->bfOffBits);
             printf("FileSize = %x\n",bmpsize);
+            printf("Height=%x Width=%x\n",header,width);
             //基本是0x36，也就是54字节，说明数据正好接在BMP_HEADER后面
             char tmpname[128];
             sprintf(tmpname,"/tmp/%s",name);
             FILE *fp=fopen(tmpname,"a+");
-            printf("name=%s\n",tmpname);
             fwrite((void *)bheader,1,sizeof(struct bitmap_header),fp);
             char ch[1]="\0";
             for(int j=0;j<bmpoffset-sizeof(struct bitmap_header);j++)
