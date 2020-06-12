@@ -221,6 +221,7 @@ for(int i=0;i<DataClusters;i++)
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
             printf("BMP Data Offset:%x\n",bheader->bfOffBits);
+            assert(0);
           }
           //this field:recover data
     cptr++;
