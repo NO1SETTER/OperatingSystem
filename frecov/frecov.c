@@ -258,7 +258,6 @@ for(int i=0;i<DataClusters;i++)
                   }
                   if(bdstart+ClusterSize-BitmapData==0)//在上个块读了一个完整的像素
                   {
-
                     NewPix=retrieve(bdstart+ClusterSize,3);
                     double ratio=(double)LastPix/(double)NewPix;
                     if(ratio>=0.5&&ratio<=2)//优先考虑直接相连的下一块
@@ -269,14 +268,15 @@ for(int i=0;i<DataClusters;i++)
                     }
                     else
                     {
-                      for(int i=0;i<DataClusters;i++)
+                      for(int k=0;k<DataClusters;k++)
                       {
-                        void* ptr=(void*)(header+DataOffset+i*ClusterSize);
-                        if(ctype[i]!=UNCERTAIN) continue;
+                        void* ptr=(void*)(header+DataOffset+k*ClusterSize);
+                        if(ctype[k]!=UNCERTAIN) continue;
                         NewPix=retrieve(ptr,3);
                         double ratio2=(double)LastPix/(double)NewPix;
                         if(ratio2>=0.5&&ratio2<=2)//找到合适的块，退出
                         {
+                          printf("Locate Cluster:%d\n",k);
                           bdstart=ptr;
                           BitmapData=ptr;
                           break;
@@ -298,19 +298,20 @@ for(int i=0;i<DataClusters;i++)
                       fwrite(WriteData,1,3,fp);
                       bdstart=bdstart+ClusterSize;
                       BitmapData=bdstart+ClusterSize+2;
-                      printf("1 Left:Straight Next:\n");
+                      printf("1 Left:Straight Next\n");
                     }
                     else
                     {
-                      for(int i=0;i<DataClusters;i++)
+                      for(int k=0;k<DataClusters;k++)
                       {
-                        void* ptr=(void*)(header+DataOffset+i*ClusterSize);
-                        if(ctype[i]!=UNCERTAIN) continue;
+                        void* ptr=(void*)(header+DataOffset+k*ClusterSize);
+                        if(ctype[k]!=UNCERTAIN) continue;
                         NewPix2=retrieve(ptr,2);
                         NewPix=(NewPix2<<8)|NewPix1;
                         double ratio2=(double)LastPix/(double)NewPix;
                         if(ratio2>=0.5&&ratio2<=2)//找到合适的块，退出
                         {
+                          printf("Locate Cluster:%d\n",k);
                           char WriteData[3]={*(char*)BitmapData,*(char*)ptr,*(char*)(ptr+1)};
                           j=j+3;
                           fwrite(WriteData,1,3,fp);
@@ -335,19 +336,20 @@ for(int i=0;i<DataClusters;i++)
                       fwrite(WriteData,1,3,fp);
                       bdstart=bdstart+ClusterSize;
                       BitmapData=bdstart+ClusterSize+1;
-                      printf("2 Left:Straight Next:\n");
+                      printf("2 Left:Straight Next\n");
                     }
                     else
                     {
-                      for(int i=0;i<DataClusters;i++)
+                      for(int k=0;k<DataClusters;k++)
                       {
-                        void* ptr=(void*)(header+DataOffset+i*ClusterSize);
-                        if(ctype[i]!=UNCERTAIN) continue;
+                        void* ptr=(void*)(header+DataOffset+k*ClusterSize);
+                        if(ctype[k]!=UNCERTAIN) continue;
                         NewPix2=retrieve(ptr,1);
                         NewPix=(NewPix2<<16)|NewPix1;
                         double ratio2=(double)LastPix/(double)NewPix;
                         if(ratio2>=0.5&&ratio2<=2)//找到合适的块，退出
                         {
+                          printf("Locate Cluster:%d\n",k);
                           char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)ptr};
                           j=j+3;
                           fwrite(WriteData,1,3,fp);
@@ -359,7 +361,6 @@ for(int i=0;i<DataClusters;i++)
                     }
 
                   }
-                  assert(0);
             }
             fclose(fp);
 
