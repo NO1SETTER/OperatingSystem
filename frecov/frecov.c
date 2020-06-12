@@ -127,7 +127,7 @@ int fsize=GetSize(fname);
 int fd=open(fname,O_RDONLY);
 assert(fd>=0);
 
-const struct fat_header* fh=(struct fat_header*)mmap((void *)0x700000000000,fsize,
+const struct fat_header* fh=(struct fat_header*)mmap(NULL,fsize,
 PROT_READ | PROT_WRITE | PROT_EXEC,MAP_PRIVATE,fd,0);//确认读到文件头了
 assert(fh->signature_word==0xaa55);
 SetBasicAttributes(fh);
@@ -147,10 +147,6 @@ uint8_t Chksum(unsigned char* pFcbName)
   return sum;
 }
 
-void call_null()
-{
-  printf("NMSL");
-}
 void Recover(const void* header)
 { 
 for(int i=0;i<DataClusters;i++)
@@ -221,9 +217,9 @@ for(int i=0;i<DataClusters;i++)
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
             printf("BMP Data Offset:%x\n",bheader->bfOffBits);
-            assert(0);
           }
           //this field:recover data
+          assert(0);
     cptr++;
   }
 }
