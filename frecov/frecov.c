@@ -204,15 +204,11 @@ for(int i=0;i<DataClusters;i++)
             ldir=ldir-1;
             no=no+1;
           }
-          for(int j=0;j<strlen(name);j++)
-          {
-            if(name[j]=='.')
-            {
-              name[j+4]='\0';break;
-            }
-          }
-          printf("%s\n",name);
-
+          printf("NAME!!!\n");
+          for(int i=0;i<strlen(name);i++)
+          putc(name[i]);
+          putc('\n');
+          printf("NAME!!!\n");
           //this field:recover data
           uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
           struct bitmap_header* bheader=(struct bitmap_header* )(void *)(header+ClusterSize*cid+DataOffset);
