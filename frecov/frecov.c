@@ -256,7 +256,6 @@ for(int i=0;i<DataClusters;i++)
                     j=j+3;
                     BitmapData=BitmapData+3;
                   }
-                  assert(0);
                   if(bdstart+ClusterSize-BitmapData==0)//在上个块读了一个完整的像素
                   {
                     NewPix=retrieve(bdstart+ClusterSize,3);
@@ -354,6 +353,7 @@ for(int i=0;i<DataClusters;i++)
                     }
 
                   }
+                  assert(0);
             }
             fclose(fp);
 
