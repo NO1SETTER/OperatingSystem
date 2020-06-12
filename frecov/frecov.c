@@ -244,7 +244,6 @@ for(int i=0;i<DataClusters;i++)
             fwrite((void *)ch,1,1,fp);
             void *BitmapData=(void *)bheader+bmpoffset;//当前读到的指针点
             void *bdstart = (void *)bheader;//当前读到的块起始点
-            assert(0);
             for(int j=0;j<bmpsize-sizeof(struct bitmap_header);)//j所代表的是已经写入的字节数
             {
                   uint32_t LastPix=0;//记录上一个像素
@@ -257,7 +256,7 @@ for(int i=0;i<DataClusters;i++)
                     j=j+3;
                     BitmapData=BitmapData+3;
                   }
-
+                  assert(0);
                   if(bdstart+ClusterSize-BitmapData==0)//在上个块读了一个完整的像素
                   {
                     NewPix=retrieve(bdstart+ClusterSize,3);
