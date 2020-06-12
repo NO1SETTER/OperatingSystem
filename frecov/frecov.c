@@ -226,7 +226,7 @@ for(int i=0;i<DataClusters;i++)
             for(int j=0;j<bmpoffset-sizeof(struct bitmap_header);j++)
             fwrite((void *)ch,1,1,fp);
             void *BitmapData=(void *)bheader+bmpoffset;
-            fwrite((BitmapData,1,bmpsize,fp);
+            fwrite(BitmapData,1,bmpsize,fp);
             fclose(fp);
           }
           assert(0);
