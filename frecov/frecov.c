@@ -182,7 +182,6 @@ for(int i=0;i<DataClusters;i++)
             {
               if(ldir->LDIR_Name1[2*j]!=0xFF&&ldir->LDIR_Name1[2*j]!=0x0)
                 {name_tp[pos++]=(char)ldir->LDIR_Name1[2*j];
-                printf("getchar %c %d\n",name_tp[pos-1],(int)name_tp[pos-1]);
                 }
               else reachend=1;
             }
@@ -190,7 +189,6 @@ for(int i=0;i<DataClusters;i++)
             {
               if(ldir->LDIR_Name2[2*j]!=0xFF&&ldir->LDIR_Name2[2*j]!=0x0)
               {name_tp[pos++]=(char)ldir->LDIR_Name2[2*j];
-              printf("getchar %c %d\n",name_tp[pos-1],(int)name_tp[pos-1]);
               }
               else reachend=1;
             }
@@ -199,7 +197,6 @@ for(int i=0;i<DataClusters;i++)
             {
               if(ldir->LDIR_Name3[2*j]!=0xFF&&ldir->LDIR_Name3[2*j]!=0x0)
               {name_tp[pos++]=(char)ldir->LDIR_Name3[2*j];
-              printf("getchar %c %d\n",name_tp[pos-1],(int)name_tp[pos-1]);
               }
               else reachend=1;
             }
@@ -209,15 +206,7 @@ for(int i=0;i<DataClusters;i++)
             ldir=ldir-1;
             no=no+1;
           }
-
-          printf("strlen=%d\n",(int)strlen(name));
-          printf("NAME!!!\n");
-          printf("name=%s\n",name);
-          for(int i=0;i<strlen(name);i++)
-          printf("%x ",(int)name[i]);
-          //putc(name[i],stdout);
-          putc('\n',stdout);
-          printf("NAME!!!\n");
+          printf("%s\n",name);
           //this field:recover data
           uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
           struct bitmap_header* bheader=(struct bitmap_header* )(void *)(header+ClusterSize*cid+DataOffset);
@@ -233,7 +222,6 @@ for(int i=0;i<DataClusters;i++)
             char tmpname[128];
             sprintf(tmpname,"/tmp/%s",name);
             FILE *fp=fopen(tmpname,"a+");
-            fclose(fp);
             printf("name=%s\n",tmpname);
             fwrite((void *)bheader,1,sizeof(struct bitmap_header),fp);
             char ch[1]="\0";
