@@ -6,6 +6,7 @@
 #include<fcntl.h>
 #include<unistd.h>
 #include<wchar.h>
+#include<dirent.h>
 #include<sys/mman.h>
 #include<sys/stat.h>
 //#define _DEBUG
