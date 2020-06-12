@@ -182,16 +182,15 @@ for(int i=0;i<DataClusters;i++)
             {
               if(ldir->LDIR_Name1[2*j]!=0xFF)
                 {name_tp[pos++]=(char)ldir->LDIR_Name1[2*j];
-                printf("getchar %c\n",name_tp[pos-1]);
+                printf("getchar %c %d\n",name_tp[pos-1],(int)name_tp[pos-1]);
                 }
               else reachend=1;
             }
-
             for(int j=0;j<6;j++)
             {
               if(ldir->LDIR_Name2[2*j]!=0xFF)
               {name_tp[pos++]=(char)ldir->LDIR_Name2[2*j];
-              printf("getchar %c\n",name_tp[pos-1]);
+              printf("getchar %c %d\n",name_tp[pos-1],(int)name_tp[pos-1]);
               }
               else reachend=1;
             }
@@ -200,7 +199,7 @@ for(int i=0;i<DataClusters;i++)
             {
               if(ldir->LDIR_Name3[2*j]!=0xFF)
               {name_tp[pos++]=(char)ldir->LDIR_Name3[2*j];
-              printf("getchar %c\n",name_tp[pos-1]);
+              printf("getchar %c %d\n",name_tp[pos-1],(int)name_tp[pos-1]);
               }
               else reachend=1;
             }
