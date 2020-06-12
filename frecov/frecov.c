@@ -214,13 +214,13 @@ for(int i=0;i<DataClusters;i++)
 
           uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
           struct bitmap_header* bheader=(struct bitmap_header* )(void *)header+ClusterSize*cid+DataOffset;
-          printf("bheader at %p\n",bheadr);
+          printf("bheader at %p\n",bheader);
           printf("First Cluster_id:%d at %x\n",cid,(unsigned)(bheader-(struct bitmap_header*)header));
           if(ctype[cid]==BMP_HEADER)//定位到BMP头才进行恢复
           {
             printf("WHY?\n");
             printf("bheader offset=%x\n",(unsigned)(bheader-(struct bitmap_header*)header));
-            printf("bheader at %p\n",bheadr);
+            printf("bheader at %p\n",bheader);
             printf("header at %p cstart at %p\n",header,bheader);
             call_null();//方便定位gdb
             char c=*(char*)bheader;
