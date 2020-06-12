@@ -219,7 +219,7 @@ for(int i=0;i<DataClusters;i++)
           {
             printf("WHY?\n");
             printf("bheader offset=%x\n",(unsigned)(bheader-(struct bitmap_header*)header));
-            printf("header at %p cstart at %p\n",header,header+ClusterSize*cid+DataOffset);
+            printf("header at %p cstart at %p\n",header,bheader);
             call_null();//方便定位gdb
             char c=*(char*)bheader;
             if(c)
