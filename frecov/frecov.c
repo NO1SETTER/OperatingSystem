@@ -221,7 +221,6 @@ for(int i=0;i<DataClusters;i++)
             ldir=ldir-1;
             no=no+1;
           }
-          printf("%s\n",name);
           //this field:recover data
           uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
           struct bitmap_header* bheader=(struct bitmap_header* )(void *)(header+ClusterSize*cid+DataOffset);
@@ -231,9 +230,9 @@ for(int i=0;i<DataClusters;i++)
             uint32_t bmpoffset=bheader->bfOffBits;
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
-            printf("BMP Data Offset:%x\n",bheader->bfOffBits);
-            printf("FileSize = %x\n",bmpsize);
-            printf("Height=%x Width=%x\n",height,width);
+            //printf("BMP Data Offset:%x\n",bheader->bfOffBits);
+            //printf("FileSize = %x\n",bmpsize);
+            //printf("Height=%x Width=%x\n",height,width);
             //基本是0x36，也就是54字节，说明数据正好接在BMP_HEADER后面
             char tmpname[128];
             sprintf(tmpname,"/tmp/%s",name);
@@ -245,6 +244,16 @@ for(int i=0;i<DataClusters;i++)
             void *BitmapData=(void *)bheader+bmpoffset;
             fwrite(BitmapData,1,bmpsize,fp);
             fclose(fp);
+
+            char cmd[128];
+            char buffer[256];
+            sprintf(cmd,"sha1sum %s",tmpname);
+            FILE *fp2=popen(cmd,"r");
+            assert(fp2);
+            fscanf(fp2,"%s",buffer);
+            pclose(fp2);
+            printf("%s %s\n",name,buffer);
+            fflush(stdout);
           }
           //this field:recover data
     cptr++;
