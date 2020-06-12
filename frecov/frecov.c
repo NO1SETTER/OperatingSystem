@@ -204,6 +204,13 @@ for(int i=0;i<DataClusters;i++)
             ldir=ldir-1;
             no=no+1;
           }
+          for(int j=0;j<strlen(name);j++)
+          {
+            if(name[j]=='.')
+            {
+              name[j+4]='\0';break;
+            }
+          }
           printf("%s\n",name);
 
           //this field:recover data
