@@ -217,10 +217,9 @@ for(int i=0;i<DataClusters;i++)
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
             printf("BMP Data Offset:%x\n",bheader->bfOffBits);
-            //基本是0x36，也就是54字节，说明数据正好接在BMP头上
+            //基本是0x36，也就是54字节，说明数据正好接在BMP_HEADER后面
           }
           //this field:recover data
-          assert(0);
     cptr++;
   }
 }
