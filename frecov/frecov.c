@@ -218,10 +218,10 @@ for(int i=0;i<DataClusters;i++)
             uint32_t width=bheader->biWidth;
             printf("BMP Data Offset:%x\n",bheader->bfOffBits);
             //基本是0x36，也就是54字节，说明数据正好接在BMP_HEADER后面
-            assert(0);
             char tmpname[128];
             sprintf(tmpname,"tmp/%s",name);
             FILE *fp=fopen(tmpname,"a+");
+            assert(fp);
             fwrite((void *)bheader,1,sizeof(struct bitmap_header),fp);
             char ch[1]="\0";
             for(int j=0;j<bmpoffset-sizeof(struct bitmap_header);j++)
