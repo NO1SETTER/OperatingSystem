@@ -232,7 +232,7 @@ for(int i=0;i<DataClusters;i++)
             uint32_t height=bheader->biHeight;
             uint32_t width=bheader->biWidth;
             //printf("BMP Data Offset:%x\n",bheader->bfOffBits);
-            printf("FileSize = %x\n",bmpsize);
+            //printf("FileSize = %x\n",bmpsize);
             //printf("Height=%x Width=%x\n",height,width);
             //基本是0x36，也就是54字节，说明数据正好接在BMP_HEADER后面
             char tmpname[128];
@@ -243,7 +243,7 @@ for(int i=0;i<DataClusters;i++)
             for(int j=0;j<bmpoffset-sizeof(struct bitmap_header);j++)
             fwrite((void *)ch,1,1,fp);
             void *BitmapData=(void *)bheader+bmpoffset;
-            fwrite(BitmapData,1,bmpsize,fp);
+            fwrite(BitmapData,1,bmpsize-sizeof(struct bitmap_header),fp);
             fclose(fp);
 
             char cmd[128];
