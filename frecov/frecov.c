@@ -213,8 +213,7 @@ for(int i=0;i<DataClusters;i++)
           //this field:recover data
           uint32_t cid=((sdir->DIR_FstClusHI<<16)|sdir->DIR_FstClusLO)-2;//虽然不知道为什么要减2
           struct bitmap_header* bheader=(struct bitmap_header* )(void *)(header+ClusterSize*cid+DataOffset);
-          printf("bheader at %p\n",bheader);
-          printf("Offset: %x\n",ClusterSize*cid+DataOffset);
+          printf("bheader at %p Offset:%x\n",bheader,ClusterSize*cid+DataOffset);
           if(ctype[cid]==BMP_HEADER)//定位到BMP头才进行恢复
           {
             uint32_t bmpsize=bheader->bfSize;
