@@ -258,12 +258,14 @@ for(int i=0;i<DataClusters;i++)
                   }
                   if(bdstart+ClusterSize-BitmapData==0)//在上个块读了一个完整的像素
                   {
+
                     NewPix=retrieve(bdstart+ClusterSize,3);
                     double ratio=(double)LastPix/(double)NewPix;
                     if(ratio>=0.5&&ratio<=2)//优先考虑直接相连的下一块
                     {
                       bdstart=bdstart+ClusterSize;
                       BitmapData=bdstart+ClusterSize;
+                      printf("0 Left:Straight Next\n");
                     }
                     else
                     {
@@ -284,6 +286,7 @@ for(int i=0;i<DataClusters;i++)
                   }
                   else if(bdstart+ClusterSize-BitmapData==1)//上一个像素还剩1个byte没读
                   {
+
                     uint32_t NewPix1=retrieve(BitmapData,1);
                     uint32_t NewPix2=retrieve(BitmapData+1,2);
                     NewPix=(NewPix2<<8)|NewPix1;
@@ -295,6 +298,7 @@ for(int i=0;i<DataClusters;i++)
                       fwrite(WriteData,1,3,fp);
                       bdstart=bdstart+ClusterSize;
                       BitmapData=bdstart+ClusterSize+2;
+                      printf("1 Left:Straight Next:\n");
                     }
                     else
                     {
@@ -319,6 +323,7 @@ for(int i=0;i<DataClusters;i++)
                   }
                   else if(bdstart+ClusterSize-BitmapData==2)//上一个像素还剩2个byte没读
                   {
+
                     uint32_t NewPix1=retrieve(BitmapData,2);
                     uint32_t NewPix2=retrieve(BitmapData+2,1);
                     NewPix=(NewPix2<<16)|NewPix1;
@@ -330,6 +335,7 @@ for(int i=0;i<DataClusters;i++)
                       fwrite(WriteData,1,3,fp);
                       bdstart=bdstart+ClusterSize;
                       BitmapData=bdstart+ClusterSize+1;
+                      printf("2 Left:Straight Next:\n");
                     }
                     else
                     {
