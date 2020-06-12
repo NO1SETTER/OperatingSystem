@@ -231,7 +231,6 @@ for(int i=0;i<DataClusters;i++)
             fwrite(BitmapData,1,bmpsize,fp);
             fclose(fp);
           }
-          assert(0);
           //this field:recover data
     cptr++;
   }
