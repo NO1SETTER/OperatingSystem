@@ -252,7 +252,7 @@ for(int i=0;i<DataClusters;i++)
             assert(fp2);
             fscanf(fp2,"%s",buffer);
             pclose(fp2);
-            printf("%s %s\n",name,buffer);
+            printf("%s %s\n",buffer,name);
             fflush(stdout);
           }
           //this field:recover data
@@ -326,7 +326,7 @@ int GetSize(char *fname)
   int ret=ftell(fp);
   rewind(fp);
   fclose(fp);
-  printf("FileSize=%x\n",ret);
+  //printf("FileSize=%x\n",ret);
   return ret;
 }
 
@@ -336,8 +336,8 @@ int GetSize(char *fname)
       DataClusters = sectors/header->BPB_SecPerClus;
       ClusterSize=header->BPB_SecPerClus*header->BPB_BytePerSec;
       DataOffset=(header->BPB_RsvdSecCnt+header->BPB_NumFATs*header->BPB_FATSz32)*header->BPB_BytePerSec;
-      printf("Data Region has 0x%x clusters\n",DataClusters);
-      printf("Cluster Size is 0x%x bytes\n",ClusterSize);
-      printf("Data Region started at 0x%x\n",DataOffset);
-      printf("FAT size=%x\n",header->BPB_FATSz32*header->BPB_BytePerSec);
+      //printf("Data Region has 0x%x clusters\n",DataClusters);
+      //printf("Cluster Size is 0x%x bytes\n",ClusterSize);
+      //printf("Data Region started at 0x%x\n",DataOffset);
+      //printf("FAT size=%x\n",header->BPB_FATSz32*header->BPB_BytePerSec);
   }
