@@ -221,8 +221,9 @@ for(int i=0;i<DataClusters;i++)
             char tmpname[128];
             sprintf(tmpname,"/tmp/%s",name);
             FILE *fp=fopen(tmpname,"a+");
-            printf("name=%s\n",tmpname);
+            fclose(fp);
             assert(0);
+            printf("name=%s\n",tmpname);
             fwrite((void *)bheader,1,sizeof(struct bitmap_header),fp);
             char ch[1]="\0";
             for(int j=0;j<bmpoffset-sizeof(struct bitmap_header);j++)
