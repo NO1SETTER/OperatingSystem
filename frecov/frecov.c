@@ -246,7 +246,7 @@ for(int i=0;i<DataClusters;i++)
             void *bdstart = (void *)bheader;//当前读到的块起始点
             for(int j=0;j<bmpsize-sizeof(struct bitmap_header);)//j所代表的是已经写入的字节数
             {
-                  uint32_t LastPix;//记录上一个像素
+                  uint32_t LastPix=0;//记录上一个像素
                   uint32_t NewPix;//当前正在比较的像素
 
                   while(bdstart+ClusterSize-BitmapData>=3)//还在一个块内,正常读
