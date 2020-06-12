@@ -148,7 +148,9 @@ uint8_t Chksum(unsigned char* pFcbName)
 }
 
 void call_null()
-{}
+{
+  printf("NMSL");
+}
 void Recover(const void* header)
 { 
 for(int i=0;i<DataClusters;i++)
