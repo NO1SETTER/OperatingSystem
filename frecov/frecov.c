@@ -204,6 +204,8 @@ for(int i=0;i<DataClusters;i++)
             ldir=ldir-1;
             no=no+1;
           }
+
+          printf("strlen=%d\n",(int)strlen(name));
           printf("NAME!!!\n");
           for(int i=0;i<strlen(name);i++)
           putc(name[i],stdout);
@@ -226,7 +228,6 @@ for(int i=0;i<DataClusters;i++)
             FILE *fp=fopen(tmpname,"a+");
             fclose(fp);
             printf("name=%s\n",tmpname);
-            printf("strlen=%d\n",(int)strlen(tmpname));
             fwrite((void *)bheader,1,sizeof(struct bitmap_header),fp);
             char ch[1]="\0";
             for(int j=0;j<bmpoffset-sizeof(struct bitmap_header);j++)
