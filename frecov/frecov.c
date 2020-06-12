@@ -150,6 +150,7 @@ while((ptr=readdir(dir))!=NULL)
   sprintf(pathname,"/tmp/%s",ptr->d_name);
   remove(pathname);
 }
+}
 
 uint8_t Chksum(unsigned char* pFcbName)
 {
