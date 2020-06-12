@@ -203,7 +203,7 @@ for(int i=0;i<DataClusters;i++)
               }
               else reachend=1;
             }
-
+            name_tp[pos]='\0';
             strcat(name,name_tp);
             if(reachend) break;
             ldir=ldir-1;
