@@ -125,7 +125,8 @@ assert(sizeof(struct sdir_entry)==32);
 assert(sizeof(struct ldir_entry)==32);
 assert(sizeof(struct bitmap_header)==54);
 clean();
-char fname[128]="/home/ebata/img/M5-frecov.img";
+assert argv[1];
+char *fname=argv[1];
 int fsize=GetSize(fname);
 int fd=open(fname,O_RDONLY);
 assert(fd>=0);
@@ -252,7 +253,7 @@ for(int i=0;i<DataClusters;i++)
             assert(fp2);
             fscanf(fp2,"%s",buffer);
             pclose(fp2);
-            printf("%s %s\n",buffer,name);
+            printf("%s  %s\n",buffer,name);
             fflush(stdout);
           }
           //this field:recover data
