@@ -116,12 +116,14 @@ void SetBasicAttributes(const struct fat_header* header);//计算文件的一些
 uint32_t retrieve(const void *ptr,int byte);//从ptr所指的位置取出长为byte的数据
 void ScanCluster(const void* header);
 void Recover(const void* header);
+void clean();
 
 int main(int argc, char *argv[]) {
 assert(sizeof(struct fat_header)==512);
 assert(sizeof(struct sdir_entry)==32);
 assert(sizeof(struct ldir_entry)==32);
 assert(sizeof(struct bitmap_header)==54);
+clean();
 char fname[128]="/home/ebata/img/M5-frecov.img";
 int fsize=GetSize(fname);
 int fd=open(fname,O_RDONLY);
@@ -133,6 +135,19 @@ assert(fh->signature_word==0xaa55);
 SetBasicAttributes(fh);
 ScanCluster(fh);
 Recover(fh);
+}
+
+void clean()
+{
+DIR *dir=opendir("/tmp");
+struct dirent* ptr;
+while((ptr=readdir(dir))!=NULL)
+{
+  if(strcmp(ptr->d_name,".")==0||strcmp(ptr->d_name,"..")==0)
+  continue;
+  char pathname[300];
+  sprintf(pathname,"/tmp/%s",ptr->d_name);
+  remove(pathname);
 }
 
 uint8_t Chksum(unsigned char* pFcbName)
