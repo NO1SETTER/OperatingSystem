@@ -208,7 +208,8 @@ for(int i=0;i<DataClusters;i++)
           printf("strlen=%d\n",(int)strlen(name));
           printf("NAME!!!\n");
           for(int i=0;i<strlen(name);i++)
-          putc(name[i],stdout);
+          printf("%d ",(int)name[i]);
+          //putc(name[i],stdout);
           putc('\n',stdout);
           printf("NAME!!!\n");
           //this field:recover data
