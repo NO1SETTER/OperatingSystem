@@ -208,7 +208,7 @@ for(int i=0;i<DataClusters;i++)
           printf("strlen=%d\n",(int)strlen(name));
           printf("NAME!!!\n");
           for(int i=0;i<strlen(name);i++)
-          printf("%d ",(int)name[i]);
+          printf("%x ",(int)name[i]);
           //putc(name[i],stdout);
           putc('\n',stdout);
           printf("NAME!!!\n");
