@@ -469,7 +469,7 @@ static void sem_wait(sem_t *sem)
   sp_lock(&thread_ctrl_lock);
   sem->val--;
   #ifdef _DEBUG
-  printf("sem:%s->val = %d\n",sem->name,sem->val);
+  printf("wait:%s->val = %d\n",sem->name,sem->val);
   #endif
   if(sem->val<0) 
   {
@@ -518,7 +518,7 @@ static void sem_signal(sem_t *sem)
   sp_lock(&thread_ctrl_lock);
 
    #ifdef _DEBUG
-  printf("sem:%s->val = %d\n",sem->name,sem->val);
+  printf("signal:%s->val = %d\n",sem->name,sem->val);
   #endif
   sem->val++;
     if(sem->wnum)
