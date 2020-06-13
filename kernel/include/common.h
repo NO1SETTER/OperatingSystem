@@ -3,7 +3,7 @@
 #include <klib-macros.h>
 #include <amdev.h>
 #define DEBUG_LOCAL
-#define DEV_ENABLE
+//#define DEV_ENABLE
 enum t_status {
   T_NEW = 1, // 新创建，还未执行过
   T_RUNNING, // 已经执行过
