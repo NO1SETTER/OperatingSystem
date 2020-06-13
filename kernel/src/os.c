@@ -1,5 +1,6 @@
 #include <common.h>
 #define STACK_SIZE 4096
+#define _DEBUG
 #define P kmt->sem_wait
 #define V kmt->sem_signal
 static void sem_init(sem_t *sem, const char *name, int value);
@@ -378,7 +379,7 @@ static void on_irq (int seq,int event,handler_t handler)//原本是_cte_init中�
     if(ptr->seq<seq)
     {
       if(ptr->next==NULL)
-      {
+      { 
         ptr->next=NEW_EV;
         break;
       }
@@ -401,61 +402,6 @@ MODULE_DEF(os) = {
   .on_irq = on_irq,
 };
 
-void activate(int id,sem_t* sem)//wait->running
-{
-  sp_lock(&thread_ctrl_lock);
-  int pos=-1;
-  for(int i=0;i<wait_num;i++)
-  {
-    if (wait_thread[i]==id) {
-      pos = i;break;
-    }
-  }
-
-  if(pos==-1)
-  {sp_unlock(&thread_ctrl_lock);
-  _intr_write(1);
-  return;
-  }
-  for(int i=pos;i<wait_num-1;i++)
-  wait_thread[i]=wait_thread[i+1];
-  wait_num=wait_num-1;
-
-  active_thread[active_num++]=id;
-  
-  all_thread[id]->status=T_RUNNING;
-  sp_unlock(&thread_ctrl_lock);
-  _intr_write(1);
-}
-
-void await(int id,sem_t* sem)//running->wait
-{
-  sp_lock(&thread_ctrl_lock);
-  int pos=-1;
-  for(int i=0;i<active_num;i++)
-  {
-    if (active_thread[i]==id) {
-      pos = i;break;
-     }
-  }
-
-  if(pos==-1)
-    {
-    sp_unlock(&thread_ctrl_lock);
-    _intr_write(1);
-    return; 
-    }
-  for(int i=pos;i<active_num-1;i++)
-  active_thread[i]=active_thread[i+1];
-
-  active_num=active_num-1;//wait_thread不用调整顺序
-  wait_thread[wait_num++]=id;
-  all_thread[id]->status=T_WAITING;
-
-  sp_unlock(&thread_ctrl_lock);
-  _intr_write(1);
-}
-
 void kill(int id)//running->dead
 {
   sp_lock(&thread_ctrl_lock);
@@ -472,6 +418,9 @@ void kill(int id)//running->dead
     _intr_write(1);
     return; 
   }
+  for(int i=pos;i<active_num-1;i++)
+  active_thread[i]=active_thread[i+1];
+
   all_thread[id]->status=T_DEAD;
   sp_unlock(&thread_ctrl_lock);
   _intr_write(1);
@@ -485,12 +434,12 @@ static void kmt_init()
 }
 
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
-//_Area{*start,*end;},start低地址,end高地址,也即栈顶
+//_Area{*start,*end;},
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
   strcpy(task->name,name);
   task->status=T_RUNNING;
   task->id=thread_num;
-  _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
+  _Area stack=(_Area){ task->ctx+1,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
   all_thread[thread_num++]=task;
   active_thread[active_num++]=task->id;
@@ -517,27 +466,45 @@ static void sem_init(sem_t *sem, const char *name, int value)
 static void sem_wait(sem_t *sem)
 {
   sp_lock(&sem->lock);//sem->lock用于控制一切对sem的修改
+  sp_lock(&thread_ctrl_lock);
   sem->val--;
   if(sem->val<0) 
   {
-    task_t * rec_cur=current;
-    await(rec_cur->id,sem);
+    task_t * cur=current;
     if(sem->wnum==0)
-      sem->waiter[sem->wnum++]=rec_cur->id;
+      sem->waiter[sem->wnum++]=cur->id;
     else
     {
       int judge=1;
       for(int i=0;i<sem->wnum;i++)
       {
-        if(sem->waiter[i]==rec_cur->id) judge=0;
+        if(sem->waiter[i]==cur->id) judge=0;
       }
-      if(judge) sem->waiter[sem->wnum++]=rec_cur->id;
+      if(judge) sem->waiter[sem->wnum++]=cur->id;
     }
-      sp_unlock(&sem->lock);
-      _intr_write(1);
-      _yield();
-      return;
+    int pos=-1;
+    for(int i=0;i<active_num;i++)
+    {
+      if(active_thread[i]==cur->id)
+      {
+        pos=i;break;
+      }
+    }
+    assert(pos!=-1);
+    for(int i=pos;i<active_num-1;i++)
+    {
+      active_thread[i]=active_thread[i+1];
+    }
+    active_num=active_num-1;
+
+    sp_unlock(&thread_ctrl_lock);
+    sp_unlock(&sem->lock);
+
+    _intr_write(1);
+    _yield();
+    return;
   }
+  sp_unlock(&thread_ctrl_lock);
   sp_unlock(&sem->lock);
   _intr_write(1);
 }
@@ -545,6 +512,7 @@ static void sem_wait(sem_t *sem)
 static void sem_signal(sem_t *sem)
 {
   sp_lock(&sem->lock);
+  sp_lock(&thread_ctrl_lock);
   sem->val++;
     if(sem->wnum)
     {
@@ -552,8 +520,10 @@ static void sem_signal(sem_t *sem)
       for(int i=no;i<sem->wnum-1;i++)
       sem->waiter[i]=sem->waiter[i+1];
       sem->wnum--;
-      activate(no,sem);//这一部分是弄到active_thread中去
+      
+      active_thread[active_num++]=no;
     }
+  sp_unlock(&thread_ctrl_lock);
   sp_unlock(&sem->lock);
   _intr_write(1);
   _yield();

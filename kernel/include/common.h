@@ -38,17 +38,13 @@ struct task
 
 task_t* all_thread[105];
 int active_thread[105];//只记录线程的id,id对应它在all_thread中的位置
-int wait_thread[105];
 
 extern int thread_num;
 extern int active_num;
-extern int wait_num;
 
 extern  task_t *current;//当前task
 
 extern spinlock_t thread_ctrl_lock;//管理控制这三个链表的锁
-void activate(int id,sem_t* sem);
-void await(int id,sem_t* sem);
 void kill(int id);
 
 struct semaphore
