@@ -2,7 +2,7 @@
 #include <klib.h>
 #include <klib-macros.h>
 #include <amdev.h>
-//#define DEBUG_LOCAL
+#define DEBUG_LOCAL
 
 enum t_status {
   T_NEW = 1, // 新创建，还未执行过
