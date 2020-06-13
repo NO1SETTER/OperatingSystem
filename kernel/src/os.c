@@ -341,7 +341,7 @@ _Context* schedule(_Event ev,_Context* c)
         current = active_thread[rand()%active_num]; 
       }
       assert(current);
-      //printf("task %s running on CPU#%d\n",current->name,_cpu());
+      printf("task %s running on CPU#%d\n",current->name,_cpu());
       return current->ctx;
 }
 
