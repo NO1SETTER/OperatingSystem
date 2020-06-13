@@ -1,6 +1,7 @@
 #include <kernel.h>
 #include <klib.h>
 #include <klib-macros.h>
+#include <amdev.h>
 //#define DEBUG_LOCAL
 
 enum t_status {
@@ -18,7 +19,7 @@ struct spinlock
   int holder;//锁的持有者
 };
 
-void sp_lockinit( spinlock_t* lk,const char *name);
+void sp_lockinit(spinlock_t* lk,const char *name);
 void sp_lock(spinlock_t* lk);
 void sp_unlock(spinlock_t *lk);
 
@@ -57,9 +58,7 @@ int val;
 task_t* waiter;
 };
 
-/*
-typedef struct device device_t;
-MODULE(dev) {
-  void (*init)();
-  device_t *(*lookup)(const char *name);
-};*/
+struct device_t
+{
+
+};
