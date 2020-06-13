@@ -79,7 +79,9 @@ task_t* task_alloc()
 static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
-
+  #ifdef DEV_ENBALE
+  dev->init();
+  #endif
 kmt->spin_lock=sp_lock;
 kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
 
