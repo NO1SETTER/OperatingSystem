@@ -261,7 +261,7 @@ for(int i=0;i<DataClusters;i++)
                   {
                     NewPix=retrieve(bdstart+ClusterSize,3);
                     double ratio=(double)LastPix/(double)NewPix;
-                    if(ratio>=0.5&&ratio<=2)//优先考虑直接相连的下一块
+                    if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
                     {
                       bdstart=bdstart+ClusterSize;
                       BitmapData=bdstart;
@@ -275,7 +275,7 @@ for(int i=0;i<DataClusters;i++)
                         if(ctype[k]!=UNCERTAIN) continue;
                         NewPix=retrieve(ptr,3);
                         double ratio2=(double)LastPix/(double)NewPix;
-                        if(ratio2>=0.5&&ratio2<=2)//找到合适的块，退出
+                        if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
                         {
                           printf("Locate Cluster:%d\n",k);
                           bdstart=ptr;
@@ -292,7 +292,7 @@ for(int i=0;i<DataClusters;i++)
                     uint32_t NewPix2=retrieve(BitmapData+1,2);
                     NewPix=(NewPix2<<8)|NewPix1;
                     double ratio=(double)LastPix/(double)NewPix;
-                    if(ratio>=0.5&&ratio<=2)//优先考虑直接相连的下一块
+                    if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
                     {
                       char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)(BitmapData+2)};
                       j=j+3;//这里要直接写入
@@ -310,7 +310,7 @@ for(int i=0;i<DataClusters;i++)
                         NewPix2=retrieve(ptr,2);
                         NewPix=(NewPix2<<8)|NewPix1;
                         double ratio2=(double)LastPix/(double)NewPix;
-                        if(ratio2>=0.5&&ratio2<=2)//找到合适的块，退出
+                        if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
                         {
                           printf("Locate Cluster:%d\n",k);
                           char WriteData[3]={*(char*)BitmapData,*(char*)ptr,*(char*)(ptr+1)};
@@ -330,7 +330,7 @@ for(int i=0;i<DataClusters;i++)
                     uint32_t NewPix2=retrieve(BitmapData+2,1);
                     NewPix=(NewPix2<<16)|NewPix1;
                     double ratio=(double)LastPix/(double)NewPix;
-                    if(ratio>=0.5&&ratio<=2)//优先考虑直接相连的下一块
+                    if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
                     {
                       char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)(BitmapData+2)};
                       j=j+3;//这里要直接写入
@@ -348,7 +348,7 @@ for(int i=0;i<DataClusters;i++)
                         NewPix2=retrieve(ptr,1);
                         NewPix=(NewPix2<<16)|NewPix1;
                         double ratio2=(double)LastPix/(double)NewPix;
-                        if(ratio2>=0.5&&ratio2<=2)//找到合适的块，退出
+                        if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
                         {
                           printf("Locate Cluster:%d\n",k);
                           char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)ptr};
