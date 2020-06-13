@@ -10,6 +10,7 @@
 #include<sys/mman.h>
 #include<sys/stat.h>
 //#define _DEBUG
+//#define GREEDY_SERACH_CLUSTER
 enum DIR_ARRTIBUTE{ATTR_READ_ONLY=0x1,ATTR_HIDDEN=0x2,ATTR_SYSTEM=0x4,
 ATTR_VOLUME_ID=0x8,ATTR_DIRECTORY=0x10,ATTR_ARCHIVE=0x20,
 ATTR_LONG_NAME=0xF};
@@ -242,129 +243,133 @@ for(int i=0;i<DataClusters;i++)
             char ch[1]="\0";
             for(int j=0;j<bmpoffset-sizeof(struct bitmap_header);j++)
             fwrite((void *)ch,1,1,fp);
-            void *BitmapData=(void *)bheader+bmpoffset;//当前读到的指针点
-            void *bdstart = (void *)bheader;//当前读到的块起始点
-            for(int j=0;j<bmpsize-sizeof(struct bitmap_header);)//j所代表的是已经写入的字节数
-            {
-                  uint32_t LastPix=0;//记录上一个像素
-                  uint32_t NewPix;//当前正在比较的像素
-                  printf("bdstart:offset at %x\n",(unsigned)(bdstart-(void*)header));
-                  printf("BitmapData:offset at %x\n",(unsigned)(bdstart-(void*)header));
-                  while(bdstart+ClusterSize-BitmapData>=3)//还在一个块内,正常读
-                  {
-                    fwrite(BitmapData,1,3,fp);
-                    LastPix=retrieve(BitmapData,3);
-                    j=j+3;
-                    BitmapData=BitmapData+3;
-                  }
-                  if(bdstart+ClusterSize-BitmapData==0)//在上个块读了一个完整的像素
-                  {
-                    NewPix=retrieve(bdstart+ClusterSize,3);
-                    double ratio=(double)LastPix/(double)NewPix;
-                    if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
+            #ifdef GREEDY_SERACH_CLUSTER
+
+              void *BitmapData=(void *)bheader+bmpoffset;//当前读到的指针点
+              void *bdstart = (void *)bheader;//当前读到的块起始点
+              for(int j=0;j<bmpsize-sizeof(struct bitmap_header);)//j所代表的是已经写入的字节数
+              {
+                    uint32_t LastPix=0;//记录上一个像素
+                    uint32_t NewPix;//当前正在比较的像素
+                    printf("bdstart:offset at %x\n",(unsigned)(bdstart-(void*)header));
+                    printf("BitmapData:offset at %x\n",(unsigned)(bdstart-(void*)header));
+                    while(bdstart+ClusterSize-BitmapData>=3)//还在一个块内,正常读
                     {
-                      bdstart=bdstart+ClusterSize;
-                      BitmapData=bdstart;
-                      printf("0 Left:Straight Next\n");
+                      fwrite(BitmapData,1,3,fp);
+                      LastPix=retrieve(BitmapData,3);
+                      j=j+3;
+                      BitmapData=BitmapData+3;
                     }
-                    else
+                    if(bdstart+ClusterSize-BitmapData==0)//在上个块读了一个完整的像素
                     {
-                      for(int k=0;k<DataClusters;k++)
+                      NewPix=retrieve(bdstart+ClusterSize,3);
+                      double ratio=(double)LastPix/(double)NewPix;
+                      if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
                       {
-                        void* ptr=(void*)(header+DataOffset+k*ClusterSize);
-                        if(ctype[k]!=UNCERTAIN) continue;
-                        NewPix=retrieve(ptr,3);
-                        double ratio2=(double)LastPix/(double)NewPix;
-                        if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
+                        bdstart=bdstart+ClusterSize;
+                        BitmapData=bdstart;
+                        printf("0 Left:Straight Next\n");
+                      }
+                      else
+                      {
+                        for(int k=0;k<DataClusters;k++)
                         {
-                          printf("Locate Cluster:%d\n",k);
-                          bdstart=ptr;
-                          BitmapData=ptr;
-                          break;
+                          void* ptr=(void*)(header+DataOffset+k*ClusterSize);
+                          if(ctype[k]!=UNCERTAIN) continue;
+                          NewPix=retrieve(ptr,3);
+                          double ratio2=(double)LastPix/(double)NewPix;
+                          if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
+                          {
+                            printf("Locate Cluster:%d\n",k);
+                            bdstart=ptr;
+                            BitmapData=ptr;
+                            break;
+                          }
                         }
                       }
                     }
-                  }
-                  else if(bdstart+ClusterSize-BitmapData==1)//上一个像素还剩1个byte没读
-                  {
+                    else if(bdstart+ClusterSize-BitmapData==1)//上一个像素还剩1个byte没读
+                    {
 
-                    uint32_t NewPix1=retrieve(BitmapData,1);
-                    uint32_t NewPix2=retrieve(BitmapData+1,2);
-                    NewPix=(NewPix2<<8)|NewPix1;
-                    double ratio=(double)LastPix/(double)NewPix;
-                    if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
-                    {
-                      char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)(BitmapData+2)};
-                      j=j+3;//这里要直接写入
-                      fwrite(WriteData,1,3,fp);
-                      bdstart=bdstart+ClusterSize;
-                      BitmapData=bdstart+2;
-                      printf("1 Left:Straight Next\n");
-                    }
-                    else
-                    {
-                      for(int k=0;k<DataClusters;k++)
+                      uint32_t NewPix1=retrieve(BitmapData,1);
+                      uint32_t NewPix2=retrieve(BitmapData+1,2);
+                      NewPix=(NewPix2<<8)|NewPix1;
+                      double ratio=(double)LastPix/(double)NewPix;
+                      if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
                       {
-                        void* ptr=(void*)(header+DataOffset+k*ClusterSize);
-                        if(ctype[k]!=UNCERTAIN) continue;
-                        NewPix2=retrieve(ptr,2);
-                        NewPix=(NewPix2<<8)|NewPix1;
-                        double ratio2=(double)LastPix/(double)NewPix;
-                        if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
+                        char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)(BitmapData+2)};
+                        j=j+3;//这里要直接写入
+                        fwrite(WriteData,1,3,fp);
+                        bdstart=bdstart+ClusterSize;
+                        BitmapData=bdstart+2;
+                        printf("1 Left:Straight Next\n");
+                      }
+                      else
+                      {
+                        for(int k=0;k<DataClusters;k++)
                         {
-                          printf("Locate Cluster:%d\n",k);
-                          char WriteData[3]={*(char*)BitmapData,*(char*)ptr,*(char*)(ptr+1)};
-                          j=j+3;
-                          fwrite(WriteData,1,3,fp);
-                          bdstart=ptr;
-                          BitmapData=ptr+2;
-                          break;
+                          void* ptr=(void*)(header+DataOffset+k*ClusterSize);
+                          if(ctype[k]!=UNCERTAIN) continue;
+                          NewPix2=retrieve(ptr,2);
+                          NewPix=(NewPix2<<8)|NewPix1;
+                          double ratio2=(double)LastPix/(double)NewPix;
+                          if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
+                          {
+                            printf("Locate Cluster:%d\n",k);
+                            char WriteData[3]={*(char*)BitmapData,*(char*)ptr,*(char*)(ptr+1)};
+                            j=j+3;
+                            fwrite(WriteData,1,3,fp);
+                            bdstart=ptr;
+                            BitmapData=ptr+2;
+                            break;
+                          }
                         }
                       }
                     }
-                  }
-                  else if(bdstart+ClusterSize-BitmapData==2)//上一个像素还剩2个byte没读
-                  {
+                    else if(bdstart+ClusterSize-BitmapData==2)//上一个像素还剩2个byte没读
+                    {
 
-                    uint32_t NewPix1=retrieve(BitmapData,2);
-                    uint32_t NewPix2=retrieve(BitmapData+2,1);
-                    NewPix=(NewPix2<<16)|NewPix1;
-                    double ratio=(double)LastPix/(double)NewPix;
-                    if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
-                    {
-                      char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)(BitmapData+2)};
-                      j=j+3;//这里要直接写入
-                      fwrite(WriteData,1,3,fp);
-                      bdstart=bdstart+ClusterSize;
-                      BitmapData=bdstart+1;
-                      printf("2 Left:Straight Next\n");
-                    }
-                    else
-                    {
-                      for(int k=0;k<DataClusters;k++)
+                      uint32_t NewPix1=retrieve(BitmapData,2);
+                      uint32_t NewPix2=retrieve(BitmapData+2,1);
+                      NewPix=(NewPix2<<16)|NewPix1;
+                      double ratio=(double)LastPix/(double)NewPix;
+                      if(ratio>=0.25&&ratio<=4)//优先考虑直接相连的下一块
                       {
-                        void* ptr=(void*)(header+DataOffset+k*ClusterSize);
-                        if(ctype[k]!=UNCERTAIN) continue;
-                        NewPix2=retrieve(ptr,1);
-                        NewPix=(NewPix2<<16)|NewPix1;
-                        double ratio2=(double)LastPix/(double)NewPix;
-                        if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
+                        char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)(BitmapData+2)};
+                        j=j+3;//这里要直接写入
+                        fwrite(WriteData,1,3,fp);
+                        bdstart=bdstart+ClusterSize;
+                        BitmapData=bdstart+1;
+                        printf("2 Left:Straight Next\n");
+                      }
+                      else
+                      {
+                        for(int k=0;k<DataClusters;k++)
                         {
-                          printf("Locate Cluster:%d\n",k);
-                          char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)ptr};
-                          j=j+3;
-                          fwrite(WriteData,1,3,fp);
-                          bdstart=ptr;
-                          BitmapData=ptr+1;
-                          break;
+                          void* ptr=(void*)(header+DataOffset+k*ClusterSize);
+                          if(ctype[k]!=UNCERTAIN) continue;
+                          NewPix2=retrieve(ptr,1);
+                          NewPix=(NewPix2<<16)|NewPix1;
+                          double ratio2=(double)LastPix/(double)NewPix;
+                          if(ratio2>=0.25&&ratio2<=4)//找到合适的块，退出
+                          {
+                            printf("Locate Cluster:%d\n",k);
+                            char WriteData[3]={*(char*)BitmapData,*(char*)(BitmapData+1),*(char*)ptr};
+                            j=j+3;
+                            fwrite(WriteData,1,3,fp);
+                            bdstart=ptr;
+                            BitmapData=ptr+1;
+                            break;
+                          }
                         }
                       }
+
                     }
-
-                  }
-            }
-            fclose(fp);
-
+              }
+              fclose(fp);
+            #else
+            fwrite((void*)bheader+bmpoffset,1,bmpsize-sizeof(struct bitmap_header),fp);
+            #endif
             char cmd[128];
             char buffer[256];
             sprintf(cmd,"sha1sum %s",tmpname);

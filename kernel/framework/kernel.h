@@ -37,4 +37,33 @@ MODULE(kmt) {
   void (*sem_init)(sem_t *sem, const char *name, int value);
   void (*sem_wait)(sem_t *sem);
   void (*sem_signal)(sem_t *sem);
+<<<<<<< HEAD
 };
+=======
+};
+
+struct ufs_stat;
+MODULE(vfs) {
+  void (*init)();
+  int (*write)(int fd, void *buf, int count);
+  int (*read)(int fd, void *buf, int count);
+  int (*close)(int fd);
+  int (*open)(const char *pathname, int flags);
+  int (*lseek)(int fd, int offset, int whence);
+  int (*link)(const char *oldpath, const char *newpath);
+  int (*unlink)(const char *pathname);
+  int (*fstat)(int fd, struct ufs_stat *buf);
+  int (*mkdir)(const char *pathname);
+  int (*chdir)(const char *path);
+  int (*dup)(int fd);
+};
+<<<<<<< HEAD
+>>>>>>> 073d9b5f8f6009feefa9020243f5e4ea65dd2ff6
+=======
+
+typedef struct device device_t;
+MODULE(dev) {
+  void (*init)();
+  device_t *(*lookup)(const char *name);
+};
+>>>>>>> d2975df19786aa7cfe393d99e2579d4f679cdbc7
