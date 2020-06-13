@@ -532,7 +532,6 @@ static void sem_signal(sem_t *sem)
   sp_unlock(&thread_ctrl_lock);
   sp_unlock(&sem->lock);
   _intr_write(1);
-  _yield();
 }
 
 
