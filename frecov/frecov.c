@@ -264,7 +264,7 @@ for(int i=0;i<DataClusters;i++)
                     if(ratio>=0.5&&ratio<=2)//优先考虑直接相连的下一块
                     {
                       bdstart=bdstart+ClusterSize;
-                      BitmapData=bdstart+ClusterSize;
+                      BitmapData=bdstart;
                       printf("0 Left:Straight Next\n");
                     }
                     else
@@ -298,7 +298,7 @@ for(int i=0;i<DataClusters;i++)
                       j=j+3;//这里要直接写入
                       fwrite(WriteData,1,3,fp);
                       bdstart=bdstart+ClusterSize;
-                      BitmapData=bdstart+ClusterSize+2;
+                      BitmapData=bdstart+2;
                       printf("1 Left:Straight Next\n");
                     }
                     else
@@ -336,7 +336,7 @@ for(int i=0;i<DataClusters;i++)
                       j=j+3;//这里要直接写入
                       fwrite(WriteData,1,3,fp);
                       bdstart=bdstart+ClusterSize;
-                      BitmapData=bdstart+ClusterSize+1;
+                      BitmapData=bdstart+1;
                       printf("2 Left:Straight Next\n");
                     }
                     else
