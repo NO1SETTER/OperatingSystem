@@ -248,8 +248,8 @@ for(int i=0;i<DataClusters;i++)
             {
                   uint32_t LastPix=0;//记录上一个像素
                   uint32_t NewPix;//当前正在比较的像素
-                  printf("bdstart at %p\n",bdstart);
-                  printf("BitmapData at %p\n",BitmapData);
+                  //printf("bdstart at %p\n",bdstart);
+                  //printf("BitmapData at %p\n",BitmapData);
                   while(bdstart+ClusterSize-BitmapData>=3)//还在一个块内,正常读
                   {
                     fwrite(BitmapData,1,3,fp);
