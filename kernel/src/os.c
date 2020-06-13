@@ -516,11 +516,10 @@ static void sem_signal(sem_t *sem)
 {
   sp_lock(&sem->lock);
   sp_lock(&thread_ctrl_lock);
-
-   #ifdef _DEBUG
+  sem->val++;
+  #ifdef _DEBUG
   printf("signal:%s->val = %d\n",sem->name,sem->val);
   #endif
-  sem->val++;
     if(sem->wnum)
     {
       int no=rand()%sem->wnum;
