@@ -1,5 +1,5 @@
 #include <am.h>
-
+#pragma once
 #define MODULE(mod) \
   typedef struct mod_##mod##_t mod_##mod##_t; \
   extern mod_##mod##_t *mod; \
@@ -37,6 +37,23 @@ MODULE(kmt) {
   void (*sem_init)(sem_t *sem, const char *name, int value);
   void (*sem_wait)(sem_t *sem);
   void (*sem_signal)(sem_t *sem);
+};
+
+
+struct ufs_stat;
+MODULE(vfs) {
+  void (*init)();
+  int (*write)(int fd, void *buf, int count);
+  int (*read)(int fd, void *buf, int count);
+  int (*close)(int fd);
+  int (*open)(const char *pathname, int flags);
+  int (*lseek)(int fd, int offset, int whence);
+  int (*link)(const char *oldpath, const char *newpath);
+  int (*unlink)(const char *pathname);
+  int (*fstat)(int fd, struct ufs_stat *buf);
+  int (*mkdir)(const char *pathname);
+  int (*chdir)(const char *path);
+  int (*dup)(int fd);
 };
 
 typedef struct device device_t;
