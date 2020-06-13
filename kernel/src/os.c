@@ -1,7 +1,6 @@
 #include <common.h>
-//#define _DEBUG
+#define _DEBUG
 #define STACK_SIZE 4096
-#define INT_MAX 2147483647
 #define P kmt->sem_wait
 #define V kmt->sem_signal
 static void sem_init(sem_t *sem, const char *name, int value);
