@@ -1,5 +1,4 @@
 #include <common.h>
-#define _DEBUG
 #define STACK_SIZE 4096
 #define P kmt->sem_wait
 #define V kmt->sem_signal
@@ -20,11 +19,11 @@ int thread_num=0;
 int active_num=0;
 int wait_num=0;
 task_t *current=NULL;//当前task
-void activate(task_t* t,sem_t* sem);
-void await(task_t *t,sem_t* sem);
-void kill(task_t *t);
+void activate(int id,sem_t* sem);
+void await(int id,sem_t* sem);
+void kill(int id);
 //中断处理程序
-struct EVENT{
+struct EVENT{//中断事件
 int seq;
 int event;
 handler_t handler;
@@ -43,7 +42,11 @@ static void on_irq (int seq,int event,handler_t handler);
 void *kalloc_safe(size_t size);
 void kfree_safe(void *ptr);
 
-extern spinlock_t print_lock;
+
+task_t* task_alloc()
+{ return (task_t*)kalloc_safe(sizeof(task_t));
+}
+
 #ifdef DEBUG_LOCAL
 sem_t empty;
 sem_t fill;
@@ -68,18 +71,12 @@ sem_t fill;
   }
 #endif
 
-task_t* task_alloc()
-{
-  return (task_t*)kalloc_safe(sizeof(task_t));
-}
-
-
 
 static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
   #ifdef DEV_ENBALE
-  dev->init();
+    dev->init();
   #endif
 kmt->spin_lock=sp_lock;
 kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
@@ -88,17 +85,14 @@ kmt->spin_unlock=sp_unlock;//这里会出现奇怪的“未赋值情况”
   kmt->sem_init(&empty, "empty", 5);  // 缓冲区大小为 5
   kmt->sem_init(&fill,  "fill",  0);
   
-  char p[4][10]={"p1","p2","p3","p4"};
-  char c[5][10]={"c1","c2","c3","c4","c5"};
+  char p[4][3]={"p1","p2","p3","p4"};
+  char c[5][3]={"c1","c2","c3","c4","c5"};
   for(int i=0;i<4;i++)
     kmt->create(task_alloc(), p[i], producer, NULL);
   for(int i=0;i<5;i++)
     kmt->create(task_alloc(), c[i], consumer, NULL);
-    
 #endif
 }
-
-
 
 
 
@@ -106,7 +100,6 @@ extern void check_allocblock(void *ptr);
 extern void check_freeblock();
 extern void print_FreeBlock();
 extern void print_AllocatedBlock();
-
 void* allocated[100005];
 int num=0;
 
@@ -332,12 +325,12 @@ _Context* schedule(_Event ev,_Context* c)
 {
       if(current==NULL)
       {
-        current=active_thread[0];
+        current=all_thread[active_thread[0]];
       }
       else
       {
         current->ctx = c;
-        current = active_thread[rand()%active_num]; 
+        current=all_thread[active_thread[rand()%active_num]]; 
       }
       assert(current);
       //printf("task %s running on CPU#%d\n",current->name,_cpu());
@@ -371,6 +364,7 @@ static _Context *os_trap(_Event ev,_Context *context)//对应_am_irq_handle + do
   //panic_on(sane_context(next), "returning to invalid context");
   return next;
 }
+
 
 static void on_irq (int seq,int event,handler_t handler)//原本是_cte_init中的一部分
 {
@@ -407,13 +401,13 @@ MODULE_DEF(os) = {
   .on_irq = on_irq,
 };
 
-void activate(task_t* t,sem_t* sem)//wait->running
+void activate(int id,sem_t* sem)//wait->running
 {
   sp_lock(&thread_ctrl_lock);
   int pos=-1;
   for(int i=0;i<wait_num;i++)
   {
-    if (wait_thread[i]==t) {
+    if (wait_thread[i]==id) {
       pos = i;break;
     }
   }
@@ -427,20 +421,20 @@ void activate(task_t* t,sem_t* sem)//wait->running
   wait_thread[i]=wait_thread[i+1];
   wait_num=wait_num-1;
 
-  active_thread[active_num++]=t;
+  active_thread[active_num++]=id;
   
-  t->status=T_RUNNING;
+  all_thread[id]->status=T_RUNNING;
   sp_unlock(&thread_ctrl_lock);
   _intr_write(1);
 }
 
-void await(task_t* t,sem_t* sem)//running->wait
+void await(int id,sem_t* sem)//running->wait
 {
   sp_lock(&thread_ctrl_lock);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
-    if (active_thread[i]==t) {
+    if (active_thread[i]==id) {
       pos = i;break;
      }
   }
@@ -455,20 +449,20 @@ void await(task_t* t,sem_t* sem)//running->wait
   active_thread[i]=active_thread[i+1];
 
   active_num=active_num-1;//wait_thread不用调整顺序
-  wait_thread[wait_num++]=t;
-  t->status=T_WAITING;
+  wait_thread[wait_num++]=id;
+  all_thread[id]->status=T_WAITING;
 
   sp_unlock(&thread_ctrl_lock);
   _intr_write(1);
 }
 
-void kill(task_t* t)//running->dead
+void kill(int id)//running->dead
 {
   sp_lock(&thread_ctrl_lock);
   int pos=-1;
   for(int i=0;i<active_num;i++)
   {
-    if (active_thread[i]==t) {
+    if (active_thread[i]==id) {
       pos = i;break;
      }
   }
@@ -478,7 +472,7 @@ void kill(task_t* t)//running->dead
     _intr_write(1);
     return; 
   }
-  t->status=T_DEAD;
+  all_thread[id]->status=T_DEAD;
   sp_unlock(&thread_ctrl_lock);
   _intr_write(1);
 }
@@ -493,21 +487,19 @@ static void kmt_init()
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
 //_Area{*start,*end;},start低地址,end高地址,也即栈顶
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-  all_thread[thread_num++]=task;
-  active_thread[active_num++]=task;
-  
   strcpy(task->name,name);
   task->status=T_RUNNING;
-  task->ct=0;
-  task->stack=kalloc_safe(STACK_SIZE);
+  task->id=thread_num;
   _Area stack=(_Area){ task->stack,task->stack+STACK_SIZE};  
   task->ctx=_kcontext(stack,entry,arg);
+  all_thread[thread_num++]=task;
+  active_thread[active_num++]=task->id;
   return 0;
 }
 
 static void kmt_teardown(task_t *task)
 {
-  kill(task);//不会从all_thread中删去
+  kill(task->id);//不会从all_thread中删去
   kfree_safe(task->stack);
 }
 
@@ -519,7 +511,7 @@ static void sem_init(sem_t *sem, const char *name, int value)
   kmt->spin_init(&sem->lock,lock_name);
   strcpy(sem->name,name);
   sem->val=value;
-  sem->waiter=NULL;
+  sem->wnum=0;
 }
 
 static void sem_wait(sem_t *sem)
@@ -529,23 +521,17 @@ static void sem_wait(sem_t *sem)
   if(sem->val<0) 
   {
     task_t * rec_cur=current;
-    await(rec_cur,sem);
-    if(sem->waiter==NULL)
-    {  
-      sem->waiter=rec_cur;
-      rec_cur->next=NULL;}
+    await(rec_cur->id,sem);
+    if(sem->wnum==0)
+      sem->waiter[sem->wnum++]=rec_cur->id;
     else
     {
-    task_t* rep=sem->waiter;
-      int judge=0;
-      while(rep)  {
-        if(rep==rec_cur) judge=1;
-        rep=rep->next;
-        }
-      if(!judge)
+      int judge=1;
+      for(int i=0;i<sem->wnum;i++)
       {
-        rec_cur->next=(sem->waiter)->next;
-        (sem->waiter)->next=rec_cur;}
+        if(sem->waiter[i]==rec_cur->id) judge=0;
+      }
+      if(judge) sem->waiter[sem->wnum++]=rec_cur->id;
     }
       sp_unlock(&sem->lock);
       _intr_write(1);
@@ -560,12 +546,13 @@ static void sem_signal(sem_t *sem)
 {
   sp_lock(&sem->lock);
   sem->val++;
-    if(sem->waiter)
+    if(sem->wnum)
     {
-      task_t *nptr = sem->waiter;
-      sem->waiter=sem->waiter->next;//为了简单直接选取第一个activate
-      nptr->next=NULL;
-      activate(nptr,sem);//这一部分是弄到active_thread中去
+      int no=rand()%sem->wnum;
+      for(int i=no;i<sem->wnum-1;i++)
+      sem->waiter[i]=sem->waiter[i+1];
+      sem->wnum--;
+      activate(no,sem);//这一部分是弄到active_thread中去
     }
   sp_unlock(&sem->lock);
   _intr_write(1);

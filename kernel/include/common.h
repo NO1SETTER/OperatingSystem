@@ -28,34 +28,36 @@ struct task
   struct
   {
     char name[15];
+    int id;
     enum t_status status;
-    struct task* next;//信号量要用
-    int ct;
+    struct task* next;//指向all_thread[id+1]
     _Context *ctx;//貌似只要保证它指向栈顶就ok了，上面的可以不管分配在哪里
   };
-  uint8_t *stack;
+  uint8_t stack[4096];
 };//管理一个线程的信息
 
 task_t* all_thread[105];
-task_t* active_thread[105];
-task_t* wait_thread[105];
+int active_thread[105];//只记录线程的id,id对应它在all_thread中的位置
+int wait_thread[105];
 
 extern int thread_num;
 extern int active_num;
 extern int wait_num;
+
 extern  task_t *current;//当前task
 
 extern spinlock_t thread_ctrl_lock;//管理控制这三个链表的锁
-void activate( task_t* t,sem_t* sem);
-void await( task_t *t,sem_t* sem);
-void kill( task_t *t);
+void activate(int id,sem_t* sem);
+void await(int id,sem_t* sem);
+void kill(int id);
 
 struct semaphore
 {
 spinlock_t lock;
 char name[15];
 int val;
-task_t* waiter;
+int waiter[105];
+int wnum;
 };
 
 struct device_t
