@@ -380,7 +380,7 @@ static bool slab_kfree(void *ptr,int k) {//从第k个CPU中找到是否有想要
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
   { 
     sp_lock(&print_lock);
-    printf("CPU#%d KALLOC\n",_cpu());
+    printf("CPU#%d KALLOC size:%x\n",_cpu(),size);
     sp_unlock(&print_lock);
 
     int k=_cpu();
