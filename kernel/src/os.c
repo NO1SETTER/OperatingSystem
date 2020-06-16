@@ -483,7 +483,10 @@ static void sem_wait(sem_t *sem)
       {
         if(sem->waiter[i]==cur->id) judge=0;
       }
-      if(judge) sem->waiter[sem->wnum++]=cur->id;
+      if(judge) {
+        sem->waiter[sem->wnum++]=cur->id;
+        printf("%s blocked\n",cur->name);
+        }
     }
     int pos=-1;
     for(int i=0;i<active_num;i++)
@@ -523,11 +526,11 @@ static void sem_signal(sem_t *sem)
     if(sem->wnum)
     {
       int no=rand()%sem->wnum;
+      active_thread[active_num++]=sem->waiter[no];
+      printf("%s activated\n",all_thread[sem->waiter[no]]->name);
       for(int i=no;i<sem->wnum-1;i++)
       sem->waiter[i]=sem->waiter[i+1];
       sem->wnum--;
-      
-      active_thread[active_num++]=no;
     }
   sp_unlock(&thread_ctrl_lock);
   sp_unlock(&sem->lock);
