@@ -1,6 +1,6 @@
 #include <common.h>
 #define _DEBUG
-//#define _BASIC_DEBUG
+#define _BASIC_DEBUG
 //#define _SLAB_ASSIST
 
 #define PAGE_SIZE 4096 
@@ -118,8 +118,6 @@ void binsert(struct block* pre,struct block* nxt,bool is_merge)//插入
 
 void print_FreeBlock()
 {
-  #ifdef _DEBUG
-  sp_lock(&print_lock);
   struct block* ptr=free_head->next;
   printf("Free blocks:\n");
   while(ptr)
@@ -127,14 +125,10 @@ void print_FreeBlock()
     printf("[%p,%p)\n",ptr->start,ptr->end);
     ptr=ptr->next;
   }
-  sp_unlock(&print_lock);
-  #endif
 }
 
 void print_AllocatedBlock()
 {
-  #ifdef _DEBUG
-  sp_lock(&print_lock);
   struct block* ptr=alloc_head->next;
   printf("Allocated blocks:\n");
   while(ptr)
@@ -142,8 +136,7 @@ void print_AllocatedBlock()
     printf("[%p,%p)\n",ptr->start,ptr->end);
     ptr=ptr->next;
   }
-  sp_unlock(&print_lock);
-  #endif
+
 }
 
 
@@ -386,12 +379,9 @@ static bool slab_kfree(void *ptr,int k) {//从第k个CPU中找到是否有想要
 
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
   { 
-    #ifdef _BASIC_DEBUG
     sp_lock(&print_lock);
-    printf("CPU#%d KALLOC\n",_cpu());
+    printf("CPU#%d KALLOC size:%x\n",_cpu(),size);
     sp_unlock(&print_lock);
-    #endif
-
 
     int k=_cpu();
     void * slab_ptr=slab_kalloc(size,k);
@@ -419,8 +409,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       bdelete(ptr);
       binsert(alloc_head,ptr,0);//整个节点直接挪过来
       #ifdef _DEBUG
-      //print_FreeBlock();
-      //print_AllocatedBlock();
+      print_FreeBlock();
+      print_AllocatedBlock();
       check_freeblock();
       check_allocblock(valid_addr,valid_addr+size);
       #endif
@@ -442,8 +432,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        //print_FreeBlock();
-        //print_AllocatedBlock();
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
@@ -465,15 +455,15 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        //print_FreeBlock();
-        //print_AllocatedBlock();
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
       }
-      else
+      else//两不靠
       { 
         #ifdef _BASIC_DEBUG
         sp_lock(&print_lock);
@@ -493,8 +483,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        //print_FreeBlock();
-        //print_AllocatedBlock();
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
@@ -509,11 +499,9 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
 }
 
 static void kfree(void *ptr) {
-  #ifdef _BASIC_DEBUG
   sp_lock(&print_lock);
   printf("CPU#%d KFREE\n",_cpu());
   sp_unlock(&print_lock);
-  #endif
 
   int k=_cpu();
     if(slab_kfree(ptr,k))
@@ -543,8 +531,8 @@ static void kfree(void *ptr) {
             #endif
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
-            //print_FreeBlock();
-            //print_AllocatedBlock();
+            print_FreeBlock();
+            print_AllocatedBlock();
             check_freeblock();
             check_allocblock(blk_ptr->start,blk_ptr->end);
             #endif
