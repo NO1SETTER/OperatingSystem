@@ -419,8 +419,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
       bdelete(ptr);
       binsert(alloc_head,ptr,0);//整个节点直接挪过来
       #ifdef _DEBUG
-      //print_FreeBlock();
-      //print_AllocatedBlock();
+      print_FreeBlock();
+      print_AllocatedBlock();
       check_freeblock();
       check_allocblock(valid_addr,valid_addr+size);
       #endif
@@ -442,8 +442,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        //print_FreeBlock();
-        //print_AllocatedBlock();
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
@@ -465,8 +465,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        //print_FreeBlock();
-        //print_AllocatedBlock();
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
@@ -493,8 +493,8 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         alloc_blk->size=size;
         binsert(alloc_head,alloc_blk,0);
         #ifdef _DEBUG
-        //print_FreeBlock();
-        //print_AllocatedBlock();
+        print_FreeBlock();
+        print_AllocatedBlock();
         check_freeblock();
         check_allocblock(valid_addr,valid_addr+size);
         #endif
@@ -543,8 +543,8 @@ static void kfree(void *ptr) {
             #endif
             binsert(loc_ptr,blk_ptr,1);
             #ifdef _DEBUG
-            //print_FreeBlock();
-            //print_AllocatedBlock();
+            print_FreeBlock();
+            print_AllocatedBlock();
             check_freeblock();
             check_allocblock(blk_ptr->start,blk_ptr->end);
             #endif
