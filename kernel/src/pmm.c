@@ -379,12 +379,9 @@ static bool slab_kfree(void *ptr,int k) {//从第k个CPU中找到是否有想要
 
 static void *kalloc(size_t size)//对于两个链表的修改，分别用链表大锁锁好
   { 
-    #ifdef _BASIC_DEBUG
     sp_lock(&print_lock);
     printf("CPU#%d KALLOC\n",_cpu());
     sp_unlock(&print_lock);
-    #endif
-
 
     int k=_cpu();
     void * slab_ptr=slab_kalloc(size,k);
@@ -502,11 +499,9 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
 }
 
 static void kfree(void *ptr) {
-  #ifdef _BASIC_DEBUG
   sp_lock(&print_lock);
   printf("CPU#%d KFREE\n",_cpu());
   sp_unlock(&print_lock);
-  #endif
 
   int k=_cpu();
     if(slab_kfree(ptr,k))
