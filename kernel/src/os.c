@@ -324,6 +324,7 @@ void sp_lockinit(spinlock_t* lk,const char *name)
 
 _Context* schedule(_Event ev,_Context* c)
 {
+  printf("SCHEDULE\n");
       if(current==NULL)
       {
         current=all_thread[active_thread[0]];
@@ -340,6 +341,7 @@ _Context* schedule(_Event ev,_Context* c)
 
 _Context* cyield(_Event ev,_Context* c)
 {
+  printf("YIELD\n");
   _yield();
   return NULL;
 }
