@@ -1,6 +1,6 @@
 #include <common.h>
 #define _DEBUG
-//#define _BASIC_DEBUG
+#define _BASIC_DEBUG
 //#define _SLAB_ASSIST
 
 #define PAGE_SIZE 4096 
@@ -463,7 +463,7 @@ static void *kalloc(size_t size)//对于两个链表的修改，分别用链表�
         sp_unlock(&glb_lock);
         return (void*)valid_addr;
       }
-      else
+      else//两不靠
       { 
         #ifdef _BASIC_DEBUG
         sp_lock(&print_lock);
