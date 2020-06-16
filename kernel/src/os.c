@@ -1,6 +1,6 @@
 #include <common.h>
 #define STACK_SIZE 4096
-#define _DEBUG
+//#define _DEBUG
 #define P kmt->sem_wait
 #define V kmt->sem_signal
 static void sem_init(sem_t *sem, const char *name, int value);
@@ -485,7 +485,9 @@ static void sem_wait(sem_t *sem)
       }
       if(judge) {
         sem->waiter[sem->wnum++]=cur->id;
+        #ifdef _DEBUG
         printf("%s blocked\n",cur->name);
+        #endif
         }
     }
     int pos=-1;
@@ -527,7 +529,9 @@ static void sem_signal(sem_t *sem)
     {
       int no=rand()%sem->wnum;
       active_thread[active_num++]=sem->waiter[no];
+      #ifdef _DEBUG
       printf("%s activated\n",all_thread[sem->waiter[no]]->name);
+      #endif
       for(int i=no;i<sem->wnum-1;i++)
       sem->waiter[i]=sem->waiter[i+1];
       sem->wnum--;
