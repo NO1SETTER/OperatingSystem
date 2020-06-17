@@ -489,8 +489,14 @@ static void sem_wait(sem_t *sem)
   if(sem->val<0) 
   {
     task_t * cur=currents[_cpu()];
+    printf("CPU#%d\n",_cpu());
     if(sem->wnum==0)
+    {
       sem->waiter[sem->wnum++]=cur->id;
+      #ifdef _DEBUG
+      printf("%s blocked\n",cur->name);
+      #endif
+    }
     else
     {
       int judge=1;
