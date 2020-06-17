@@ -19,7 +19,6 @@ static void kmt_teardown(task_t *task);
 int thread_num=0;
 int active_num=0;
 int wait_num=0;
-task_t *current=NULL;//当前task
 void activate(int id,sem_t* sem);
 void await(int id,sem_t* sem);
 void kill(int id);
@@ -76,6 +75,8 @@ sem_t fill;
 static void os_init() {
   pmm->init();
   kmt->init(); // 模块先初始化
+  for(int i=0;i<_ncpu();i++)
+    currents[i]=NULL;
   #ifdef DEV_ENBALE
     dev->init();
   #endif
@@ -298,17 +299,10 @@ static void os_run() {
     }
   }*/
 
-
-
-
-
-
-
-
 void sp_lock(spinlock_t* lk)
 {
-  while(_atomic_xchg(&lk->locked,1));
   _intr_write(0);
+  while(_atomic_xchg(&lk->locked,1));
 }
 
 void sp_unlock(spinlock_t *lk)
@@ -322,10 +316,9 @@ void sp_lockinit(spinlock_t* lk,const char *name)
   lk->locked=0;
 }
 
-_Context* schedule(_Event ev,_Context* c)
+_Context* schedule(_Event ev,_Context* c)//传入的c是current的最新上下文,要保存下来
 {
-  printf("SCHEDULE\n");
-      if(current==NULL)
+      /*if(current==NULL)
       {
         current=all_thread[active_thread[0]];
       }
@@ -336,12 +329,27 @@ _Context* schedule(_Event ev,_Context* c)
       }
       assert(current);
       //printf("task %s running on CPU#%d\n",current->name,_cpu());
+      return current->ctx;*/
+      task_t* current=currents[_cpu()];
+      if(!current)
+        current=all_thread[0];//暂时的
+      else
+        current->ctx=c;
+      
+      task_t* rec=current;
+      int reschedule=0;
+      do{
+        current=current->next;
+        if(rec==current)//转了一圈都没找到
+          reschedule=1;
+        if(reschedule&&current->status)//由于指定队列内的都被阻塞,允许调度指定队列外的线程
+         break;
+      }while((current->id)%_ncpu()!=_cpu()||current->status!=T_RUNNING);
       return current->ctx;
 }
 
 _Context* cyield(_Event ev,_Context* c)
 {
-  printf("YIELD\n");
   _yield();
   return NULL;
 }
@@ -438,13 +446,18 @@ static void kmt_init()
 //task提前分配好,那么我们用一个指针数组管理所有这些分配好的task
 //_Area{*start,*end;},
 static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), void *arg) {
-  strcpy(task->name,name);
-  task->status=T_RUNNING;
-  task->id=thread_num;
+  strcpy(task->name,name);//名字
+  task->status=T_RUNNING;//状态
+  task->id=thread_num;//id设置为当前进程数
+  if(thread_num > 0)
+  {
+    all_thread[thread_num-1]->next=task;//设置链表形成环路
+    task->next=all_thread[0];
+  }
   _Area stack=(_Area){ task->ctx+1,task->stack+STACK_SIZE};  
-  task->ctx=_kcontext(stack,entry,arg);
-  all_thread[thread_num++]=task;
-  active_thread[active_num++]=task->id;
+  task->ctx=_kcontext(stack,entry,arg);//设置栈空间以及上下文
+  all_thread[thread_num++]=task;//添加到所有线程中
+  active_thread[active_num++]=task->id;//添加到活跃线程中
   return 0;
 }
 
@@ -475,7 +488,7 @@ static void sem_wait(sem_t *sem)
   #endif
   if(sem->val<0) 
   {
-    task_t * cur=current;
+    task_t * cur=currents[_cpu()];
     if(sem->wnum==0)
       sem->waiter[sem->wnum++]=cur->id;
     else

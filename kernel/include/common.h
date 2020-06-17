@@ -4,6 +4,7 @@
 #include <amdev.h>
 #define DEBUG_LOCAL
 //#define DEV_ENABLE
+#define MAX_CPU 8
 enum t_status {
   T_NEW = 1, // 新创建，还未执行过
   T_RUNNING, // 已经执行过
@@ -35,17 +36,15 @@ struct task
   };
   uint8_t stack[4096];
 };//管理一个线程的信息
-
+task_t* currents[MAX_CPU];
 task_t* all_thread[105];
 int active_thread[105];//只记录线程的id,id对应它在all_thread中的位置
 
 extern int thread_num;
 extern int active_num;
-
-extern  task_t *current;//当前task
-
 extern spinlock_t thread_ctrl_lock;//管理控制这三个链表的锁
 void kill(int id);
+
 
 struct semaphore
 {
