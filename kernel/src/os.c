@@ -494,7 +494,7 @@ static void sem_wait(sem_t *sem)
     {
       sem->waiter[sem->wnum++]=cur->id;
       #ifdef _DEBUG
-      printf("%s blocked\n",cur->name);
+      printf("%task_%d blocked\n",cur->id);
       #endif
     }
     else
