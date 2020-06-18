@@ -345,6 +345,7 @@ _Context* schedule(_Event ev,_Context* c)//传入的c是current的最新上下�
         if(reschedule&&current->status)//由于指定队列内的都被阻塞,允许调度指定队列外的线程
          break;
       }while((current->id)%_ncpu()!=_cpu()||current->status!=T_RUNNING);
+      assert(current);
       return current->ctx;
 }
 
