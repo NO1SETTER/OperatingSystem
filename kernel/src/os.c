@@ -450,7 +450,7 @@ static int kmt_create(task_t *task, const char *name, void (*entry)(void *arg), 
   strcpy(task->name,name);//名字
   task->status=T_RUNNING;//状态
   task->id=thread_num;//id设置为当前进程数
-  printf("task %d created\n",task->id);
+  printf(" task %d created\n",task->id);
   if(thread_num > 0)
   {
     all_thread[thread_num-1]->next=task;//设置链表形成环路
