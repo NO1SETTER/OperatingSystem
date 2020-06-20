@@ -330,6 +330,7 @@ _Context* schedule(_Event ev,_Context* c)//传入的c是current的最新上下�
       assert(current);
       //printf("task %s running on CPU#%d\n",current->name,_cpu());
       return current->ctx;*/
+      printf("Current id =%d\n")
       task_t* current=currents[_cpu()];
       if(!current)
         current=all_thread[0];//暂时的
